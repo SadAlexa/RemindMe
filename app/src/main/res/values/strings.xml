@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">RemindMe</string>
+    <string name="hello">Hello</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="not_registered">Don\'t you have an account?</string>
+    <string name="guest">Sign in as a guest</string>
+</resources>

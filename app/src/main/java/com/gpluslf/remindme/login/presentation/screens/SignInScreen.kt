@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,18 +23,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gpluslf.remindme.R
 import com.gpluslf.remindme.login.presentation.components.CustomButton
+import com.gpluslf.remindme.login.presentation.components.CustomOutlinedTextField
 import com.gpluslf.remindme.login.presentation.model.LoginAction
+import com.gpluslf.remindme.login.presentation.model.SignInAction
+import com.gpluslf.remindme.login.presentation.model.SignInState
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
 @Composable
-fun WelcomeScreen(
+fun SignInScreen(
     modifier: Modifier = Modifier,
+    state: SignInState = SignInState(),
+    onSignInAction: (SignInAction) -> Unit = {},
     onLoginAction: (LoginAction) -> Unit = {},
 ) {
     Column(
         modifier.padding(horizontal = 50.dp, vertical = 70.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(40.dp),
+        verticalArrangement = Arrangement.spacedBy(30.dp),
     ) {
         Image(
             painterResource(R.drawable.remindmeicon),
@@ -46,35 +50,26 @@ fun WelcomeScreen(
         )
 
         Text(
-            "${stringResource(R.string.hello)}!",
+            stringResource(R.string.sign_in),
             fontSize = 60.sp,
             fontWeight = FontWeight.Black
         )
+        CustomOutlinedTextField(
+            stringResource(R.string.email),
+            state.email
+        ) {
+            onSignInAction(SignInAction.UpdateEmail(it))
+        }
+        CustomOutlinedTextField(
+            stringResource(R.string.password),
+            state.password
+        ) {
+            onSignInAction(SignInAction.UpdatePassword(it))
+        }
         CustomButton(
             stringResource(R.string.sign_in)
         ) {
             onLoginAction(LoginAction.SignIn)
-        }
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                stringResource(
-                    R.string.not_registered
-                ),
-                fontSize = 20.sp,
-                lineHeight = 40.sp,
-                fontWeight = FontWeight.Bold,
-            )
-            CustomButton(
-                stringResource(R.string.sign_up)
-            ) {
-                onLoginAction(LoginAction.SignUp)
-            }
-        }
-        Spacer(Modifier.weight(1f))
-        CustomButton(
-            stringResource(R.string.guest)
-        ) {
-            onLoginAction(LoginAction.Guest)
         }
     }
 }
@@ -84,7 +79,7 @@ fun WelcomeScreen(
 private fun WelcomeScreenPreviewLight() {
     RemindMeTheme {
         Scaffold  { padding ->
-            WelcomeScreen(
+            SignInScreen(
                 Modifier
                     .padding(padding)
                     .fillMaxSize())
@@ -99,7 +94,7 @@ private fun WelcomeScreenPreviewLight() {
 private fun WelcomeScreenPreviewDark() {
     RemindMeTheme {
         Scaffold  { padding ->
-            WelcomeScreen(
+            SignInScreen(
                 Modifier
                     .padding(padding)
                     .fillMaxSize())

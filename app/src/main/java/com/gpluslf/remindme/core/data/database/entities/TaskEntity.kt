@@ -3,8 +3,7 @@ package com.gpluslf.remindme.core.data.database.entities
 import androidx.room.Entity
 import androidx.room.ColumnInfo
 import androidx.room.ForeignKey
-import androidx.room.TypeConverters
-import com.gpluslf.remindme.core.data.database.utils.Converters
+import java.util.Date
 
 @Entity(
     tableName = "tasks",
@@ -24,7 +23,7 @@ import com.gpluslf.remindme.core.data.database.utils.Converters
         )
     ]
 )
-@TypeConverters(Converters::class)
+
 data class TaskEntity(
     @ColumnInfo(name = "title")
     val title: String,
@@ -39,13 +38,13 @@ data class TaskEntity(
     val body: String? = null,
 
     @ColumnInfo(name = "end_time")
-    val endTime: String? = null,
+    val endTime: Date? = null,
 
     @ColumnInfo(name = "frequency")
-    val frequency: Frequency? = null,
+    val frequency: Date? = null,
 
     @ColumnInfo(name = "alert")
-    val alert: Alert? = null,
+    val alert: Date? = null,
 
     @ColumnInfo(name = "image")
     val image: ByteArray? = null

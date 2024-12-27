@@ -28,7 +28,7 @@ fun TodoList.toTodoListUi() = TodoListUi(
     title,
     userId,
     body,
-    toBitMap(image),
+    image?.toBitMap(),
     isShared,
     sharedUserId,
     isFavorite,

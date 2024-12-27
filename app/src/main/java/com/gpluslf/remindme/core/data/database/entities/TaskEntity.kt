@@ -38,13 +38,13 @@ data class TaskEntity(
     val body: String? = null,
 
     @ColumnInfo(name = "end_time")
-    val endTime: Date? = null,
+    val endTime: Long? = null,
 
     @ColumnInfo(name = "frequency")
-    val frequency: Date? = null,
+    val frequency: Long? = null,
 
     @ColumnInfo(name = "alert")
-    val alert: Date? = null,
+    val alert: Long? = null,
 
     @ColumnInfo(name = "image")
     val image: ByteArray? = null

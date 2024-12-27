@@ -26,6 +26,6 @@ fun Task.toTaskUi() = TaskUi(
     endTime,
     frequency,
     alert,
-    toBitMap(image),
+    image?.toBitMap(),
 )
 

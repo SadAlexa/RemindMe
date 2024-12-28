@@ -2,12 +2,17 @@ package com.gpluslf.remindme.core.data.database.repository
 
 import com.gpluslf.remindme.core.data.database.daos.AchievementDAOs
 import com.gpluslf.remindme.core.data.database.entities.AchievementEntity
+import com.gpluslf.remindme.core.data.mappers.toAchievement
+import com.gpluslf.remindme.core.data.mappers.toEntity
+import com.gpluslf.remindme.core.domain.Achievement
+import com.gpluslf.remindme.core.domain.AchievementDataSource
+import kotlinx.coroutines.flow.map
 
-class AchievementRepository(private val achievementDAOs: AchievementDAOs) {
+class AchievementRepository(private val achievementDAOs: AchievementDAOs): AchievementDataSource {
 
-    fun getAllAchievements(userId: Long) = achievementDAOs.getAllAchievements(userId)
+    override fun getAllAchievements(userId: Long) = achievementDAOs.getAllAchievements(userId).map { flow -> flow.map { it.toAchievement() } }
 
-    suspend fun upsertAchievement(achievement: AchievementEntity) = achievementDAOs.upsertAchievement(achievement)
+    override suspend fun upsertAchievement(achievement: Achievement) = achievementDAOs.upsertAchievement(achievement.toEntity())
 
-    suspend fun deleteAchievement(achievement: AchievementEntity) = achievementDAOs.deleteAchievement(achievement)
+    override suspend fun deleteAchievement(achievement: Achievement) = achievementDAOs.deleteAchievement(achievement.toEntity())
 }

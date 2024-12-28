@@ -15,7 +15,9 @@ data class TaskUi(
     val endTime: Date?,
     val frequency: Date?,
     val alert: Date?,
-    val image: Bitmap?
+    val image: Bitmap?,
+    val isDone: Boolean,
+    val tags : List<TagUi> = emptyList()
 )
 
 fun Task.toTaskUi() = TaskUi(
@@ -27,5 +29,7 @@ fun Task.toTaskUi() = TaskUi(
     frequency,
     alert,
     image?.toBitMap(),
+    isDone,
+    tags.map { it.toTagUi() }
 )
 

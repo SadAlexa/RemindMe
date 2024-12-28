@@ -21,7 +21,9 @@ data class TodoListUi(
 
     val isFavorite: Boolean = false,
 
-    val categoryId: Long
+    val categoryId: Long,
+
+    val taskList: List<TaskUi> = emptyList()
 )
 
 fun TodoList.toTodoListUi() = TodoListUi(

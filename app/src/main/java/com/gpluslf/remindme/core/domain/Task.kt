@@ -17,6 +17,10 @@ data class Task(
 
     val alert: Date? = null,
 
-    val image: Image? = null
+    val image: Image? = null,
+
+    val isDone: Boolean = false,
+
+    val tags: List<Tag> = emptyList()
 )
 

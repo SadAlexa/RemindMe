@@ -2,15 +2,22 @@ package com.gpluslf.remindme.core.data.database.repository
 
 import com.gpluslf.remindme.core.data.database.daos.UserDAOs
 import com.gpluslf.remindme.core.data.database.entities.UserEntity
+import com.gpluslf.remindme.core.data.mappers.toUser
+import com.gpluslf.remindme.core.data.mappers.toUserEntity
+import com.gpluslf.remindme.core.domain.User
+import com.gpluslf.remindme.core.domain.UserDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-class UserRepository(private val userDAOs: UserDAOs) {
+class UserRepository(private val userDAOs: UserDAOs): UserDataSource {
 
-    val users: Flow<List<UserEntity>> = userDAOs.getAllUsers()
+    override fun getUsers(query: String): Flow<List<User>> {
+        return userDAOs.getAllUsers().map { flow -> flow.map { it.toUser() } }
+    }
 
-    fun getUserById(id: Long) = userDAOs.getUserById(id)
+    override fun getUserById(userId: Long) = userDAOs.getUserById(userId).map { it?.toUser() }
 
-    suspend fun upsertUser(user: UserEntity) = userDAOs.upsertUser(user)
+    override suspend fun upsertUser(user: User) = userDAOs.upsertUser(user.toUserEntity())
 
-    suspend fun deleteUser(user: UserEntity) = userDAOs.deleteUser(user)
+    override suspend fun deleteUser(user: User) = userDAOs.deleteUser(user.toUserEntity())
 }

@@ -47,6 +47,9 @@ data class TaskEntity(
     val alert: Long? = null,
 
     @ColumnInfo(name = "image")
-    val image: ByteArray? = null
+    val image: ByteArray? = null,
+
+    @ColumnInfo(name = "is_done")
+    val isDone: Boolean = false
 )
 

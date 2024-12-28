@@ -5,9 +5,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface TaskDataSource {
 
-    fun getTaskByTitle(taskTitle: String, listTitle: String, userId: Long): Flow<Task?>
+    // fun getTaskByTitle(taskTitle: String, listTitle: String, userId: Long): Flow<Task?>
 
-    fun getTasksByList(listTitle: String, userId: Long): Flow<List<Task>>
+    fun getAllTasksByList(listTitle: String, userId: Long): Flow<List<Task>>
 
     suspend fun upsertTask(task: Task)
 

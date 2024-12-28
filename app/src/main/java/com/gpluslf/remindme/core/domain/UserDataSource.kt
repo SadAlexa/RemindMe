@@ -4,9 +4,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserDataSource {
 
-    fun getUserById(userId: Long): Flow<User?>
+    fun getUsers(query: String): Flow<List<User>>
 
-    fun getAllUsers(): Flow<List<User>>
+    fun getUserById(userId: Long): Flow<User?>
 
     suspend fun upsertUser(user: User)
 

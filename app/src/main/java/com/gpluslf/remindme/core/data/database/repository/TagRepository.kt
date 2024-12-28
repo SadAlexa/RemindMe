@@ -1,16 +1,20 @@
 package com.gpluslf.remindme.core.data.database.repository
 
 import com.gpluslf.remindme.core.data.database.daos.TagDAOs
-import com.gpluslf.remindme.core.data.database.entities.TagEntity
+import com.gpluslf.remindme.core.data.mappers.toTag
+import com.gpluslf.remindme.core.data.mappers.toTagEntity
+import com.gpluslf.remindme.core.domain.Tag
+import com.gpluslf.remindme.core.domain.TagDataSource
+import kotlinx.coroutines.flow.map
 
 
-class TagRepository(private val tagDAOs: TagDAOs) {
+class TagRepository(private val tagDAOs: TagDAOs): TagDataSource {
 
-    fun getAllTags(listTitle: String, userId: Long) = tagDAOs.getAllTags(listTitle, userId)
+    override fun getAllTags(listTitle: String, userId: Long) = tagDAOs.getAllTags(listTitle, userId).map { flow -> flow.map { it.toTag() } }
 
-    fun getTagById(categoryId: Long) = tagDAOs.getTagById(categoryId)
+    override fun getTagById(tagId: Long) = tagDAOs.getTagById(tagId).map { it?.toTag() }
 
-    suspend fun upsertTag(tag: TagEntity) = tagDAOs.upsertTag(tag)
+    override suspend fun upsertTag(tag: Tag) = tagDAOs.upsertTag(tag.toTagEntity())
 
-    suspend fun deleteTag(tag: TagEntity) = tagDAOs.deleteTag(tag)
+    override suspend fun deleteTag(tag: Tag) = tagDAOs.deleteTag(tag.toTagEntity())
 }

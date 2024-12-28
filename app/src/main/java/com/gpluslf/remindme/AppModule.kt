@@ -21,13 +21,14 @@ val appModule = module {
             "remindme-database"
         ).build()
     }
+    single { get<RemindMeDatabase>().tagsOnTaskDao() }
     single { UserRepository(get<RemindMeDatabase>().userDao()) }
     single { ListRepository(get<RemindMeDatabase>().listDao()) }
     single { CategoryRepository(get<RemindMeDatabase>().categoryDao()) }
-    single { TaskRepository(get<RemindMeDatabase>().taskDao()) }
+    single { TaskRepository(get<RemindMeDatabase>().taskDao(), get())}
     single { TagRepository(get<RemindMeDatabase>().tagDao()) }
     single { NotificationRepository(get<RemindMeDatabase>().notificationDao()) }
     single { AchievementRepository(get<RemindMeDatabase>().achievementDao()) }
     single { SharedUserListRepository(get<RemindMeDatabase>().sharedUserListDao()) }
-    single { TagsOnTaskRepository(get<RemindMeDatabase>().tagsOnTaskDao()) }
+    single { TagsOnTaskRepository(get()) }
 }

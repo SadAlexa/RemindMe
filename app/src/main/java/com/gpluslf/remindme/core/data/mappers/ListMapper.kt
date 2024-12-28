@@ -1,10 +1,11 @@
 package com.gpluslf.remindme.core.data.mappers
 
+import com.gpluslf.remindme.core.data.database.entities.CategoryEntity
 import com.gpluslf.remindme.core.data.database.entities.ListEntity
 import com.gpluslf.remindme.core.domain.Image
 import com.gpluslf.remindme.core.domain.TodoList
 
-fun ListEntity.toTodoList() = TodoList(
+fun ListEntity.toTodoList(category: CategoryEntity?) = TodoList(
     title,
     userId,
     body,
@@ -12,7 +13,7 @@ fun ListEntity.toTodoList() = TodoList(
     isShared,
     sharedUserId,
     isFavorite,
-    categoryId
+    category?.toCategory()
 )
 
 fun TodoList.toListEntity() = ListEntity(
@@ -23,5 +24,5 @@ fun TodoList.toListEntity() = ListEntity(
     isShared,
     sharedUserId,
     isFavorite,
-    categoryId
+    category?.id
 )

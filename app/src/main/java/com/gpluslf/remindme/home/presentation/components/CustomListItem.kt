@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.gpluslf.remindme.core.domain.Category
 import com.gpluslf.remindme.core.domain.Image
 import com.gpluslf.remindme.core.domain.TodoList
 import com.gpluslf.remindme.home.presentation.model.TodoListUi
@@ -71,13 +72,14 @@ private fun CustomListItemPreview() {
     }
 }
 
-internal val sampleTodoList = TodoList("title", 1, categoryId = 1, body = "body", image = Image(
-    bytes = ByteArray(
-    1000
-    ).apply {
-        repeat(1000) {
-            this[it] = 1
-        }
-    },
-))
+internal val sampleTodoList = TodoList(
+    "title",
+    1,
+    body = "body",
+    category = Category(
+        id = 1,
+        title = "title",
+        userId = 1
+    ),
+)
 

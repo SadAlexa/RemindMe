@@ -21,7 +21,7 @@ data class TodoListUi(
 
     val isFavorite: Boolean = false,
 
-    val categoryId: Long,
+    val category: CategoryUi? = null,
 
     val taskList: List<TaskUi> = emptyList()
 )
@@ -34,6 +34,6 @@ fun TodoList.toTodoListUi() = TodoListUi(
     isShared,
     sharedUserId,
     isFavorite,
-    categoryId
+    category?.toCategoryUi(),
 )
 

@@ -10,4 +10,9 @@
     <string name="name">Name</string>
     <string name="username">Username</string>
     <string name="confirmPassword">Confirm password</string>
+    <string name="list_title">Title</string>
+    <string name="list_body">Description</string>
+    <string name="list_image">Image</string>
+    <string name="add_image">Add an image</string>
+    <string name="list_category">Category</string>
 </resources>

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface CategoryDAOs {
 
     @Query("SELECT * FROM categories WHERE id = :categoryId")
-    fun getCategoryById(categoryId: Long): Flow<CategoryEntity?>
+    fun getCategoryById(categoryId: Long): CategoryEntity?
 
     @Query("SELECT * FROM categories WHERE user_id = :userId")
     fun getAllCategories(userId: Long): Flow<List<CategoryEntity>>

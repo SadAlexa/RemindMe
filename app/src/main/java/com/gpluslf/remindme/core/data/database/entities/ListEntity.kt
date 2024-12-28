@@ -51,5 +51,5 @@ data class ListEntity(
     val isFavorite: Boolean = false,
 
     @ColumnInfo(name = "category_id")
-    val categoryId: Long
+    val categoryId: Long? = null
 )

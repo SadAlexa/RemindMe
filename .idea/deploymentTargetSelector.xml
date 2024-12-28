@@ -8,6 +8,9 @@
       <SelectionState runConfigName="WelcomeScreenPreviewLight">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="AddListScreenPreviewLight">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>

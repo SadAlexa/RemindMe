@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface CategoryDataSource {
 
-    fun getCategoryById(categoryId: Long): Flow<Category?>
+    fun getCategoryById(categoryId: Long): Category?
 
     fun getAllCategories(userId: Long): Flow<List<Category>>
 

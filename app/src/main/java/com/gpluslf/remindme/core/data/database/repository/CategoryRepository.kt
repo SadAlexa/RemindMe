@@ -13,7 +13,7 @@ class CategoryRepository(private val categoryDAOs: CategoryDAOs): CategoryDataSo
 
     override fun getAllCategories(userId: Long) = categoryDAOs.getAllCategories(userId).map { flow -> flow.map { it.toCategory() } }
 
-    override fun getCategoryById(categoryId: Long) = categoryDAOs.getCategoryById(categoryId).map { category -> category?.toCategory() }
+    override fun getCategoryById(categoryId: Long) = categoryDAOs.getCategoryById(categoryId)?.toCategory()
 
     override suspend fun upsertCategory(category: Category) = categoryDAOs.upsertCategory(category.toCategoryEntity())
 

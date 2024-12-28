@@ -22,9 +22,10 @@ val appModule = module {
         ).build()
     }
     single { get<RemindMeDatabase>().tagsOnTaskDao() }
+    single { get<RemindMeDatabase>().categoryDao() }
     single { UserRepository(get<RemindMeDatabase>().userDao()) }
-    single { ListRepository(get<RemindMeDatabase>().listDao()) }
-    single { CategoryRepository(get<RemindMeDatabase>().categoryDao()) }
+    single { ListRepository(get<RemindMeDatabase>().listDao(), get()) }
+    single { CategoryRepository(get()) }
     single { TaskRepository(get<RemindMeDatabase>().taskDao(), get())}
     single { TagRepository(get<RemindMeDatabase>().tagDao()) }
     single { NotificationRepository(get<RemindMeDatabase>().notificationDao()) }

@@ -15,5 +15,5 @@ data class TodoList(
 
     val isFavorite: Boolean = false,
 
-    val categoryId: Long
+    val category: Category? = null
 )

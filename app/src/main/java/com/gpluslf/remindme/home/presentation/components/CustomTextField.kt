@@ -1,10 +1,7 @@
 package com.gpluslf.remindme.home.presentation.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -16,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
 @Composable
-fun CustomBasicTextField(text: String, value: String, onValueChange: (String) -> Unit) {
+fun CustomTextField(text: String, value: String, onValueChange: (String) -> Unit) {
     TextField(
         value = value,
         onValueChange = onValueChange,
@@ -30,10 +27,10 @@ fun CustomBasicTextField(text: String, value: String, onValueChange: (String) ->
 
 @Preview
 @Composable
-private fun CustomBasicTextFieldPreview() {
+private fun CustomTextFieldPreview() {
     RemindMeTheme {
         Surface {
-            CustomBasicTextField(
+            CustomTextField(
                 text = "Title",
                 value = "Title",
                 onValueChange = {}

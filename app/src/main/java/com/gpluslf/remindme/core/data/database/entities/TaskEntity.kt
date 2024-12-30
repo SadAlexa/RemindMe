@@ -47,9 +47,15 @@ data class TaskEntity(
     val alert: Long? = null,
 
     @ColumnInfo(name = "image")
-    val image: ByteArray? = null,
+    val image: String? = null,
 
     @ColumnInfo(name = "is_done")
-    val isDone: Boolean = false
+    val isDone: Boolean = false,
+
+    @ColumnInfo(name = "latitude")
+    val latitude: Double? = null,
+
+    @ColumnInfo(name = "longitude")
+    val longitude: Double? = null
 )
 

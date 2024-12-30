@@ -39,7 +39,7 @@ data class ListEntity(
     val body: String? = null,
 
     @ColumnInfo(name = "image")
-    val image: ByteArray? = null,
+    val image: String? = null,
 
     @ColumnInfo(name = "is_shared")
     val isShared: Boolean = false,

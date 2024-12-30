@@ -1,10 +1,7 @@
 package com.gpluslf.remindme.home.presentation.model
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import com.gpluslf.remindme.core.domain.Image
+import android.net.Uri
 import com.gpluslf.remindme.core.domain.TodoList
-import com.gpluslf.remindme.core.presentation.toBitMap
 
 data class TodoListUi(
     val title: String,
@@ -13,7 +10,7 @@ data class TodoListUi(
 
     val body: String? = null,
 
-    val image: Bitmap? = null,
+    val image: Uri? = null,
 
     val isShared: Boolean = false,
 
@@ -30,7 +27,7 @@ fun TodoList.toTodoListUi() = TodoListUi(
     title,
     userId,
     body,
-    image?.toBitMap(),
+    image,
     isShared,
     sharedUserId,
     isFavorite,

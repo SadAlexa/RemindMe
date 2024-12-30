@@ -1,5 +1,7 @@
 package com.gpluslf.remindme.core.domain
 
+import android.net.Uri
+
 data class TodoList(
     val title: String,
 
@@ -7,7 +9,7 @@ data class TodoList(
 
     val body: String? = null,
 
-    val image: Image? = null,
+    val image: Uri? = null,
 
     val isShared: Boolean = false,
 

@@ -1,5 +1,7 @@
 package com.gpluslf.remindme.core.domain
 
+import android.net.Uri
+
 data class User(
     val id: Long? = null,
 
@@ -13,5 +15,5 @@ data class User(
 
     val salt: String,
 
-    val image: Image? = null,
+    val image: Uri? = null,
 )

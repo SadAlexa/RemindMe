@@ -21,7 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.gpluslf.remindme.core.domain.Category
-import com.gpluslf.remindme.core.domain.Image
 import com.gpluslf.remindme.core.domain.TodoList
 import com.gpluslf.remindme.home.presentation.model.TodoListUi
 import com.gpluslf.remindme.home.presentation.model.toTodoListUi

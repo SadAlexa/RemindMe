@@ -25,5 +25,5 @@ data class UserEntity(
     val salt: String,
 
     @ColumnInfo(name = "image")
-    val image: ByteArray? = null,
+    val image: String? = null,
 )

@@ -1,6 +1,6 @@
 package com.gpluslf.remindme.home.presentation.model
 
-import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.runtime.Immutable
 
 @Immutable
@@ -9,7 +9,7 @@ data class TodoListState(
 
     val body: String? = "",
 
-    val image: Bitmap? = null,
+    val image: Uri? = null,
 
     val isShared: Boolean = false,
 

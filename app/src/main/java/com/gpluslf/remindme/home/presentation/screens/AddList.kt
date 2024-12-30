@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGri
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Camera
@@ -40,6 +41,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,11 +50,11 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.gpluslf.remindme.R
 import com.gpluslf.remindme.core.domain.Category
-import com.gpluslf.remindme.home.presentation.components.CustomBasicTextField
+import com.gpluslf.remindme.home.presentation.components.CustomPhotoButton
+import com.gpluslf.remindme.home.presentation.components.CustomTextField
 import com.gpluslf.remindme.home.presentation.model.AddListAction
 import com.gpluslf.remindme.home.presentation.model.TodoListState
 import com.gpluslf.remindme.home.presentation.model.toCategoryUi
-import com.gpluslf.remindme.login.presentation.components.CustomOutlinedTextField
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,14 +98,14 @@ fun AddListScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(30.dp),
         ) {
-            CustomBasicTextField (
+            CustomTextField (
                 stringResource(R.string.list_title),
                 state.title
             ) {
                 onAddListAction(AddListAction.UpdateTitle(it))
             }
 
-            CustomBasicTextField(
+            CustomTextField(
                 stringResource(R.string.list_body),
                 state.body ?: ""
             ) {
@@ -128,28 +130,11 @@ fun AddListScreen(
             val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
                 result.value = it
             }
-            Button (onClick = {
-                launcher.launch(
-                    PickVisualMediaRequest(mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly)
-                )
-            }) {
-                Row (
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Icon(
-                        Icons.Outlined.CameraAlt,
-                        contentDescription = null,
-                    )
-                    Text(
-                        stringResource(R.string.add_image)
-                    )
-                }
-            }
+            CustomPhotoButton(launcher)
 
             result.value?.let { image ->
-                //Use Coil to display the selected image
+                onAddListAction(AddListAction.UpdateImage(image))
+                // Use Coil to display the selected image
                 val painter = rememberAsyncImagePainter(
                     ImageRequest
                         .Builder(LocalContext.current)
@@ -161,6 +146,7 @@ fun AddListScreen(
                     contentDescription = null,
                     modifier = Modifier.size(150.dp, 150.dp)
                         .padding(16.dp)
+                        .clip(RoundedCornerShape(20.dp))
                 )
             }
         }

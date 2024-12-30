@@ -1,5 +1,6 @@
 package com.gpluslf.remindme.core.domain
 
+import android.net.Uri
 import java.util.Date
 
 data class Task(
@@ -17,9 +18,13 @@ data class Task(
 
     val alert: Date? = null,
 
-    val image: Image? = null,
+    val image: Uri? = null,
 
     val isDone: Boolean = false,
+
+    val latitude: Double? = null,
+
+    val longitude: Double? = null,
 
     val tags: List<Tag> = emptyList()
 )

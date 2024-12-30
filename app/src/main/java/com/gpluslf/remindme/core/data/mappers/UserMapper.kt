@@ -1,7 +1,7 @@
 package com.gpluslf.remindme.core.data.mappers
 
+import android.net.Uri
 import com.gpluslf.remindme.core.data.database.entities.UserEntity
-import com.gpluslf.remindme.core.domain.Image
 import com.gpluslf.remindme.core.domain.User
 
 fun UserEntity.toUser() = User(
@@ -11,7 +11,7 @@ fun UserEntity.toUser() = User(
     email,
     password,
     salt,
-    if (image != null) Image(image) else null,
+    image?.let { Uri.parse(it) },
 )
 
 fun User.toUserEntity() = UserEntity(
@@ -21,5 +21,5 @@ fun User.toUserEntity() = UserEntity(
     email,
     password,
     salt,
-    image?.bytes
+    image?.toString(),
 )

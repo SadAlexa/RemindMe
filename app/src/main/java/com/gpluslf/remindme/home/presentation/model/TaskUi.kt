@@ -1,8 +1,8 @@
 package com.gpluslf.remindme.home.presentation.model
 
 import android.graphics.Bitmap
+import android.net.Uri
 import com.gpluslf.remindme.core.data.database.entities.TaskEntity
-import com.gpluslf.remindme.core.domain.Image
 import com.gpluslf.remindme.core.domain.Task
 import com.gpluslf.remindme.core.presentation.toBitMap
 import java.util.Date
@@ -15,8 +15,10 @@ data class TaskUi(
     val endTime: Date?,
     val frequency: Date?,
     val alert: Date?,
-    val image: Bitmap?,
+    val image: Uri?,
     val isDone: Boolean,
+    val latitude: Double?,
+    val longitude: Double?,
     val tags : List<TagUi> = emptyList()
 )
 
@@ -28,8 +30,10 @@ fun Task.toTaskUi() = TaskUi(
     endTime,
     frequency,
     alert,
-    image?.toBitMap(),
+    image,
     isDone,
+    latitude,
+    longitude,
     tags.map { it.toTagUi() }
 )
 

@@ -1,10 +1,7 @@
 package com.gpluslf.remindme.home.presentation.model
 
-import android.graphics.Bitmap
 import android.net.Uri
-import com.gpluslf.remindme.core.data.database.entities.TaskEntity
 import com.gpluslf.remindme.core.domain.Task
-import com.gpluslf.remindme.core.presentation.toBitMap
 import java.util.Date
 
 data class TaskUi(

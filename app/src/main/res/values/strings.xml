@@ -15,4 +15,6 @@
     <string name="list_image">Image</string>
     <string name="add_image">Add an image</string>
     <string name="list_category">Category</string>
+    <string name="add_task">Add Task</string>
+    <string name="task_title">Task title</string>
 </resources>

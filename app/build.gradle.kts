@@ -73,4 +73,5 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.compose)
 }

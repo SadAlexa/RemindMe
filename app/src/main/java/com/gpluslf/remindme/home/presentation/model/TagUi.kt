@@ -7,7 +7,8 @@ data class TagUi(
     val id: Long,
     val title: String,
     val listTitle: String,
-    val userId: Long
+    val userId: Long,
+    val isSelected: Boolean = false,
 )
 
 fun Tag.toTagUi() = TagUi(

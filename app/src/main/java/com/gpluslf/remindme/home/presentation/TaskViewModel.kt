@@ -2,6 +2,7 @@ package com.gpluslf.remindme.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gpluslf.remindme.core.domain.TaskDataSource
 import com.gpluslf.remindme.home.presentation.model.TaskUi
 import com.gpluslf.remindme.home.presentation.model.toTaskUi
@@ -15,10 +16,11 @@ import kotlinx.coroutines.launch
 
 data class TasksState(
     val tasks: List<TaskUi>,
-    val listTitle: String = ""
 )
 
 class TasksViewModel(
+    private val userId: Long,
+    private val listTitle: String,
     private val repository: TaskDataSource
 ) : ViewModel() {
     private val _state = MutableStateFlow(TasksState(emptyList()))
@@ -29,11 +31,14 @@ class TasksViewModel(
         started = SharingStarted.WhileSubscribed(),
         initialValue = TasksState(emptyList())
     )
-
     private fun loadData() {
-        repository.getAllTasksByList("title", 1 /*TODO*/).map {flow ->
-            _state.update { state ->
-                state.copy(tasks = flow.map { it.toTaskUi() })
+        viewModelScope.launch {
+            repository.getAllTasksByList(listTitle, userId).collect { flow ->
+                _state.update { state ->
+                    state.copy(
+                        tasks = flow.map { it.toTaskUi() }
+                    )
+                }
             }
         }
     }
@@ -45,4 +50,5 @@ class TasksViewModel(
     fun deleteTask(task: TaskUi) = viewModelScope.launch {
         // TODO
     }
+
 }

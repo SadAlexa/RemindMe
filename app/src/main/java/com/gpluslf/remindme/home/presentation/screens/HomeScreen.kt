@@ -34,7 +34,7 @@ import com.gpluslf.remindme.ui.theme.RemindMeTheme
 fun HomeScreen(
     state: ListsState,
     onFloatingActionButtonClick: () -> Unit,
-    onCustomListItemClick: (Long, String) -> Unit,
+    onCustomListItemClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -74,7 +74,7 @@ fun HomeScreen(
                     CustomListItem(
                         item,
                         onClick = {
-                            onCustomListItemClick(item.userId, item.title)
+                            onCustomListItemClick(item.title)
                         }
                     )
                 }
@@ -95,7 +95,7 @@ private fun HomeScreenPreviewLight() {
                     lists = (0..10).map { sampleTodoList.toTodoListUi().copy(title = "List $it") }
                 ),
                 {},
-                {_, _ ->},
+                {_ ->},
                 modifier = Modifier
                     .padding(padding)
                     .fillMaxSize())
@@ -115,7 +115,7 @@ private fun HomeScreenPreviewDark() {
                     lists = (0..10).map { sampleTodoList.toTodoListUi().copy(title = "List $it") }
                 ),
                 {},
-                {_, _ ->},
+                {_ ->},
                 modifier = Modifier
                     .padding(padding)
                     .fillMaxSize())

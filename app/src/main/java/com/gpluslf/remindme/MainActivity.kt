@@ -19,10 +19,8 @@ import com.gpluslf.remindme.ui.theme.RemindMeTheme
 import org.koin.android.ext.android.get
 
 class MainActivity : ComponentActivity() {
-    private lateinit var locationService: LocationService
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        locationService = get<LocationService>()
         enableEdgeToEdge()
         setContent {
             RemindMeTheme {
@@ -32,8 +30,13 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     val backStackEntry by navController.currentBackStackEntryAsState()
-                    val currentDestination = backStackEntry?.destination
-
+//                    val currentRoute by remember {
+//                        derivedStateOf {
+//                            RemindMeRoute.routes.find {
+//                                it.route == backStackEntry?.destination?.route
+//                            } ?: RemindMeRoute.Home
+//                        }
+//                    }
 
                     Scaffold(
                         topBar = {} //TODO
@@ -46,14 +49,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        locationService.pauseLocationRequest()
-    }
-    override fun onResume() {
-        super.onResume()
-        locationService.resumeLocationRequest()
     }
 }

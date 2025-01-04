@@ -31,6 +31,7 @@ import com.gpluslf.remindme.ui.theme.RemindMeTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListScreen(
+    listTitle: String,
     state: TasksState,
     onFloatingActionButtonClick: () -> Unit,
     onCustomTaskClick: () -> Unit,
@@ -52,7 +53,7 @@ fun ListScreen(
                 expandedHeight = 80.dp,
                 title = {
                     Text(
-                        state.listTitle, style = MaterialTheme.typography.headlineLarge
+                        listTitle, style = MaterialTheme.typography.headlineLarge
                     )
                 },
                 actions = {
@@ -91,6 +92,7 @@ private fun ListScreenPreviewLight() {
     RemindMeTheme {
         Scaffold  { padding ->
             ListScreen(
+                listTitle = "List Title",
                 state = sampleState,
                 {},
                 {},
@@ -109,6 +111,7 @@ private fun ListScreenPreviewDark() {
     RemindMeTheme {
         Scaffold  { padding ->
             ListScreen(
+                listTitle = "List Title",
                 state = sampleState,
                 {},
                 {},
@@ -121,5 +124,4 @@ private fun ListScreenPreviewDark() {
 
 internal val sampleState = TasksState(
     tasks= (0..10).map { sampleTask.toTaskUi().copy(title = "Task $it") },
-    listTitle = "List Title"
 )

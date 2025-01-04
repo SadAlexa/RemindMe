@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.map
 
 class ListRepository(private val listDAOs: ListDAOs, private val categoryDAOs: CategoryDAOs) : ListDataSource{
     override fun getAllLists(userId: Long) : Flow<List<TodoList>> {
+        print(listDAOs)
         return listDAOs.getAllLists(userId).map {
             flow -> flow.map { it.toTodoList( getCategoryById(it.categoryId)) }
         }

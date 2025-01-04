@@ -15,3 +15,9 @@ fun Category.toCategoryUi() = CategoryUi(
     title,
     userId
 )
+
+fun CategoryUi.toCategory() = Category(
+    id,
+    title,
+    userId
+)

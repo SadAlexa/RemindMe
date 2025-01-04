@@ -30,7 +30,7 @@ import com.gpluslf.remindme.ui.theme.RemindMeTheme
 @Composable
 fun WelcomeScreen(
     modifier: Modifier = Modifier,
-    onLoginAction: (LoginAction) -> Unit = {},
+    onLoginAction: (LoginAction) -> Unit,
 ) {
     Column(
         modifier.padding(horizontal = 50.dp, vertical = 70.dp),
@@ -87,7 +87,8 @@ private fun WelcomeScreenPreviewLight() {
             WelcomeScreen(
                 Modifier
                     .padding(padding)
-                    .fillMaxSize())
+                    .fillMaxSize()
+            ) {}
         }
     }
 }
@@ -102,7 +103,8 @@ private fun WelcomeScreenPreviewDark() {
             WelcomeScreen(
                 Modifier
                     .padding(padding)
-                    .fillMaxSize())
+                    .fillMaxSize()
+            ) {}
         }
     }
 }

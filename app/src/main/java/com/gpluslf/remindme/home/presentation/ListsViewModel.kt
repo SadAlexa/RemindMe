@@ -2,6 +2,7 @@ package com.gpluslf.remindme.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gpluslf.remindme.core.domain.ListDataSource
 import com.gpluslf.remindme.home.presentation.model.TodoListUi
 import com.gpluslf.remindme.home.presentation.model.toTodoListUi
@@ -16,10 +17,10 @@ import kotlinx.coroutines.launch
 data class ListsState(val lists: List<TodoListUi>)
 
 class ListsViewModel(
+    private val userId: Long,
     private val repository: ListDataSource
 ) : ViewModel() {
     private val _state = MutableStateFlow(ListsState(emptyList()))
-
     val state = _state.onStart {
         loadData()
     }.stateIn(
@@ -29,9 +30,11 @@ class ListsViewModel(
     )
 
     private fun loadData() {
-        repository.getAllLists(1 /*TODO*/).map {flow ->
-            _state.update { state ->
-                state.copy(lists = flow.map { it.toTodoListUi() })
+        viewModelScope.launch {
+            repository.getAllLists(userId).collect { list ->
+                _state.update { state ->
+                    state.copy(lists = list.map { it.toTodoListUi() })
+                }
             }
         }
     }

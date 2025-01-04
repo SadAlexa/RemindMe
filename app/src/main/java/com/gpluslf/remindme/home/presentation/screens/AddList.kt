@@ -64,12 +64,16 @@ fun AddListScreen(
     state: TodoListState = TodoListState(),
     onAddListAction : (AddListAction) -> Unit = {},
     onFloatingActionButtonClick : () -> Unit = {},
+    onCloseActionButtonClick: () -> Unit = {},
 ) {Scaffold(
     modifier = modifier,
     floatingActionButton = {
         FloatingActionButton(
             containerColor = MaterialTheme.colorScheme.primary,
-            onClick = onFloatingActionButtonClick
+            onClick = {
+                onAddListAction(AddListAction.SaveList)
+                onFloatingActionButtonClick()
+            }
         ) {
             Icon(Icons.Outlined.Save, "Save List")
         }
@@ -84,7 +88,7 @@ fun AddListScreen(
                 )
             },
             actions = {
-                IconButton(onClick = { /*TODO*/ }, content = {
+                IconButton(onClick = onCloseActionButtonClick, content = {
                     Icon(
                         Icons.Outlined.Close, contentDescription = "Close",
                     )
@@ -94,7 +98,9 @@ fun AddListScreen(
     }
 ) { contentPadding ->
         Column(
-            modifier.padding(contentPadding).padding(horizontal = 30.dp),
+            modifier
+                .padding(contentPadding)
+                .padding(horizontal = 30.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(30.dp),
         ) {
@@ -144,7 +150,8 @@ fun AddListScreen(
                 Image(
                     painter = painter,
                     contentDescription = null,
-                    modifier = Modifier.size(150.dp, 150.dp)
+                    modifier = Modifier
+                        .size(150.dp, 150.dp)
                         .padding(16.dp)
                         .clip(RoundedCornerShape(20.dp))
                 )

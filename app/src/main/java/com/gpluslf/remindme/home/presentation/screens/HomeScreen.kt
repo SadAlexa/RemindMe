@@ -2,7 +2,6 @@ package com.gpluslf.remindme.home.presentation.screens
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gpluslf.remindme.home.presentation.ListsState
-import com.gpluslf.remindme.home.presentation.components.NoItemsPlaceholder
+import com.gpluslf.remindme.core.presentation.components.NoItemsPlaceholder
 import com.gpluslf.remindme.home.presentation.components.CustomListItem
 import com.gpluslf.remindme.home.presentation.components.sampleTodoList
 import com.gpluslf.remindme.home.presentation.model.toTodoListUi
@@ -80,7 +79,7 @@ fun HomeScreen(
                 }
             }
         } else {
-            NoItemsPlaceholder(Modifier.padding(contentPadding))
+            NoItemsPlaceholder(Modifier.padding(contentPadding), "Tap the + button to add a new list.")
         }
     }
 }

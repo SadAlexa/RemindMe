@@ -1,5 +1,7 @@
 package com.gpluslf.remindme.core.domain
 
+import java.util.Date
+
 data class Notification(
 
     val id: Long,
@@ -12,7 +14,7 @@ data class Notification(
 
     val senderUserId: Long?,
 
-    val sendTime: Long,
+    val sendTime: Date,
 
     val isRead: Boolean,
 

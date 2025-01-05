@@ -15,7 +15,7 @@ class UserRepository(private val userDAOs: UserDAOs): UserDataSource {
         return userDAOs.getAllUsers().map { flow -> flow.map { it.toUser() } }
     }
 
-    override fun getUserById(userId: Long) = userDAOs.getUserById(userId).map { it?.toUser() }
+    override fun getUserById(userId: Long): Flow<User> = userDAOs.getUserById(userId).map { it.toUser() }
 
     override suspend fun upsertUser(user: User) = userDAOs.upsertUser(user.toUserEntity())
 

@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGri
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -153,7 +154,7 @@ fun AddListScreen(
                     modifier = Modifier
                         .size(150.dp, 150.dp)
                         .padding(16.dp)
-                        .clip(RoundedCornerShape(20.dp))
+                        .clip(CircleShape)
                 )
             }
         }

@@ -6,7 +6,7 @@ interface UserDataSource {
 
     fun getUsers(query: String): Flow<List<User>>
 
-    fun getUserById(userId: Long): Flow<User?>
+    fun getUserById(userId: Long): Flow<User>
 
     suspend fun upsertUser(user: User)
 

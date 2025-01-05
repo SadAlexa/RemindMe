@@ -1,14 +1,17 @@
 package com.gpluslf.remindme.updates.presentation.screens
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -16,20 +19,25 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gpluslf.remindme.core.domain.Notification
 import com.gpluslf.remindme.core.presentation.components.NoItemsPlaceholder
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 import com.gpluslf.remindme.updates.presentation.NotificationsState
+import com.gpluslf.remindme.updates.presentation.model.NotificationAction
 import com.gpluslf.remindme.updates.presentation.model.toNotificationUi
+import java.text.DateFormat.getDateInstance
+import java.text.DateFormat.getDateTimeInstance
+import java.text.DateFormat.getTimeInstance
 import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdatesScreen(
     state: NotificationsState,
-    onNotificationClick: (/*TODO*/) -> Unit,
+    onNotificationClick: (NotificationAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -54,10 +62,15 @@ fun UpdatesScreen(
             ) {
                 items(state.notifications, key = { it.id }) { item ->
                     ListItem(
-                        modifier = Modifier.fillMaxSize().clickable { onNotificationClick(/*TODO*/) },
+                        modifier = Modifier.fillMaxSize()
+                            .clip(RoundedCornerShape(20.dp))
+                            .clickable { onNotificationClick(NotificationAction.Click(item)) },
                         headlineContent = { Text(item.title) },
                         supportingContent = { Text(item.body) },
-                        trailingContent = { Text(item.sendTime.toString()) },
+                        trailingContent = { Text(getTimeInstance().format(item.sendTime)) },
+                        colors = ListItemDefaults.colors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        )
                     )
                 }
             }
@@ -90,11 +103,7 @@ internal val sampleNotifications = Notification(
     body = "body",
     userId = 1,
     sendTime = Date.from(Date().toInstant()),
-    senderUserId = TODO(),
-    isRead = TODO(),
-    taskTitle = TODO(),
-    taskListTitle = TODO(),
-    achievementTitle = TODO(),
+    isRead = false,
 )
 
 @Preview(showBackground = true, showSystemUi = true, device = "id:pixel_9_pro",

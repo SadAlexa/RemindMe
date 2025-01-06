@@ -24,6 +24,7 @@ import com.gpluslf.remindme.core.domain.TaskDataSource
 import com.gpluslf.remindme.core.domain.User
 import com.gpluslf.remindme.core.domain.UserDataSource
 import com.gpluslf.remindme.home.presentation.ListsViewModel
+import com.gpluslf.remindme.home.presentation.TaskListViewModel
 import com.gpluslf.remindme.home.presentation.TasksViewModel
 import com.gpluslf.remindme.home.presentation.TodoListViewModel
 import com.gpluslf.remindme.login.presentation.LoginViewModel
@@ -87,6 +88,7 @@ val appModule = module {
     viewModel<ListsViewModel> { (userId: Long) -> ListsViewModel(userId, get()) }
     viewModel<TodoListViewModel> { (userId: Long) -> TodoListViewModel(userId, get()) }
     viewModel<TasksViewModel> { (userId: Long, listTitle: String) -> TasksViewModel(userId, listTitle, get()) }
+    viewModel<TaskListViewModel> { (userId: Long, listTitle: String) -> TaskListViewModel(userId, listTitle, get())}
     viewModel<CalendarViewModel> { CalendarViewModel() }
     viewModel<NotificationsViewModel> { (userId: Long) -> NotificationsViewModel(userId, get()) }
 }

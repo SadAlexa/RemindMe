@@ -68,7 +68,9 @@ fun CustomTaskItem(task: TaskUi, onTagClick: () -> Unit, onTaskClick: () -> Unit
         trailingContent = {
             Checkbox(
                 checked = task.isDone,
-                onCheckedChange = {/*TODO*/}
+                onCheckedChange = {
+                    onTaskClick()
+                }
             )
         }
     )

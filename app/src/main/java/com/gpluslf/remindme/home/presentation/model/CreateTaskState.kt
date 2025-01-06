@@ -27,6 +27,8 @@ data class CreateTaskState (
 
     val longitude: Double? = null,
 
+    val selectedTags: List<TagUi> = emptyList(),
+
     val tags : List<TagUi> = emptyList(),
 
     val isTimePickerOpen: Boolean = false,

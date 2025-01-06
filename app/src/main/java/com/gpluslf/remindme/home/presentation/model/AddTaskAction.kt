@@ -7,7 +7,8 @@ import java.util.Date
 sealed interface AddTaskAction {
     data class UpdateTitle(val title: String) : AddTaskAction
     data class UpdateBody(val body: String) : AddTaskAction
-    data class UpdateEndTime(val endTime: Long?) : AddTaskAction
+    data class UpdateEndTime(val endTime: Pair<Int, Int>) : AddTaskAction
+    data class UpdateEndDate(val endDate: Date?) : AddTaskAction
     data class UpdateFrequency(val frequency: Date) : AddTaskAction
     data class UpdateAlert(val alert: Date) : AddTaskAction
     data class UpdateImage(val image: Uri) : AddTaskAction

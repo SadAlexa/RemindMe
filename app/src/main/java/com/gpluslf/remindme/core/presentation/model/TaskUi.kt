@@ -34,3 +34,18 @@ fun Task.toTaskUi() = TaskUi(
     tags.map { it.toTagUi() }
 )
 
+fun TaskUi.toTask() = Task(
+    title,
+    listTitle,
+    userId,
+    body,
+    endTime,
+    frequency,
+    alert,
+    image,
+    isDone,
+    latitude,
+    longitude,
+    tags.map { it.toTag() }
+)
+

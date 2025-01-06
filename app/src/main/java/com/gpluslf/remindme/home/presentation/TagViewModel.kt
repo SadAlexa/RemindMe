@@ -5,6 +5,8 @@ import com.gpluslf.remindme.core.presentation.model.TagUi
 import com.gpluslf.remindme.core.presentation.model.toTagUi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class TagState(val tags: List<TagUi>)
 
@@ -28,9 +31,13 @@ class TagViewModel(
     )
 
     private fun loadData() {
-        repository.getAllTags("title", 1 /*TODO*/).map {flow ->
-            _state.update { state ->
-                state.copy(tags = flow.map { it.toTagUi() })
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository.getAllTags("title", 1 /*TODO*/).map {flow ->
+                    _state.update { state ->
+                        state.copy(tags = flow.map { it.toTagUi() })
+                    }
+                }
             }
         }
     }

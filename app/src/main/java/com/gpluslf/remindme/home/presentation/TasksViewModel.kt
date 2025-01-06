@@ -4,13 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gpluslf.remindme.core.domain.TaskDataSource
 import com.gpluslf.remindme.core.presentation.model.TaskUi
+import com.gpluslf.remindme.core.presentation.model.toTask
 import com.gpluslf.remindme.core.presentation.model.toTaskUi
+import com.gpluslf.remindme.home.presentation.model.ListScreenAction
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class TasksState(
     val tasks: List<TaskUi>,
@@ -31,22 +35,29 @@ class TasksViewModel(
     )
     private fun loadData() {
         viewModelScope.launch {
-            repository.getAllTasksByList(listTitle, userId).collect { flow ->
-                _state.update { state ->
-                    state.copy(
-                        tasks = flow.map { it.toTaskUi() }
-                    )
+            withContext(Dispatchers.IO) {
+                repository.getAllTasksByList(listTitle, userId).collect { flow ->
+                    _state.update { state ->
+                        state.copy(
+                            tasks = flow.map { it.toTaskUi() }
+                        )
+                    }
                 }
             }
         }
     }
 
-    fun upsertTask(task: TaskUi) = viewModelScope.launch {
-        // TODO
+    fun onAction(action: ListScreenAction) {
+        when (action) {
+            is ListScreenAction.ToggleTask -> {
+                viewModelScope.launch {
+                    repository.upsertTask(
+                        action.task.copy(
+                            isDone = !action.task.isDone
+                        ).toTask()
+                    )
+                }
+            }
+        }
     }
-
-    fun deleteTask(task: TaskUi) = viewModelScope.launch {
-        // TODO
-    }
-
 }

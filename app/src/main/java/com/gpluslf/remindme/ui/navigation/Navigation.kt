@@ -21,9 +21,11 @@ import androidx.navigation.toRoute
 import com.gpluslf.remindme.calendar.presentation.CalendarViewModel
 import com.gpluslf.remindme.calendar.presentation.screens.CalendarScreen
 import com.gpluslf.remindme.home.presentation.ListsViewModel
+import com.gpluslf.remindme.home.presentation.TaskListViewModel
 import com.gpluslf.remindme.home.presentation.TasksViewModel
 import com.gpluslf.remindme.home.presentation.TodoListViewModel
 import com.gpluslf.remindme.home.presentation.screens.AddListScreen
+import com.gpluslf.remindme.home.presentation.screens.AddTaskScreen
 import com.gpluslf.remindme.home.presentation.screens.HomeScreen
 import com.gpluslf.remindme.home.presentation.screens.ListScreen
 import com.gpluslf.remindme.login.presentation.LoginViewModel
@@ -153,7 +155,7 @@ fun RemindMeNavGraph(
                 ListScreen(
                     listTitle = listTitle,
                     state = state,
-                    onCustomTaskClick = {/*TODO*/},
+                    onAction = viewModel::onAction,
                     onFloatingActionButtonClick = {
                         navController.navigate(RemindMeRoute.AddTask(listTitle))
                     },
@@ -171,6 +173,23 @@ fun RemindMeNavGraph(
                         navController.navigate(RemindMeRoute.Home)
                     },
                     onCloseActionButtonClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+            composable<RemindMeRoute.AddTask> {
+                val listTitle = it.toRoute<RemindMeRoute.AddTask>().listTitle
+                val viewModel = koinViewModel<TaskListViewModel>(
+                    parameters = { parametersOf(currentUserId, listTitle) }
+                )
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                AddTaskScreen (
+                    state = state,
+                    onAddTaskAction = viewModel::onAddTaskAction,
+                    onFloatingActionButtonClick = {
+                        navController.popBackStack()
+                    },
+                    onCloseButtonClick = {
                         navController.popBackStack()
                     }
                 )

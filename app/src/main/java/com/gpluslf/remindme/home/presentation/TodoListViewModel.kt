@@ -7,9 +7,12 @@ import com.gpluslf.remindme.core.domain.TodoList
 import com.gpluslf.remindme.home.presentation.model.AddListAction
 import com.gpluslf.remindme.home.presentation.model.TodoListState
 import com.gpluslf.remindme.home.presentation.model.toCategory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TodoListViewModel(
     private val userId: Long,
@@ -38,25 +41,25 @@ class TodoListViewModel(
     fun onAddListAction(action: AddListAction) {
         when (action) {
             is AddListAction.UpdateTitle -> {
-                _state.value = state.value.copy(title = action.title)
+                _state.update {state -> state.copy(title = action.title)}
             }
             is AddListAction.UpdateBody -> {
-                _state.value = state.value.copy(body = action.body)
+                _state.update {state -> state.copy(body = action.body)}
             }
             is AddListAction.UpdateImage -> {
-                _state.value = state.value.copy(image = action.image)
+                _state.update {state -> state.copy(image = action.image)}
             }
             is AddListAction.UpdateCategory -> {
-                _state.value = state.value.copy(selectedCategory = action.category)
+                _state.update {state -> state.copy(selectedCategory = action.category)}
             }
             is AddListAction.UpdateShared -> {
-                _state.value = state.value.copy(isShared = action.isShared)
+                _state.update {state -> state.copy(isShared = action.isShared)}
             }
             is AddListAction.UpdateFavorite -> {
-                _state.value = state.value.copy(isFavorite = action.isFavorite)
+                _state.update {state -> state.copy(isFavorite = action.isFavorite)}
             }
             is AddListAction.UpdateSharedUserId -> {
-                _state.value = state.value.copy(sharedUserId = action.sharedUserId)
+                _state.update {state -> state.copy(sharedUserId = action.sharedUserId)}
             }
             AddListAction.SaveList -> saveList()
         }

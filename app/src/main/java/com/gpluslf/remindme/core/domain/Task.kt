@@ -26,6 +26,8 @@ data class Task(
 
     val longitude: Double? = null,
 
+    val selectedTags: List<Tag> = emptyList(),
+
     val tags: List<Tag> = emptyList()
 )
 

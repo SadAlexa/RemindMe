@@ -1,5 +1,6 @@
 package com.gpluslf.remindme.home.presentation.screens
 
+import android.app.TimePickerDialog
 import android.content.res.Configuration
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Save
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -53,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.gpluslf.remindme.R
+import com.gpluslf.remindme.core.data.mappers.toDate
 import com.gpluslf.remindme.home.presentation.components.CustomPhotoButton
 import com.gpluslf.remindme.home.presentation.components.CustomTextField
 import com.gpluslf.remindme.home.presentation.model.AddTaskAction
@@ -72,11 +75,12 @@ fun AddTaskScreen(
     state: CreateTaskState,
     onAddTaskAction : (AddTaskAction) -> Unit,
     onFloatingActionButtonClick : () -> Unit,
+    onCloseButtonClick : () -> Unit
 ) {
     if (state.isDatePickerOpen) {
         DatePickerModal(
             onDateSelected = {
-                onAddTaskAction(AddTaskAction.UpdateEndTime(it))
+                onAddTaskAction(AddTaskAction.UpdateEndDate(it))
             },
             onDismiss = {
                 onAddTaskAction(AddTaskAction.ShowDatePicker(false))
@@ -100,7 +104,10 @@ fun AddTaskScreen(
     floatingActionButton = {
         FloatingActionButton(
             containerColor = MaterialTheme.colorScheme.primary,
-            onClick = onFloatingActionButtonClick
+            onClick = {
+                onAddTaskAction(AddTaskAction.SaveTask)
+                onFloatingActionButtonClick()
+            }
         ) {
             Icon(Icons.Outlined.Save, "Save Task")
         }
@@ -115,13 +122,13 @@ fun AddTaskScreen(
                 )
             },
             actions = {
-                IconButton(onClick = {
-                    onAddTaskAction(AddTaskAction.SaveTask)
-                }, content = {
-                    Icon(
-                        Icons.Outlined.Close, contentDescription = "Close",
-                    )
-                })
+                IconButton(onClick = onCloseButtonClick,
+                    content = {
+                        Icon(
+                            Icons.Outlined.Close, contentDescription = "Close",
+                        )
+                    }
+                )
             }
         )
     }
@@ -178,7 +185,9 @@ fun AddTaskScreen(
                 Row (
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth().clickable{ onAddTaskAction(AddTaskAction.ShowTimePicker(true)) }
+                    modifier = Modifier.fillMaxWidth().clickable{
+                        onAddTaskAction(AddTaskAction.ShowDatePicker(true))
+                    }
                 ) {
                     Icon(Icons.Default.DateRange, contentDescription = "Date")
                     Text(
@@ -234,7 +243,7 @@ fun AddTaskScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModal(
-    onDateSelected: (Long?) -> Unit,
+    onDateSelected: (Date?) -> Unit,
     onDismiss: () -> Unit
 ) {
     val datePickerState = rememberDatePickerState()
@@ -243,7 +252,7 @@ fun DatePickerModal(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton (onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
+                onDateSelected(datePickerState.selectedDateMillis?.toDate())
                 onDismiss()
             }) {
                 Text("OK")
@@ -262,7 +271,7 @@ fun DatePickerModal(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerModal(
-    onConfirm: (Long?) -> Unit,
+    onConfirm: (Pair<Int, Int>) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val currentTime = Calendar.getInstance()
@@ -273,23 +282,40 @@ fun TimePickerModal(
         is24Hour = true,
     )
 
-    Column {
+    TimePickerDialog(
+        onDismiss = { onDismiss() },
+        onConfirm = {
+            onConfirm(Pair(timePickerState.hour, timePickerState.minute))
+            onDismiss()
+        }
+    ) {
         TimePicker(
             state = timePickerState,
         )
-        Button(onClick = onDismiss) {
-            Text("Dismiss picker")
-        }
-        Button(onClick = {
-            onConfirm(
-                timePickerState.hour.toLong() * 60 * 60 * 1000 +
-                        timePickerState.minute.toLong() * 60 * 1000
-            )
-            onDismiss()
-        }) {
-            Text("Confirm selection")
-        }
     }
+}
+
+
+@Composable
+fun TimePickerDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        dismissButton = {
+            TextButton(onClick = { onDismiss() }) {
+                Text("Dismiss")
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onConfirm() }) {
+                Text("OK")
+            }
+        },
+        text = { content() }
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true, device = "id:pixel_9_pro")
@@ -302,6 +328,7 @@ private fun AddTaskScreenPreviewLight() {
                     .padding(padding)
                     .fillMaxSize(),
                 state = sampleCreateTaskState,
+                {},
                 {},
                 {}
             )
@@ -321,6 +348,7 @@ private fun AddTaskScreenPreviewDark() {
                     .padding(padding)
                     .fillMaxSize(),
                 state = sampleCreateTaskState,
+                {},
                 {},
                 {}
             )

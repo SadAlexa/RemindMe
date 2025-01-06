@@ -26,6 +26,7 @@ import com.gpluslf.remindme.home.presentation.components.CustomTaskItem
 import com.gpluslf.remindme.core.presentation.components.NoItemsPlaceholder
 import com.gpluslf.remindme.home.presentation.components.sampleTask
 import com.gpluslf.remindme.core.presentation.model.toTaskUi
+import com.gpluslf.remindme.home.presentation.model.ListScreenAction
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,7 +35,7 @@ fun ListScreen(
     listTitle: String,
     state: TasksState,
     onFloatingActionButtonClick: () -> Unit,
-    onCustomTaskClick: () -> Unit,
+    onAction: (ListScreenAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -74,7 +75,7 @@ fun ListScreen(
                     CustomTaskItem(
                         item,
                         onTaskClick = {
-                            onCustomTaskClick()
+                            onAction(ListScreenAction.ToggleTask(item))
                         },
                         onTagClick = {/*TODO*/}
                     )

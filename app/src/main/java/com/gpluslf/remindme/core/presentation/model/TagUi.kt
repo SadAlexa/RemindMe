@@ -16,3 +16,10 @@ fun Tag.toTagUi() = TagUi(
     listTitle,
     userId
 )
+
+fun TagUi.toTag() = Tag(
+    id,
+    title,
+    listTitle,
+    userId
+)

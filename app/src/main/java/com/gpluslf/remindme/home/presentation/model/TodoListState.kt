@@ -2,6 +2,7 @@ package com.gpluslf.remindme.home.presentation.model
 
 import android.net.Uri
 import androidx.compose.runtime.Immutable
+import com.gpluslf.remindme.core.presentation.model.TodoListUi
 
 @Immutable
 data class TodoListState(

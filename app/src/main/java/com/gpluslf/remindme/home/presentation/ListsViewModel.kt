@@ -5,12 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.gpluslf.remindme.core.domain.ListDataSource
 import com.gpluslf.remindme.core.presentation.model.TodoListUi
 import com.gpluslf.remindme.core.presentation.model.toTodoListUi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class ListsState(val lists: List<TodoListUi>)
 
@@ -29,9 +31,11 @@ class ListsViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
-            repository.getAllLists(userId).collect { list ->
-                _state.update { state ->
-                    state.copy(lists = list.map { it.toTodoListUi() })
+            withContext(Dispatchers.IO) {
+                repository.getAllLists(userId).collect { list ->
+                    _state.update { state ->
+                        state.copy(lists = list.map { it.toTodoListUi() })
+                    }
                 }
             }
         }

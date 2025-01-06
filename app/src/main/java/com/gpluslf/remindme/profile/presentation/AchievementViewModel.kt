@@ -3,12 +3,8 @@ package com.gpluslf.remindme.profile.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gpluslf.remindme.core.domain.AchievementDataSource
-import com.gpluslf.remindme.core.domain.UserDataSource
-import com.gpluslf.remindme.home.presentation.model.toTodoListUi
 import com.gpluslf.remindme.profile.presentation.model.AchievementUi
-import com.gpluslf.remindme.profile.presentation.model.UserUi
 import com.gpluslf.remindme.profile.presentation.model.toAchievementUi
-import com.gpluslf.remindme.profile.presentation.model.toUserUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart

@@ -2,10 +2,7 @@ package com.gpluslf.remindme.updates.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gpluslf.remindme.core.domain.ListDataSource
 import com.gpluslf.remindme.core.domain.NotificationDataSource
-import com.gpluslf.remindme.home.presentation.model.TodoListUi
-import com.gpluslf.remindme.home.presentation.model.toTodoListUi
 import com.gpluslf.remindme.updates.presentation.model.NotificationUi
 import com.gpluslf.remindme.updates.presentation.model.toNotificationUi
 import kotlinx.coroutines.flow.MutableStateFlow

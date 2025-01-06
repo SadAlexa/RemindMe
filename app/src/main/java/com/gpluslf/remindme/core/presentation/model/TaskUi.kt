@@ -1,4 +1,4 @@
-package com.gpluslf.remindme.home.presentation.model
+package com.gpluslf.remindme.core.presentation.model
 
 import android.net.Uri
 import com.gpluslf.remindme.core.domain.Task

@@ -1,6 +1,5 @@
-package com.gpluslf.remindme.home.presentation.model
+package com.gpluslf.remindme.core.presentation.model
 
-import com.gpluslf.remindme.core.data.database.entities.TagEntity
 import com.gpluslf.remindme.core.domain.Tag
 
 data class TagUi(

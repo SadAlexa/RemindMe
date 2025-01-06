@@ -25,7 +25,7 @@ import com.gpluslf.remindme.home.presentation.TasksState
 import com.gpluslf.remindme.home.presentation.components.CustomTaskItem
 import com.gpluslf.remindme.core.presentation.components.NoItemsPlaceholder
 import com.gpluslf.remindme.home.presentation.components.sampleTask
-import com.gpluslf.remindme.home.presentation.model.toTaskUi
+import com.gpluslf.remindme.core.presentation.model.toTaskUi
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)

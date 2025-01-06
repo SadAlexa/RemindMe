@@ -1,7 +1,6 @@
 package com.gpluslf.remindme.home.presentation.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,7 +8,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -22,8 +20,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.gpluslf.remindme.core.domain.Category
 import com.gpluslf.remindme.core.domain.TodoList
-import com.gpluslf.remindme.home.presentation.model.TodoListUi
-import com.gpluslf.remindme.home.presentation.model.toTodoListUi
+import com.gpluslf.remindme.core.presentation.model.TodoListUi
+import com.gpluslf.remindme.core.presentation.model.toTodoListUi
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
 @Composable

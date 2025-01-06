@@ -2,13 +2,11 @@ package com.gpluslf.remindme.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gpluslf.remindme.core.domain.TaskDataSource
-import com.gpluslf.remindme.home.presentation.model.TaskUi
-import com.gpluslf.remindme.home.presentation.model.toTaskUi
+import com.gpluslf.remindme.core.presentation.model.TaskUi
+import com.gpluslf.remindme.core.presentation.model.toTaskUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update

@@ -28,8 +28,6 @@ import com.gpluslf.remindme.ui.theme.RemindMeTheme
 import com.gpluslf.remindme.updates.presentation.NotificationsState
 import com.gpluslf.remindme.updates.presentation.model.NotificationAction
 import com.gpluslf.remindme.updates.presentation.model.toNotificationUi
-import java.text.DateFormat.getDateInstance
-import java.text.DateFormat.getDateTimeInstance
 import java.text.DateFormat.getTimeInstance
 import java.util.Date
 

@@ -12,16 +12,16 @@ data class Notification(
 
     val userId: Long,
 
-    val senderUserId: Long?,
+    val senderUserId: Long? = null,
 
     val sendTime: Date,
 
     val isRead: Boolean,
 
-    val taskTitle: String?,
+    val taskTitle: String? = null,
 
-    val taskListTitle: String?,
+    val taskListTitle: String? = null,
 
-    val achievementTitle: String?
+    val achievementTitle: String? = null
 )
 

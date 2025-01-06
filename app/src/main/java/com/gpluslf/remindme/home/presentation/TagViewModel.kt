@@ -1,8 +1,8 @@
 package com.gpluslf.remindme.home.presentation
 
 import com.gpluslf.remindme.core.domain.TagDataSource
-import com.gpluslf.remindme.home.presentation.model.TagUi
-import com.gpluslf.remindme.home.presentation.model.toTagUi
+import com.gpluslf.remindme.core.presentation.model.TagUi
+import com.gpluslf.remindme.core.presentation.model.toTagUi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow

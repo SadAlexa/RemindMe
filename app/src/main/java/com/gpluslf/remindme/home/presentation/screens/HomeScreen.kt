@@ -25,7 +25,7 @@ import com.gpluslf.remindme.home.presentation.ListsState
 import com.gpluslf.remindme.core.presentation.components.NoItemsPlaceholder
 import com.gpluslf.remindme.home.presentation.components.CustomListItem
 import com.gpluslf.remindme.home.presentation.components.sampleTodoList
-import com.gpluslf.remindme.home.presentation.model.toTodoListUi
+import com.gpluslf.remindme.core.presentation.model.toTodoListUi
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)

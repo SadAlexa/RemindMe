@@ -57,11 +57,10 @@ import com.gpluslf.remindme.home.presentation.components.CustomPhotoButton
 import com.gpluslf.remindme.home.presentation.components.CustomTextField
 import com.gpluslf.remindme.home.presentation.model.AddTaskAction
 import com.gpluslf.remindme.home.presentation.model.CreateTaskState
-import com.gpluslf.remindme.home.presentation.model.TagUi
+import com.gpluslf.remindme.core.presentation.model.TagUi
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 import java.text.DateFormat.getDateInstance
 import java.text.DateFormat.getTimeInstance
-import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 

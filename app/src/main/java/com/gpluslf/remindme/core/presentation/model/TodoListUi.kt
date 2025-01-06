@@ -1,7 +1,9 @@
-package com.gpluslf.remindme.home.presentation.model
+package com.gpluslf.remindme.core.presentation.model
 
 import android.net.Uri
 import com.gpluslf.remindme.core.domain.TodoList
+import com.gpluslf.remindme.home.presentation.model.CategoryUi
+import com.gpluslf.remindme.home.presentation.model.toCategoryUi
 
 data class TodoListUi(
     val title: String,

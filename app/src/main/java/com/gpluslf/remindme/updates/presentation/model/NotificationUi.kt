@@ -1,11 +1,6 @@
 package com.gpluslf.remindme.updates.presentation.model
 
-import android.net.Uri
 import com.gpluslf.remindme.core.domain.Notification
-import com.gpluslf.remindme.core.domain.TodoList
-import com.gpluslf.remindme.home.presentation.model.CategoryUi
-import com.gpluslf.remindme.home.presentation.model.TaskUi
-import com.gpluslf.remindme.home.presentation.model.toCategoryUi
 import java.util.Date
 
 data class NotificationUi(

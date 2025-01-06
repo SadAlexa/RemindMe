@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.gpluslf.remindme.core.domain.Tag
 import com.gpluslf.remindme.core.domain.Task
-import com.gpluslf.remindme.home.presentation.model.TaskUi
-import com.gpluslf.remindme.home.presentation.model.toTaskUi
+import com.gpluslf.remindme.core.presentation.model.TaskUi
+import com.gpluslf.remindme.core.presentation.model.toTaskUi
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
 @Composable

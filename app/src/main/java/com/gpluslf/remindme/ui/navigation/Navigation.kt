@@ -200,7 +200,8 @@ fun RemindMeNavGraph(
                 )
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 CalendarScreen(
-                    taskState = state
+                    taskState = state,
+                    viewModel::onAction
                 )
             }
             composable<RemindMeRoute.Profile> {

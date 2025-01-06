@@ -29,8 +29,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,9 +39,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.gpluslf.remindme.calendar.presentation.component.CalendarItem
 import com.gpluslf.remindme.calendar.presentation.CalendarTaskState
+import com.gpluslf.remindme.calendar.presentation.component.CalendarItem
 import com.gpluslf.remindme.calendar.presentation.component.sampleTask
+import com.gpluslf.remindme.calendar.presentation.model.CalendarAction
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 import com.kizitonwose.calendar.compose.CalendarState
 import com.kizitonwose.calendar.compose.HorizontalCalendar
@@ -63,9 +63,10 @@ import java.util.Locale
 @Composable
 fun CalendarScreen(
     taskState: CalendarTaskState,
+    onAction: (CalendarAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val currentMonth = remember { YearMonth.now() }
+    val currentMonth = taskState.currentMonth
     val startMonth = remember { currentMonth.minusMonths(100) }
     val endMonth = remember { currentMonth.plusMonths(100) }
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
@@ -77,24 +78,28 @@ fun CalendarScreen(
         firstVisibleMonth = currentMonth,
         firstDayOfWeek = firstDayOfWeek,
     )
-    val isOpen = remember { mutableStateOf(false) }
 
-    Scaffold (
+    Scaffold(
         modifier = modifier,
-        topBar = { CalendarTopBar(
-            currentMonth,
-            isOpen = isOpen
-        ) }
+        topBar = {
+            CalendarTopBar(
+                taskState.currentMonth,
+                isOpen = taskState.isCalendarOpen,
+                onAction
+            )
+        }
     ) { contentPadding ->
         Column(
             modifier = Modifier
                 .padding(contentPadding),
         ) {
-            if (isOpen.value) {
+            if (taskState.isCalendarOpen) {
                 MonthCalendar(
                     currentMonth = currentMonth,
+                    currentDay = taskState.selectedDay,
                     daysOfWeek = daysOfWeek,
-                    state = state
+                    state = state,
+                    onAction
                 )
             } else {
                 WeeklyCalendar(
@@ -104,11 +109,13 @@ fun CalendarScreen(
                     firstDayOfWeek = firstDayOfWeek
                 )
             }
-            MonthChips(currentMonth)
+            MonthChips(currentMonth, onClick = {
+                onAction(CalendarAction.SelectMonth(it))
+            })
             Spacer(modifier = Modifier.size(16.dp))
             HorizontalDivider()
             Spacer(modifier = Modifier.size(16.dp))
-            LazyColumn (
+            LazyColumn(
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -123,11 +130,27 @@ fun CalendarScreen(
 }
 
 @Composable
-fun MonthCalendar(currentMonth: YearMonth, daysOfWeek: List<DayOfWeek>, state: CalendarState) {
+fun MonthCalendar(
+    currentMonth: YearMonth,
+    currentDay: LocalDate,
+    daysOfWeek: List<DayOfWeek>,
+    state: CalendarState,
+    onAction: (CalendarAction) -> Unit
+) {
     HorizontalCalendar(
         state = state,
-        dayContent = { MonthDay(it, currentMonth) },
+        dayContent = { day ->
+            MonthDay(
+                day,
+                currentMonth,
+                currentDay,
+                onClick = { onAction(CalendarAction.SelectDay(day.date)) }
+            )
+        },
         monthHeader = {
+            LaunchedEffect(it) {
+                onAction(CalendarAction.SetCurrentMonth(it.yearMonth))
+            }
             Column {
                 DaysOfWeekTitle(daysOfWeek)
             }
@@ -136,7 +159,13 @@ fun MonthCalendar(currentMonth: YearMonth, daysOfWeek: List<DayOfWeek>, state: C
 }
 
 @Composable
-fun WeeklyCalendar(startDate: LocalDate, endDate: LocalDate, currentDate: LocalDate, firstDayOfWeek: DayOfWeek, modifier: Modifier = Modifier) {
+fun WeeklyCalendar(
+    startDate: LocalDate,
+    endDate: LocalDate,
+    currentDate: LocalDate,
+    firstDayOfWeek: DayOfWeek,
+    modifier: Modifier = Modifier
+) {
     val state = rememberWeekCalendarState(
         startDate = startDate,
         endDate = endDate,
@@ -156,15 +185,15 @@ fun WeeklyCalendar(startDate: LocalDate, endDate: LocalDate, currentDate: LocalD
 }
 
 @Composable
-fun MonthChips(currentMonth: YearMonth) {
+fun MonthChips(currentMonth: YearMonth, onClick: (YearMonth) -> Unit) {
     Row(
         modifier = Modifier.horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         (1..12).forEach {
             FilterChip(
-                selected = false,
-                onClick = {},
+                selected = currentMonth.month.value == it,
+                onClick = { onClick(YearMonth.of(currentMonth.year, it)) },
                 label = {
                     Text(
                         YearMonth.of(currentMonth.year, it).month.getDisplayName(
@@ -180,20 +209,20 @@ fun MonthChips(currentMonth: YearMonth) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalendarTopBar(month: YearMonth, isOpen: MutableState<Boolean>) {
+fun CalendarTopBar(month: YearMonth, isOpen: Boolean, onAction: (CalendarAction) -> Unit) {
     TopAppBar(
         title = {
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.clickable {
-                    isOpen.value = !isOpen.value
+                    onAction(CalendarAction.ToggleCalendar)
                 }
             ) {
                 Text(
                     text = month.month.getDisplayName(TextStyle.FULL, Locale.getDefault()),
                     fontWeight = FontWeight.Bold
                 )
-                if (isOpen.value) {
+                if (isOpen) {
                     Icon(Icons.Outlined.ArrowDropUp, contentDescription = "Collapse")
                 } else {
                     Icon(Icons.Outlined.ArrowDropDown, contentDescription = "Expand")
@@ -202,7 +231,8 @@ fun CalendarTopBar(month: YearMonth, isOpen: MutableState<Boolean>) {
 
         },
         actions = {
-            Text(text = month.year.toString(),
+            Text(
+                text = month.year.toString(),
                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.padding(end = 10.dp)
             )
@@ -227,24 +257,40 @@ fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
 }
 
 @Composable
-fun MonthDay(day: CalendarDay, currentMonth: YearMonth) {
+fun MonthDay(
+    day: CalendarDay,
+    currentMonth: YearMonth,
+    currentDay: LocalDate,
+    onClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .aspectRatio(1f)
-            .clickable { /*TODO*/ },
+            .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
                 .size(30.dp)
                 .clip(CircleShape)
-                .background(if (day.date == LocalDate.now()) MaterialTheme.colorScheme.primaryContainer else Color.Transparent),
+                .background(
+                    when (day.date) {
+                        LocalDate.now() -> MaterialTheme.colorScheme.primaryContainer
+                        currentDay -> MaterialTheme.colorScheme.surfaceDim
+                        else -> Color.Transparent
+                    }
+                ),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = day.date.dayOfMonth.toString(),
                 fontWeight = FontWeight.Medium,
-                color = if (day.date.yearMonth == currentMonth) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.outline
+                color =
+                if (day.date.yearMonth == currentMonth)
+                    MaterialTheme.colorScheme.onBackground
+                else
+                    MaterialTheme.colorScheme.outline
+
             )
         }
     }
@@ -279,7 +325,11 @@ private fun CalendarScreenPreview() {
     RemindMeTheme {
         Surface {
             CalendarScreen(
-                taskState = CalendarTaskState(tasks = (1..10).map { sampleTask }),
+                taskState = CalendarTaskState(
+                    tasks = (1..10).map { sampleTask },
+                    isCalendarOpen = true
+                ),
+                {}
             )
         }
     }

@@ -4,13 +4,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.gpluslf.remindme.calendar.presentation.CalendarViewModel
+import com.gpluslf.remindme.core.data.database.RemindMeDatabase
 import com.gpluslf.remindme.core.data.database.repository.AchievementRepository
 import com.gpluslf.remindme.core.data.database.repository.CategoryRepository
-import com.gpluslf.remindme.core.data.database.RemindMeDatabase
 import com.gpluslf.remindme.core.data.database.repository.ListRepository
 import com.gpluslf.remindme.core.data.database.repository.NotificationRepository
-import com.gpluslf.remindme.core.data.database.repository.SharedUserListRepository
-import com.gpluslf.remindme.core.data.database.repository.TagsOnTaskRepository
 import com.gpluslf.remindme.core.data.database.repository.TagRepository
 import com.gpluslf.remindme.core.data.database.repository.TaskRepository
 import com.gpluslf.remindme.core.data.database.repository.UserRepository
@@ -31,14 +29,10 @@ import com.gpluslf.remindme.login.presentation.LoginViewModel
 import com.gpluslf.remindme.profile.presentation.AchievementViewModel
 import com.gpluslf.remindme.profile.presentation.UserViewModel
 import com.gpluslf.remindme.updates.presentation.NotificationsViewModel
-import io.ktor.http.parametersOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.koin.core.module.dsl.viewModel
-import org.koin.core.scope.Scope
 import org.koin.dsl.module
 
 val appModule = module {
@@ -75,11 +69,11 @@ val appModule = module {
     single<UserDataSource> { UserRepository(get<RemindMeDatabase>().userDao()) }
     single<ListDataSource> { ListRepository(get<RemindMeDatabase>().listDao(), get()) }
     single<CategoryDataSource> { CategoryRepository(get()) }
-    single<TaskDataSource> { TaskRepository(get<RemindMeDatabase>().taskDao(), get())}
+    single<TaskDataSource> { TaskRepository(get<RemindMeDatabase>().taskDao(), get()) }
     single<TagDataSource> { TagRepository(get<RemindMeDatabase>().tagDao()) }
     single<NotificationDataSource> { NotificationRepository(get<RemindMeDatabase>().notificationDao()) }
     single<AchievementDataSource> { AchievementRepository(get<RemindMeDatabase>().achievementDao()) }
-     // single { SharedUserListRepository(get<RemindMeDatabase>().sharedUserListDao()) }
+    // single { SharedUserListRepository(get<RemindMeDatabase>().sharedUserListDao()) }
     // single { TagsOnTaskRepository(get()) }
 
     viewModel<LoginViewModel> { LoginViewModel() }
@@ -87,8 +81,20 @@ val appModule = module {
     viewModel<UserViewModel> { (userId: Long) -> UserViewModel(userId, get()) }
     viewModel<ListsViewModel> { (userId: Long) -> ListsViewModel(userId, get()) }
     viewModel<TodoListViewModel> { (userId: Long) -> TodoListViewModel(userId, get()) }
-    viewModel<TasksViewModel> { (userId: Long, listTitle: String) -> TasksViewModel(userId, listTitle, get()) }
-    viewModel<TaskListViewModel> { (userId: Long, listTitle: String) -> TaskListViewModel(userId, listTitle, get())}
-    viewModel<CalendarViewModel> { CalendarViewModel() }
+    viewModel<TasksViewModel> { (userId: Long, listTitle: String) ->
+        TasksViewModel(
+            userId,
+            listTitle,
+            get()
+        )
+    }
+    viewModel<TaskListViewModel> { (userId: Long, listTitle: String) ->
+        TaskListViewModel(
+            userId,
+            listTitle,
+            get()
+        )
+    }
+    viewModel<CalendarViewModel> { (userId: Long) -> CalendarViewModel(userId, get()) }
     viewModel<NotificationsViewModel> { (userId: Long) -> NotificationsViewModel(userId, get()) }
 }

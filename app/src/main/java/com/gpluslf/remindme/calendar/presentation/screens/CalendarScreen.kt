@@ -40,9 +40,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gpluslf.remindme.calendar.presentation.CalendarTaskState
-import com.gpluslf.remindme.calendar.presentation.component.CalendarItem
-import com.gpluslf.remindme.calendar.presentation.component.sampleTask
 import com.gpluslf.remindme.calendar.presentation.model.CalendarAction
+import com.gpluslf.remindme.core.presentation.components.TaskItem
+import com.gpluslf.remindme.core.presentation.components.sampleTask
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 import com.kizitonwose.calendar.compose.CalendarState
 import com.kizitonwose.calendar.compose.HorizontalCalendar
@@ -64,6 +64,7 @@ import java.util.Locale
 fun CalendarScreen(
     taskState: CalendarTaskState,
     onAction: (CalendarAction) -> Unit,
+    checkDay: (LocalDate) -> Boolean,
     modifier: Modifier = Modifier
 ) {
     val currentMonth = taskState.currentMonth
@@ -99,14 +100,18 @@ fun CalendarScreen(
                     currentDay = taskState.selectedDay,
                     daysOfWeek = daysOfWeek,
                     state = state,
-                    onAction
+                    onAction = onAction,
+                    checkDay = checkDay
                 )
             } else {
                 WeeklyCalendar(
-                    startDate = startMonth.atDay(1),
-                    endDate = endMonth.atEndOfMonth(),
-                    currentDate = LocalDate.now(),
-                    firstDayOfWeek = firstDayOfWeek
+                    startDate = currentMonth.atDay(1),
+                    endDate = currentMonth.atEndOfMonth(),
+                    currentMonth = currentMonth,
+                    currentDate = taskState.selectedDay,
+                    firstDayOfWeek = firstDayOfWeek,
+                    onAction = onAction,
+                    checkDay = checkDay,
                 )
             }
             MonthChips(currentMonth, onClick = {
@@ -122,7 +127,11 @@ fun CalendarScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(taskState.tasks) { task ->
-                    CalendarItem(task = task)
+                    TaskItem(
+                        task = task,
+                        onTagClick = {},
+                        onTaskClick = {}
+                    )
                 }
             }
         }
@@ -135,13 +144,15 @@ fun MonthCalendar(
     currentDay: LocalDate,
     daysOfWeek: List<DayOfWeek>,
     state: CalendarState,
-    onAction: (CalendarAction) -> Unit
+    onAction: (CalendarAction) -> Unit,
+    checkDay: (LocalDate) -> Boolean
 ) {
     HorizontalCalendar(
         state = state,
         dayContent = { day ->
             MonthDay(
                 day,
+                checkDay(day.date),
                 currentMonth,
                 currentDay,
                 onClick = { onAction(CalendarAction.SelectDay(day.date)) }
@@ -162,9 +173,11 @@ fun MonthCalendar(
 fun WeeklyCalendar(
     startDate: LocalDate,
     endDate: LocalDate,
+    currentMonth: YearMonth,
     currentDate: LocalDate,
     firstDayOfWeek: DayOfWeek,
-    modifier: Modifier = Modifier
+    onAction: (CalendarAction) -> Unit,
+    checkDay: (LocalDate) -> Boolean,
 ) {
     val state = rememberWeekCalendarState(
         startDate = startDate,
@@ -175,7 +188,15 @@ fun WeeklyCalendar(
 
     WeekCalendar(
         state = state,
-        dayContent = { WeekDay(it) },
+        dayContent = { day ->
+            WeekDay(
+                day,
+                checkDay(day.date),
+                currentDate,
+                currentMonth,
+                onClick = { onAction(CalendarAction.SelectDay(day.date)) }
+            )
+        },
         weekHeader = {
             Column {
                 DaysOfWeekTitle(daysOfWeek())
@@ -259,16 +280,18 @@ fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
 @Composable
 fun MonthDay(
     day: CalendarDay,
+    isEventPresent: Boolean,
     currentMonth: YearMonth,
     currentDay: LocalDate,
     onClick: () -> Unit
 ) {
-    Box(
+    Column(
         modifier = Modifier
             .aspectRatio(1f)
             .clickable { onClick() },
-        contentAlignment = Alignment.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Box(
             modifier = Modifier
                 .size(30.dp)
@@ -293,28 +316,66 @@ fun MonthDay(
 
             )
         }
+
+        Box(
+            Modifier
+                .size(10.dp)
+                .clip(CircleShape)
+                .background(
+                    if (isEventPresent)
+                        MaterialTheme.colorScheme.primary
+                    else Color.Transparent
+                )
+        )
+
     }
 }
 
 
 @Composable
-fun WeekDay(day: WeekDay) {
-    Box(
+fun WeekDay(
+    day: WeekDay,
+    isEventPresent: Boolean,
+    currentDay: LocalDate,
+    currentMonth: YearMonth,
+    onClick: () -> Unit
+) {
+    Column(
         modifier = Modifier
             .aspectRatio(1f)
-            .clickable { /*TODO*/ },
-        contentAlignment = Alignment.Center
+            .clickable { onClick() },
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Box(
             modifier = Modifier
                 .size(30.dp)
                 .clip(CircleShape)
-                .background(if (day.date == LocalDate.now()) MaterialTheme.colorScheme.primaryContainer else Color.Transparent),
-        )
-        Text(
-            text = day.date.dayOfMonth.toString(),
-            fontWeight = FontWeight.Medium,
-            color = if (day.date.yearMonth == LocalDate.now().yearMonth) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.outline
+                .background(
+                    when (day.date) {
+                        LocalDate.now() -> MaterialTheme.colorScheme.primaryContainer
+                        currentDay -> MaterialTheme.colorScheme.surfaceDim
+                        else -> Color.Transparent
+                    }
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = day.date.dayOfMonth.toString(),
+                fontWeight = FontWeight.Medium,
+                color = if (day.date.yearMonth == currentMonth) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.outline
+            )
+        }
+
+        Box(
+            Modifier
+                .size(10.dp)
+                .clip(CircleShape)
+                .background(
+                    if (isEventPresent)
+                        MaterialTheme.colorScheme.primary
+                    else Color.Transparent
+                )
         )
     }
 }
@@ -327,9 +388,10 @@ private fun CalendarScreenPreview() {
             CalendarScreen(
                 taskState = CalendarTaskState(
                     tasks = (1..10).map { sampleTask },
-                    isCalendarOpen = true
+                    isCalendarOpen = false
                 ),
-                {}
+                {},
+                { false }
             )
         }
     }

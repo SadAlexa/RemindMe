@@ -3,6 +3,7 @@ package com.gpluslf.remindme.calendar.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gpluslf.remindme.calendar.presentation.model.CalendarAction
+import com.gpluslf.remindme.core.data.mappers.toLong
 import com.gpluslf.remindme.core.domain.TaskDataSource
 import com.gpluslf.remindme.core.presentation.model.TaskUi
 import com.gpluslf.remindme.core.presentation.model.toTaskUi
@@ -28,6 +29,7 @@ class CalendarViewModel(
     private val userId: Long,
     private val taskDataSource: TaskDataSource
 ) : ViewModel() {
+    private var monthTasks = emptyList<TaskUi>()
     private val _state = MutableStateFlow(CalendarTaskState())
     val state = _state.onStart {
         getMonthTasks(
@@ -43,11 +45,9 @@ class CalendarViewModel(
     private fun getMonthTasks(start: LocalDate, end: LocalDate) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val tasks =
+                monthTasks =
                     taskDataSource.getAllTaskByYearMonth(start, end, userId).map { it.toTaskUi() }
-                _state.update { state ->
-                    state.copy(tasks = tasks)
-                }
+                selectDay(_state.value.selectedDay)
             }
         }
     }
@@ -76,10 +76,28 @@ class CalendarViewModel(
             }
 
             is CalendarAction.SelectDay -> {
-                _state.update { state ->
-                    state.copy(selectedDay = action.day)
-                }
+                selectDay(action.day)
             }
+        }
+    }
+
+    private fun selectDay(date: LocalDate) {
+        val startOfDay = date.atStartOfDay().toLocalDate().toLong()
+        val endOfDay = date.atStartOfDay().plusDays(1).toLocalDate().toLong()
+        val tasks = monthTasks.filter { it.endTime != null }
+            .filter { it.endTime!!.toLong() in startOfDay..<endOfDay }
+        _state.update { state ->
+            state.copy(
+                tasks = tasks,
+                selectedDay = date
+            )
+        }
+    }
+
+    fun hasEvents(date: LocalDate): Boolean {
+        return monthTasks.any {
+            it.endTime != null && it.endTime!!.toLong() in date.atStartOfDay().toLocalDate()
+                .toLong()..<date.atStartOfDay().plusDays(1).toLocalDate().toLong()
         }
     }
 }

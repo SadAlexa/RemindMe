@@ -21,11 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.gpluslf.remindme.home.presentation.TasksState
-import com.gpluslf.remindme.home.presentation.components.CustomTaskItem
 import com.gpluslf.remindme.core.presentation.components.NoItemsPlaceholder
-import com.gpluslf.remindme.home.presentation.components.sampleTask
-import com.gpluslf.remindme.core.presentation.model.toTaskUi
+import com.gpluslf.remindme.core.presentation.components.TaskItem
+import com.gpluslf.remindme.core.presentation.components.sampleTask
+import com.gpluslf.remindme.home.presentation.TasksState
 import com.gpluslf.remindme.home.presentation.model.ListScreenAction
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
@@ -58,7 +57,7 @@ fun ListScreen(
                     )
                 },
                 actions = {
-                    FilterChip(onClick = {/*TODO*/}, selected = false, label = {
+                    FilterChip(onClick = {/*TODO*/ }, selected = false, label = {
                         Text("All"/*TODO*/, style = MaterialTheme.typography.bodyLarge)
                     })
                 }
@@ -67,22 +66,27 @@ fun ListScreen(
     ) { contentPadding ->
         if (state.tasks.isNotEmpty()) {
             LazyColumn(
-                modifier = Modifier.padding(contentPadding).padding(horizontal = 20.dp),
+                modifier = Modifier
+                    .padding(contentPadding)
+                    .padding(horizontal = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
                 items(state.tasks) { item ->
-                    CustomTaskItem(
+                    TaskItem(
                         item,
-                        onTaskClick = {
+                        onCheckClick = {
                             onAction(ListScreenAction.ToggleTask(item))
                         },
-                        onTagClick = {/*TODO*/}
+                        onTagClick = {/*TODO*/ }
                     )
                 }
             }
         } else {
-            NoItemsPlaceholder(Modifier.padding(contentPadding), "Tap the + button to add a new task.")
+            NoItemsPlaceholder(
+                Modifier.padding(contentPadding),
+                "Tap the + button to add a new task."
+            )
         }
     }
 }
@@ -91,7 +95,7 @@ fun ListScreen(
 @Composable
 private fun ListScreenPreviewLight() {
     RemindMeTheme {
-        Scaffold  { padding ->
+        Scaffold { padding ->
             ListScreen(
                 listTitle = "List Title",
                 state = sampleState,
@@ -99,18 +103,20 @@ private fun ListScreenPreviewLight() {
                 {},
                 modifier = Modifier
                     .padding(padding)
-                    .fillMaxSize())
+                    .fillMaxSize()
+            )
         }
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true, device = "id:pixel_9_pro",
+@Preview(
+    showBackground = true, showSystemUi = true, device = "id:pixel_9_pro",
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 private fun ListScreenPreviewDark() {
     RemindMeTheme {
-        Scaffold  { padding ->
+        Scaffold { padding ->
             ListScreen(
                 listTitle = "List Title",
                 state = sampleState,
@@ -118,11 +124,12 @@ private fun ListScreenPreviewDark() {
                 {},
                 modifier = Modifier
                     .padding(padding)
-                    .fillMaxSize())
+                    .fillMaxSize()
+            )
         }
     }
 }
 
 internal val sampleState = TasksState(
-    tasks= (0..10).map { sampleTask.toTaskUi().copy(title = "Task $it") },
+    tasks = (0..10).map { sampleTask.copy(title = "Task $it") },
 )

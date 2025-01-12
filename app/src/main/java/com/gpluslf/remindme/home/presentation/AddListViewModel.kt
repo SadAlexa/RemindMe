@@ -2,22 +2,47 @@ package com.gpluslf.remindme.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gpluslf.remindme.core.domain.CategoryDataSource
 import com.gpluslf.remindme.core.domain.ListDataSource
 import com.gpluslf.remindme.core.domain.TodoList
 import com.gpluslf.remindme.home.presentation.model.AddListAction
 import com.gpluslf.remindme.home.presentation.model.TodoListState
 import com.gpluslf.remindme.home.presentation.model.toCategory
+import com.gpluslf.remindme.home.presentation.model.toCategoryUi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class TodoListViewModel(
+class AddListViewModel(
     private val userId: Long,
-    private val todoListDataSource: ListDataSource
+    private val todoListDataSource: ListDataSource,
+    private val categoryDataSource: CategoryDataSource
 ) : ViewModel() {
     private val _state = MutableStateFlow(TodoListState())
-    val state = _state.asStateFlow()
+    val state = _state.onStart {
+        loadData()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        TodoListState()
+    )
+
+    private fun loadData() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                categoryDataSource.getAllCategories(userId).collect { list ->
+                    _state.update { state ->
+                        state.copy(categories = list.map { it.toCategoryUi() })
+                    }
+                }
+            }
+        }
+    }
 
     private fun saveList() {
         viewModelScope.launch {
@@ -51,7 +76,12 @@ class TodoListViewModel(
             }
 
             is AddListAction.UpdateCategory -> {
-                _state.update { state -> state.copy(selectedCategory = action.category) }
+                _state.update { state ->
+                    state.copy(
+                        selectedCategory = action.category,
+
+                        )
+                }
             }
 
             is AddListAction.UpdateShared -> {

@@ -17,10 +17,10 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.gpluslf.remindme.calendar.presentation.CalendarViewModel
 import com.gpluslf.remindme.calendar.presentation.screens.CalendarScreen
+import com.gpluslf.remindme.home.presentation.AddListViewModel
+import com.gpluslf.remindme.home.presentation.AddTaskViewModel
 import com.gpluslf.remindme.home.presentation.ListsViewModel
-import com.gpluslf.remindme.home.presentation.TaskListViewModel
 import com.gpluslf.remindme.home.presentation.TasksViewModel
-import com.gpluslf.remindme.home.presentation.TodoListViewModel
 import com.gpluslf.remindme.home.presentation.screens.AddListScreen
 import com.gpluslf.remindme.home.presentation.screens.AddTaskScreen
 import com.gpluslf.remindme.home.presentation.screens.HomeScreen
@@ -165,7 +165,7 @@ fun RemindMeNavGraph(
                 )
             }
             composable<RemindMeRoute.AddList> {
-                val viewModel = koinViewModel<TodoListViewModel>(
+                val viewModel = koinViewModel<AddListViewModel>(
                     parameters = { parametersOf(currentUserId) }
                 )
                 val state by viewModel.state.collectAsStateWithLifecycle()
@@ -182,7 +182,7 @@ fun RemindMeNavGraph(
             }
             composable<RemindMeRoute.AddTask> {
                 val listTitle = it.toRoute<RemindMeRoute.AddTask>().listTitle
-                val viewModel = koinViewModel<TaskListViewModel>(
+                val viewModel = koinViewModel<AddTaskViewModel>(
                     parameters = { parametersOf(currentUserId, listTitle) }
                 )
                 val state by viewModel.state.collectAsStateWithLifecycle()

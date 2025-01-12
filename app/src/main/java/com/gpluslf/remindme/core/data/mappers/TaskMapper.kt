@@ -1,10 +1,8 @@
 package com.gpluslf.remindme.core.data.mappers
 
 import android.net.Uri
-import androidx.room.TypeConverter
 import com.gpluslf.remindme.core.data.database.entities.TagEntity
 import com.gpluslf.remindme.core.data.database.entities.TaskEntity
-import com.gpluslf.remindme.core.domain.Tag
 import com.gpluslf.remindme.core.domain.Task
 
 fun TaskEntity.toTask(tags: List<TagEntity>) = Task(

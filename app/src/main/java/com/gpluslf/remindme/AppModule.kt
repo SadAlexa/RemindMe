@@ -21,10 +21,10 @@ import com.gpluslf.remindme.core.domain.TagDataSource
 import com.gpluslf.remindme.core.domain.TaskDataSource
 import com.gpluslf.remindme.core.domain.User
 import com.gpluslf.remindme.core.domain.UserDataSource
+import com.gpluslf.remindme.home.presentation.AddListViewModel
+import com.gpluslf.remindme.home.presentation.AddTaskViewModel
 import com.gpluslf.remindme.home.presentation.ListsViewModel
-import com.gpluslf.remindme.home.presentation.TaskListViewModel
 import com.gpluslf.remindme.home.presentation.TasksViewModel
-import com.gpluslf.remindme.home.presentation.TodoListViewModel
 import com.gpluslf.remindme.login.presentation.LoginViewModel
 import com.gpluslf.remindme.profile.presentation.AchievementViewModel
 import com.gpluslf.remindme.profile.presentation.UserViewModel
@@ -78,7 +78,7 @@ val appModule = module {
     viewModel<AchievementViewModel> { (userId: Long) -> AchievementViewModel(userId, get()) }
     viewModel<UserViewModel> { (userId: Long) -> UserViewModel(userId, get()) }
     viewModel<ListsViewModel> { (userId: Long) -> ListsViewModel(userId, get(), get()) }
-    viewModel<TodoListViewModel> { (userId: Long) -> TodoListViewModel(userId, get()) }
+    viewModel<AddListViewModel> { (userId: Long) -> AddListViewModel(userId, get(), get()) }
     viewModel<TasksViewModel> { (userId: Long, listTitle: String) ->
         TasksViewModel(
             userId,
@@ -87,10 +87,11 @@ val appModule = module {
             get()
         )
     }
-    viewModel<TaskListViewModel> { (userId: Long, listTitle: String) ->
-        TaskListViewModel(
+    viewModel<AddTaskViewModel> { (userId: Long, listTitle: String) ->
+        AddTaskViewModel(
             userId,
             listTitle,
+            get(),
             get()
         )
     }

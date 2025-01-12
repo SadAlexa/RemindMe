@@ -117,7 +117,7 @@ fun AddListScreen(
             ) {
                 items(state.categories) { category ->
                     FilterChip(
-                        selected = category.isSelected,
+                        selected = category == state.selectedCategory,
                         onClick = { onAddListAction(AddListAction.UpdateCategory(category)) },
                         label = {
                             Text(

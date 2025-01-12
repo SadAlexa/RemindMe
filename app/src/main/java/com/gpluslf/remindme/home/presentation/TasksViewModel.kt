@@ -5,13 +5,16 @@ import androidx.lifecycle.viewModelScope
 import com.gpluslf.remindme.core.domain.Tag
 import com.gpluslf.remindme.core.domain.TagDataSource
 import com.gpluslf.remindme.core.domain.TaskDataSource
+import com.gpluslf.remindme.core.presentation.model.TagUi
 import com.gpluslf.remindme.core.presentation.model.TaskUi
+import com.gpluslf.remindme.core.presentation.model.toTagUi
 import com.gpluslf.remindme.core.presentation.model.toTask
 import com.gpluslf.remindme.core.presentation.model.toTaskUi
 import com.gpluslf.remindme.home.presentation.model.ListScreenAction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -21,7 +24,9 @@ import kotlinx.coroutines.withContext
 data class TasksState(
     val tasks: List<TaskUi>,
     val showDialog: Boolean = false,
-    val tagTitle: String = ""
+    val tagTitle: String = "",
+    val selectedTag: TagUi? = null,
+    val tags: List<TagUi> = emptyList()
 )
 
 class TasksViewModel(
@@ -39,17 +44,35 @@ class TasksViewModel(
         initialValue = TasksState(emptyList())
     )
 
+    private var allTasks: List<TaskUi> = emptyList()
+
     private fun loadData() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                taskRepository.getAllTasksByList(listTitle, userId).collect { flow ->
+                combine(
+                    taskRepository.getAllTasksByList(listTitle, userId),
+                    tagRepository.getAllTags(listTitle, userId)
+                ) { tasks, tags ->
+                    Pair(
+                        tasks.map { it.toTaskUi() },
+                        tags.map { it.toTagUi() }
+                    )
+                }.collect { (tasks, tags) ->
+                    allTasks = tasks
                     _state.update { state ->
                         state.copy(
-                            tasks = flow.map { it.toTaskUi() }
+                            tags = tags,
+                            tasks = filterByTag(state.selectedTag)
                         )
                     }
                 }
             }
+        }
+    }
+
+    private fun filterByTag(tag: TagUi? = null): List<TaskUi> {
+        return allTasks.filter { task ->
+            tag == null || task.tags.map { it.id }.contains(tag.id)
         }
     }
 
@@ -73,6 +96,15 @@ class TasksViewModel(
                 _state.update { state -> state.copy(tagTitle = action.tagTitle) }
             }
 
+            is ListScreenAction.SelectTag -> {
+                _state.update { state ->
+                    state.copy(
+                        selectedTag = action.tag,
+                        tasks = filterByTag(action.tag)
+                    )
+                }
+            }
+
             ListScreenAction.SaveTag -> {
                 viewModelScope.launch {
                     tagRepository.upsertTag(
@@ -86,6 +118,7 @@ class TasksViewModel(
                 }
                 _state.update { state -> state.copy(showDialog = false, tagTitle = "") }
             }
+
         }
     }
 }

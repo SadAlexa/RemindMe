@@ -16,6 +16,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -26,9 +30,11 @@ import com.gpluslf.remindme.core.presentation.model.toTodoListUi
 import com.gpluslf.remindme.home.presentation.ListsState
 import com.gpluslf.remindme.home.presentation.components.CustomAlertDialog
 import com.gpluslf.remindme.home.presentation.components.CustomListItem
+import com.gpluslf.remindme.home.presentation.components.CustomModalBottomSheet
 import com.gpluslf.remindme.home.presentation.components.FloatingActionAddButton
 import com.gpluslf.remindme.home.presentation.components.FloatingActionButtonMenuItem
 import com.gpluslf.remindme.home.presentation.components.sampleTodoList
+import com.gpluslf.remindme.home.presentation.model.CategoryUi
 import com.gpluslf.remindme.home.presentation.model.HomeScreenAction
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
@@ -55,6 +61,22 @@ fun HomeScreen(
             onTitleValueChange = {
                 onHomeScreenAction(HomeScreenAction.UpdateCategoryTitle(it))
             }
+        )
+    }
+
+    var showBottomSheet by remember { mutableStateOf(false) }
+
+    if (showBottomSheet) {
+        CustomModalBottomSheet(
+            action = {
+                onHomeScreenAction(HomeScreenAction.SetCategory(it))
+            },
+            elements = state.categories,
+            key = { it.title },
+            onDismissRequest = {
+                showBottomSheet = false
+            },
+            selected = state.selectedCategory
         )
     }
 
@@ -90,8 +112,11 @@ fun HomeScreen(
                     )
                 },
                 actions = {
-                    FilterChip(onClick = {/*TODO*/ }, selected = false, label = {
-                        Text("All"/*TODO*/, style = MaterialTheme.typography.bodyLarge)
+                    FilterChip(onClick = { showBottomSheet = true }, selected = false, label = {
+                        Text(
+                            state.selectedCategory?.title ?: "All",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     })
                 }
             )

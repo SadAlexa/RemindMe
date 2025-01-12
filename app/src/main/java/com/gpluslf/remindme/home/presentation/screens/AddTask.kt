@@ -221,7 +221,7 @@ fun AddTaskScreen(
             ) {
                 items(state.tags) { tag ->
                     FilterChip(
-                        selected = tag.isSelected,
+                        selected = state.selectedTags.contains(tag),
                         onClick = { onAddTaskAction(AddTaskAction.UpdateTags(tag)) },
                         label = { Text(tag.title, style = MaterialTheme.typography.bodyLarge) },
                     )

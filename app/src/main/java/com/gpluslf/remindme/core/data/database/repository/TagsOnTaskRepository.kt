@@ -5,10 +5,13 @@ import com.gpluslf.remindme.core.data.database.entities.TagsOnTaskEntity
 
 class TagsOnTaskRepository(private val tagsOnTaskDAOs: TagsOnTaskDAOs) {
 
-    fun getAllTagsOnTask(taskTitle: String, listTitle: String, userId: Long) = tagsOnTaskDAOs.getAllTagsOnTask(taskTitle, listTitle, userId)
+    suspend fun getAllTagsOnTask(taskTitle: String, listTitle: String, userId: Long) =
+        tagsOnTaskDAOs.getAllTagsOnTask(taskTitle, listTitle, userId)
 
-    suspend fun upsertTagOnTask(tagsOnTask: TagsOnTaskEntity) = tagsOnTaskDAOs.upsertTagOnTask(tagsOnTask)
+    suspend fun upsertTagOnTask(tagsOnTask: TagsOnTaskEntity) =
+        tagsOnTaskDAOs.upsertTagOnTask(tagsOnTask)
 
-    suspend fun deleteTagOnTask(tagsOnTask: TagsOnTaskEntity) = tagsOnTaskDAOs.deleteTagOnTask(tagsOnTask)
+    suspend fun deleteTagOnTask(tagsOnTask: TagsOnTaskEntity) =
+        tagsOnTaskDAOs.deleteTagOnTask(tagsOnTask)
 
 }

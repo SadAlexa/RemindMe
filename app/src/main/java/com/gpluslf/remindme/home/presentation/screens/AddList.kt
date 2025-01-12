@@ -1,32 +1,23 @@
 package com.gpluslf.remindme.home.presentation.screens
 
+import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Camera
-import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Save
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
@@ -35,11 +26,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,41 +51,44 @@ import com.gpluslf.remindme.ui.theme.RemindMeTheme
 fun AddListScreen(
     modifier: Modifier = Modifier,
     state: TodoListState = TodoListState(),
-    onAddListAction : (AddListAction) -> Unit = {},
-    onFloatingActionButtonClick : () -> Unit = {},
+    onAddListAction: (AddListAction) -> Unit = {},
+    onFloatingActionButtonClick: () -> Unit = {},
     onCloseActionButtonClick: () -> Unit = {},
-) {Scaffold(
-    modifier = modifier,
-    floatingActionButton = {
-        FloatingActionButton(
-            containerColor = MaterialTheme.colorScheme.primary,
-            onClick = {
-                onAddListAction(AddListAction.SaveList)
-                onFloatingActionButtonClick()
+) {
+
+    val context = LocalContext.current
+
+    Scaffold(
+        modifier = modifier,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    onAddListAction(AddListAction.SaveList)
+                    onFloatingActionButtonClick()
+                }
+            ) {
+                Icon(Icons.Outlined.Save, "Save List")
             }
-        ) {
-            Icon(Icons.Outlined.Save, "Save List")
-        }
-    },
-    topBar = {
-        TopAppBar(
-            modifier = Modifier.padding(horizontal = 30.dp),
-            expandedHeight = 80.dp,
-            title = {
-                Text(
-                    "Add List", style = MaterialTheme.typography.headlineLarge
-                )
-            },
-            actions = {
-                IconButton(onClick = onCloseActionButtonClick, content = {
-                    Icon(
-                        Icons.Outlined.Close, contentDescription = "Close",
+        },
+        topBar = {
+            TopAppBar(
+                modifier = Modifier.padding(horizontal = 30.dp),
+                expandedHeight = 80.dp,
+                title = {
+                    Text(
+                        "Add List", style = MaterialTheme.typography.headlineLarge
                     )
-                })
-            }
-        )
-    }
-) { contentPadding ->
+                },
+                actions = {
+                    IconButton(onClick = onCloseActionButtonClick, content = {
+                        Icon(
+                            Icons.Outlined.Close, contentDescription = "Close",
+                        )
+                    })
+                }
+            )
+        }
+    ) { contentPadding ->
         Column(
             modifier
                 .padding(contentPadding)
@@ -105,7 +96,7 @@ fun AddListScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(30.dp),
         ) {
-            CustomTextField (
+            CustomTextField(
                 stringResource(R.string.list_title),
                 state.title
             ) {
@@ -119,29 +110,38 @@ fun AddListScreen(
                 onAddListAction(AddListAction.UpdateBody(it))
             }
 
-            LazyVerticalStaggeredGrid (
+            LazyVerticalStaggeredGrid(
                 columns = StaggeredGridCells.Adaptive(minSize = 100.dp),
                 contentPadding = PaddingValues(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ){
+            ) {
                 items(state.categories) { category ->
                     FilterChip(
                         selected = category.isSelected,
                         onClick = { onAddListAction(AddListAction.UpdateCategory(category)) },
-                        label = { Text(category.title, style = MaterialTheme.typography.bodyLarge) },
+                        label = {
+                            Text(
+                                category.title,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        },
                     )
                 }
             }
 
-            val result = remember { mutableStateOf<Uri?>(null) }
-            val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
-                result.value = it
-            }
+            val launcher =
+                rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { image ->
+                    if (image != null) {
+                        context.contentResolver.takePersistableUriPermission(
+                            image,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        )
+                        onAddListAction(AddListAction.UpdateImage(image))
+                    }
+                }
             CustomPhotoButton(launcher)
 
-            result.value?.let { image ->
-                onAddListAction(AddListAction.UpdateImage(image))
-                // Use Coil to display the selected image
+            state.image?.let { image ->
                 val painter = rememberAsyncImagePainter(
                     ImageRequest
                         .Builder(LocalContext.current)
@@ -165,7 +165,7 @@ fun AddListScreen(
 @Composable
 private fun AddListScreenPreviewLight() {
     RemindMeTheme {
-        Scaffold  { padding ->
+        Scaffold { padding ->
             AddListScreen(
                 Modifier
                     .padding(padding)
@@ -176,13 +176,14 @@ private fun AddListScreenPreviewLight() {
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true, device = "id:pixel_9_pro",
+@Preview(
+    showBackground = true, showSystemUi = true, device = "id:pixel_9_pro",
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 private fun AddListScreenPreviewDark() {
     RemindMeTheme {
-        Scaffold  { padding ->
+        Scaffold { padding ->
             AddListScreen(
                 Modifier
                     .padding(padding)
@@ -196,11 +197,11 @@ private fun AddListScreenPreviewDark() {
 internal val sampleTodoListState = TodoListState(
     title = "Sample List",
     categories = (1..10).map {
-            Category(
-                id = it.toLong(),
-                title = "title $it",
-                userId = 1
-            ).toCategoryUi()
+        Category(
+            id = it.toLong(),
+            title = "title $it",
+            userId = 1
+        ).toCategoryUi()
     }
 
 )

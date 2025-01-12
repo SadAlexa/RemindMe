@@ -20,11 +20,9 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.gpluslf.remindme.core.model.LocationService
 import com.gpluslf.remindme.ui.navigation.RemindMeNavGraph
 import com.gpluslf.remindme.ui.navigation.Screens
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
-import org.koin.android.ext.android.get
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,9 +37,8 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val backStackEntry by navController.currentBackStackEntryAsState()
                     val currentDestination = backStackEntry?.destination
-
-                    val showBottomBar = Screens.entries.any {
-                        screen -> currentDestination?.hierarchy?.any {
+                    val showBottomBar = Screens.entries.any { screen ->
+                        currentDestination?.hierarchy?.any {
                             it.hasRoute(route = screen.route::class)
                         } ?: false
                     }

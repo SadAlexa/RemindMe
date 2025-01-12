@@ -73,18 +73,17 @@ val appModule = module {
     single<TagDataSource> { TagRepository(get<RemindMeDatabase>().tagDao()) }
     single<NotificationDataSource> { NotificationRepository(get<RemindMeDatabase>().notificationDao()) }
     single<AchievementDataSource> { AchievementRepository(get<RemindMeDatabase>().achievementDao()) }
-    // single { SharedUserListRepository(get<RemindMeDatabase>().sharedUserListDao()) }
-    // single { TagsOnTaskRepository(get()) }
 
     viewModel<LoginViewModel> { LoginViewModel() }
     viewModel<AchievementViewModel> { (userId: Long) -> AchievementViewModel(userId, get()) }
     viewModel<UserViewModel> { (userId: Long) -> UserViewModel(userId, get()) }
-    viewModel<ListsViewModel> { (userId: Long) -> ListsViewModel(userId, get()) }
+    viewModel<ListsViewModel> { (userId: Long) -> ListsViewModel(userId, get(), get()) }
     viewModel<TodoListViewModel> { (userId: Long) -> TodoListViewModel(userId, get()) }
     viewModel<TasksViewModel> { (userId: Long, listTitle: String) ->
         TasksViewModel(
             userId,
             listTitle,
+            get(),
             get()
         )
     }

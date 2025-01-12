@@ -2,6 +2,8 @@ package com.gpluslf.remindme.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gpluslf.remindme.core.domain.Tag
+import com.gpluslf.remindme.core.domain.TagDataSource
 import com.gpluslf.remindme.core.domain.TaskDataSource
 import com.gpluslf.remindme.core.presentation.model.TaskUi
 import com.gpluslf.remindme.core.presentation.model.toTask
@@ -18,12 +20,15 @@ import kotlinx.coroutines.withContext
 
 data class TasksState(
     val tasks: List<TaskUi>,
+    val showDialog: Boolean = false,
+    val tagTitle: String = ""
 )
 
 class TasksViewModel(
     private val userId: Long,
     private val listTitle: String,
-    private val repository: TaskDataSource
+    private val taskRepository: TaskDataSource,
+    private val tagRepository: TagDataSource
 ) : ViewModel() {
     private val _state = MutableStateFlow(TasksState(emptyList()))
     val state = _state.onStart {
@@ -33,10 +38,11 @@ class TasksViewModel(
         started = SharingStarted.WhileSubscribed(),
         initialValue = TasksState(emptyList())
     )
+
     private fun loadData() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                repository.getAllTasksByList(listTitle, userId).collect { flow ->
+                taskRepository.getAllTasksByList(listTitle, userId).collect { flow ->
                     _state.update { state ->
                         state.copy(
                             tasks = flow.map { it.toTaskUi() }
@@ -51,12 +57,34 @@ class TasksViewModel(
         when (action) {
             is ListScreenAction.ToggleTask -> {
                 viewModelScope.launch {
-                    repository.upsertTask(
+                    taskRepository.upsertTask(
                         action.task.copy(
                             isDone = !action.task.isDone
                         ).toTask()
                     )
                 }
+            }
+
+            is ListScreenAction.ShowDialog -> {
+                _state.update { state -> state.copy(showDialog = action.showDialog) }
+            }
+
+            is ListScreenAction.UpdateTagTitle -> {
+                _state.update { state -> state.copy(tagTitle = action.tagTitle) }
+            }
+
+            ListScreenAction.SaveTag -> {
+                viewModelScope.launch {
+                    tagRepository.upsertTag(
+                        Tag(
+                            id = 0,
+                            title = state.value.tagTitle,
+                            listTitle = listTitle,
+                            userId
+                        )
+                    )
+                }
+                _state.update { state -> state.copy(showDialog = false, tagTitle = "") }
             }
         }
     }

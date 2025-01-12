@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-feature android:name="android.hardware.camera.any"/>
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.any" />
 
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
@@ -14,7 +15,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <queries>
         <intent>
@@ -29,7 +30,7 @@
             <action android:name="android.settings.APPLICATION_DETAILS_SETTINGS" />
         </intent>
         <intent>
-            <action android:name="android.settings.WIRELESS_SETTINGS"/>
+            <action android:name="android.settings.WIRELESS_SETTINGS" />
         </intent>
     </queries>
 
@@ -63,6 +64,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/path_provider" />
         </provider>
+
     </application>
 
 </manifest>

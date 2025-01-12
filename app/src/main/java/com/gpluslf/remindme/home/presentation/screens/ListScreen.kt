@@ -2,16 +2,19 @@ package com.gpluslf.remindme.home.presentation.screens
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Tag
+import androidx.compose.material.icons.outlined.TaskAlt
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,12 +22,16 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gpluslf.remindme.core.presentation.components.NoItemsPlaceholder
 import com.gpluslf.remindme.core.presentation.components.TaskItem
 import com.gpluslf.remindme.core.presentation.components.sampleTask
 import com.gpluslf.remindme.home.presentation.TasksState
+import com.gpluslf.remindme.home.presentation.components.CustomAlertDialog
+import com.gpluslf.remindme.home.presentation.components.FloatingActionAddButton
+import com.gpluslf.remindme.home.presentation.components.FloatingActionButtonMenuItem
 import com.gpluslf.remindme.home.presentation.model.ListScreenAction
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
@@ -33,28 +40,67 @@ import com.gpluslf.remindme.ui.theme.RemindMeTheme
 fun ListScreen(
     listTitle: String,
     state: TasksState,
-    onFloatingActionButtonClick: () -> Unit,
+    onAddTaskClick: () -> Unit,
     onAction: (ListScreenAction) -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    if (state.showDialog) {
+        CustomAlertDialog(
+            "Category",
+            state.tagTitle,
+            onConfirmation = {
+                onAction(ListScreenAction.SaveTag)
+            },
+            onDismissRequest = {
+                onAction(ListScreenAction.ShowDialog(false))
+            },
+            onTitleValueChange = {
+                onAction(ListScreenAction.UpdateTagTitle(it))
+            }
+        )
+    }
+
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
-            FloatingActionButton(
-                containerColor = MaterialTheme.colorScheme.primary,
-                onClick = onFloatingActionButtonClick
-            ) {
-                Icon(Icons.Outlined.Add, "Add Task")
-            }
+            FloatingActionAddButton(
+                items = listOf(
+                    FloatingActionButtonMenuItem(
+                        icon = Icons.Outlined.Tag,
+                        text = "Add Tag",
+                        onSelected = { onAction(ListScreenAction.ShowDialog(true)) }
+                    ),
+                    FloatingActionButtonMenuItem(
+                        icon = Icons.Outlined.TaskAlt,
+                        text = "Add Task",
+                        onSelected = onAddTaskClick
+                    )
+                )
+            )
         },
         topBar = {
             TopAppBar(
-                modifier = Modifier.padding(horizontal = 30.dp),
+                modifier = Modifier.padding(end = 30.dp),
                 expandedHeight = 80.dp,
                 title = {
-                    Text(
-                        listTitle, style = MaterialTheme.typography.headlineLarge
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        IconButton(onClick = onBackClick, content = {
+                            Icon(
+                                Icons.AutoMirrored.Outlined.ArrowBack,
+                                contentDescription = "Go back",
+                            )
+                        })
+                        Text(
+                            listTitle,
+                            style = MaterialTheme.typography.headlineLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 },
                 actions = {
                     FilterChip(onClick = {/*TODO*/ }, selected = false, label = {
@@ -101,6 +147,7 @@ private fun ListScreenPreviewLight() {
                 state = sampleState,
                 {},
                 {},
+                onBackClick = {},
                 modifier = Modifier
                     .padding(padding)
                     .fillMaxSize()
@@ -122,6 +169,7 @@ private fun ListScreenPreviewDark() {
                 state = sampleState,
                 {},
                 {},
+                onBackClick = {},
                 modifier = Modifier
                     .padding(padding)
                     .fillMaxSize()

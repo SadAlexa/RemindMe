@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
 @Composable
-fun CustomTextField(text: String, value: String, onValueChange: (String) -> Unit) {
+fun CustomTextField(label: String, value: String, onValueChange: (String) -> Unit) {
     TextField(
         value = value,
         onValueChange = onValueChange,
@@ -23,8 +23,8 @@ fun CustomTextField(text: String, value: String, onValueChange: (String) -> Unit
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp)),
-        label = { Text(text = text) },
-        placeholder = { Text(text = text) }
+        label = { Text(text = label) },
+        placeholder = { Text(text = label) }
     )
 }
 
@@ -34,7 +34,7 @@ private fun CustomTextFieldPreview() {
     RemindMeTheme {
         Surface {
             CustomTextField(
-                text = "Title",
+                label = "Title",
                 value = "Title",
                 onValueChange = {}
             )

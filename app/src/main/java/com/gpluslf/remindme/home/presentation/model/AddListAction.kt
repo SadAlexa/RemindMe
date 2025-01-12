@@ -10,5 +10,5 @@ sealed interface AddListAction {
     data class UpdateSharedUserId(val sharedUserId: Long) : AddListAction
     data class UpdateFavorite(val isFavorite: Boolean) : AddListAction
     data class UpdateCategory(val category: CategoryUi) : AddListAction
-    data object SaveList: AddListAction
+    data object SaveList : AddListAction
 }

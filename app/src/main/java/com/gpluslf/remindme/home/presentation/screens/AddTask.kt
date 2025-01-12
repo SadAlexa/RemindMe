@@ -1,8 +1,7 @@
 package com.gpluslf.remindme.home.presentation.screens
 
-import android.app.TimePickerDialog
+import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -25,7 +24,6 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,8 +41,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,11 +52,11 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.gpluslf.remindme.R
 import com.gpluslf.remindme.core.data.mappers.toDate
+import com.gpluslf.remindme.core.presentation.model.TagUi
 import com.gpluslf.remindme.home.presentation.components.CustomPhotoButton
 import com.gpluslf.remindme.home.presentation.components.CustomTextField
 import com.gpluslf.remindme.home.presentation.model.AddTaskAction
 import com.gpluslf.remindme.home.presentation.model.CreateTaskState
-import com.gpluslf.remindme.core.presentation.model.TagUi
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 import java.text.DateFormat.getDateInstance
 import java.text.DateFormat.getTimeInstance
@@ -73,10 +69,12 @@ import java.util.Date
 fun AddTaskScreen(
     modifier: Modifier = Modifier,
     state: CreateTaskState,
-    onAddTaskAction : (AddTaskAction) -> Unit,
-    onFloatingActionButtonClick : () -> Unit,
-    onCloseButtonClick : () -> Unit
+    onAddTaskAction: (AddTaskAction) -> Unit,
+    onFloatingActionButtonClick: () -> Unit,
+    onCloseButtonClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
     if (state.isDatePickerOpen) {
         DatePickerModal(
             onDateSelected = {
@@ -98,146 +96,168 @@ fun AddTaskScreen(
             }
         )
     }
-
-    Scaffold (
-    modifier = modifier,
-    floatingActionButton = {
-        FloatingActionButton(
-            containerColor = MaterialTheme.colorScheme.primary,
-            onClick = {
-                onAddTaskAction(AddTaskAction.SaveTask)
-                onFloatingActionButtonClick()
-            }
-        ) {
-            Icon(Icons.Outlined.Save, "Save Task")
-        }
-    },
-    topBar = {
-        TopAppBar(
-            modifier = Modifier.padding(horizontal = 30.dp),
-            expandedHeight = 80.dp,
-            title = {
-                Text(
-                    stringResource(R.string.add_task), style = MaterialTheme.typography.headlineLarge
-                )
-            },
-            actions = {
-                IconButton(onClick = onCloseButtonClick,
-                    content = {
-                        Icon(
-                            Icons.Outlined.Close, contentDescription = "Close",
-                        )
-                    }
-                )
-            }
-        )
-    }
-) { contentPadding ->
-    Column(
-        modifier.padding(contentPadding).padding(horizontal = 30.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-    ) {
-        CustomTextField(
-            stringResource(R.string.task_title),
-            state.title
-        ) {
-            onAddTaskAction(AddTaskAction.UpdateTitle(it))
-        }
-
-        CustomTextField(
-            stringResource(R.string.list_body),
-            state.body
-        ) {
-            onAddTaskAction(AddTaskAction.UpdateBody(it))
-        }
-
-        HorizontalDivider()
-
-        AnimatedContent(
-            state.endTime != null,
-            label = "End Time",
-        ) { endTimePresent ->
-            if (endTimePresent) {
-                val date = getDateInstance()
-                val time = getTimeInstance()
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Icon(Icons.Default.DateRange, contentDescription = "Date")
-                    Text(
-                        "Ends: ${state.endTime?.let { date.format(it) }}", style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.clickable { onAddTaskAction(AddTaskAction.ShowDatePicker(true)) }
-                    )
-                    Text("${state.endTime?.let { time.format(it) }}", style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.clickable { onAddTaskAction(AddTaskAction.ShowTimePicker(true)) })
-                    IconButton(onClick = {
-                        onAddTaskAction(AddTaskAction.RemoveEndTime)
-                    }, content = {
-                        Icon(
-                            Icons.Outlined.Close, contentDescription = "Close",
-                        )
-                    })
+    Scaffold(
+        modifier = modifier,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    onAddTaskAction(AddTaskAction.SaveTask)
+                    onFloatingActionButtonClick()
                 }
-            } else {
-                Row (
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth().clickable{
-                        onAddTaskAction(AddTaskAction.ShowDatePicker(true))
-                    }
-                ) {
-                    Icon(Icons.Default.DateRange, contentDescription = "Date")
+            ) {
+                Icon(Icons.Outlined.Save, "Save Task")
+            }
+        },
+        topBar = {
+            TopAppBar(
+                modifier = Modifier.padding(horizontal = 30.dp),
+                expandedHeight = 80.dp,
+                title = {
                     Text(
-                        "Add end time", style = MaterialTheme.typography.bodyLarge,
-
+                        stringResource(R.string.add_task),
+                        style = MaterialTheme.typography.headlineLarge
+                    )
+                },
+                actions = {
+                    IconButton(onClick = onCloseButtonClick,
+                        content = {
+                            Icon(
+                                Icons.Outlined.Close, contentDescription = "Close",
+                            )
+                        }
                     )
                 }
-            }
+            )
         }
-        HorizontalDivider()
+    ) { contentPadding ->
+        Column(
+            modifier
+                .padding(contentPadding)
+                .padding(horizontal = 30.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+        ) {
+            CustomTextField(
+                stringResource(R.string.task_title),
+                state.title
+            ) {
+                onAddTaskAction(AddTaskAction.UpdateTitle(it))
+            }
 
-        LazyVerticalStaggeredGrid (
-            columns = StaggeredGridCells.Adaptive(minSize = 100.dp),
-            contentPadding = PaddingValues(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ){
-            items(state.tags) { tag ->
-                FilterChip(
-                    selected = tag.isSelected,
-                    onClick = { onAddTaskAction(AddTaskAction.UpdateTags(tag)) },
-                    label = { Text(tag.title, style = MaterialTheme.typography.bodyLarge) },
+            CustomTextField(
+                stringResource(R.string.list_body),
+                state.body
+            ) {
+                onAddTaskAction(AddTaskAction.UpdateBody(it))
+            }
+
+            HorizontalDivider()
+
+            AnimatedContent(
+                state.endTime != null,
+                label = "End Time",
+            ) { endTimePresent ->
+                if (endTimePresent) {
+                    val date = getDateInstance()
+                    val time = getTimeInstance()
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Icon(Icons.Default.DateRange, contentDescription = "Date")
+                        Text(
+                            "Ends: ${state.endTime?.let { date.format(it) }}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.clickable {
+                                onAddTaskAction(
+                                    AddTaskAction.ShowDatePicker(
+                                        true
+                                    )
+                                )
+                            }
+                        )
+                        Text("${state.endTime?.let { time.format(it) }}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.clickable {
+                                onAddTaskAction(
+                                    AddTaskAction.ShowTimePicker(
+                                        true
+                                    )
+                                )
+                            })
+                        IconButton(onClick = {
+                            onAddTaskAction(AddTaskAction.RemoveEndTime)
+                        }, content = {
+                            Icon(
+                                Icons.Outlined.Close, contentDescription = "Close",
+                            )
+                        })
+                    }
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onAddTaskAction(AddTaskAction.ShowDatePicker(true))
+                            }
+                    ) {
+                        Icon(Icons.Default.DateRange, contentDescription = "Date")
+                        Text(
+                            "Add end time", style = MaterialTheme.typography.bodyLarge,
+
+                            )
+                    }
+                }
+            }
+            HorizontalDivider()
+
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Adaptive(minSize = 100.dp),
+                contentPadding = PaddingValues(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(state.tags) { tag ->
+                    FilterChip(
+                        selected = tag.isSelected,
+                        onClick = { onAddTaskAction(AddTaskAction.UpdateTags(tag)) },
+                        label = { Text(tag.title, style = MaterialTheme.typography.bodyLarge) },
+                    )
+                }
+            }
+
+            val launcher =
+                rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { image ->
+                    if (image != null) {
+                        context.contentResolver.takePersistableUriPermission(
+                            image,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        )
+                        onAddTaskAction(AddTaskAction.UpdateImage(image))
+                    }
+                }
+            CustomPhotoButton(launcher)
+
+            state.image?.let { image ->
+                val painter = rememberAsyncImagePainter(
+                    ImageRequest
+                        .Builder(LocalContext.current)
+                        .data(data = image)
+                        .build()
+                )
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(150.dp, 150.dp)
+                        .padding(16.dp)
+                        .clip(RoundedCornerShape(20.dp))
                 )
             }
         }
-
-        val result = remember { mutableStateOf<Uri?>(null) }
-        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
-            result.value = it
-        }
-        CustomPhotoButton(launcher)
-
-        result.value?.let { image ->
-            onAddTaskAction(AddTaskAction.UpdateImage(image))
-            // Use Coil to display the selected image
-            val painter = rememberAsyncImagePainter(
-                ImageRequest
-                    .Builder(LocalContext.current)
-                    .data(data = image)
-                    .build()
-            )
-            Image(
-                painter = painter,
-                contentDescription = null,
-                modifier = Modifier.size(150.dp, 150.dp)
-                    .padding(16.dp)
-                    .clip(RoundedCornerShape(20.dp))
-            )
-        }
     }
-}
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -248,10 +268,10 @@ fun DatePickerModal(
 ) {
     val datePickerState = rememberDatePickerState()
 
-    DatePickerDialog (
+    DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            TextButton (onClick = {
+            TextButton(onClick = {
                 onDateSelected(datePickerState.selectedDateMillis?.toDate())
                 onDismiss()
             }) {
@@ -322,7 +342,7 @@ fun TimePickerDialog(
 @Composable
 private fun AddTaskScreenPreviewLight() {
     RemindMeTheme {
-        Scaffold  { padding ->
+        Scaffold { padding ->
             AddTaskScreen(
                 Modifier
                     .padding(padding)
@@ -336,13 +356,14 @@ private fun AddTaskScreenPreviewLight() {
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true, device = "id:pixel_9_pro",
+@Preview(
+    showBackground = true, showSystemUi = true, device = "id:pixel_9_pro",
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 private fun AddTaskScreenPreviewDark() {
     RemindMeTheme {
-        Scaffold  { padding ->
+        Scaffold { padding ->
             AddTaskScreen(
                 Modifier
                     .padding(padding)
@@ -356,10 +377,10 @@ private fun AddTaskScreenPreviewDark() {
     }
 }
 
-internal val sampleCreateTaskState =  CreateTaskState(
+internal val sampleCreateTaskState = CreateTaskState(
     title = "title",
     body = "body",
-    endTime = Date( System.currentTimeMillis() + 24 * 60 * 60 * 1000),
+    endTime = Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000),
     tags = listOf(
         TagUi(
             id = 1,

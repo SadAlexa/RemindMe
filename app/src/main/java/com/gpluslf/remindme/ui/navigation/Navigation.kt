@@ -3,11 +3,8 @@ package com.gpluslf.remindme.ui.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.outlined.CalendarMonth
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.PersonOutline
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -28,13 +25,11 @@ import com.gpluslf.remindme.home.presentation.screens.AddListScreen
 import com.gpluslf.remindme.home.presentation.screens.AddTaskScreen
 import com.gpluslf.remindme.home.presentation.screens.HomeScreen
 import com.gpluslf.remindme.home.presentation.screens.ListScreen
-import com.gpluslf.remindme.login.presentation.LoginViewModel
 import com.gpluslf.remindme.login.presentation.model.LoginAction
 import com.gpluslf.remindme.login.presentation.screens.WelcomeScreen
 import com.gpluslf.remindme.profile.presentation.AchievementViewModel
 import com.gpluslf.remindme.profile.presentation.UserViewModel
 import com.gpluslf.remindme.profile.presentation.screens.ProfileScreen
-import com.gpluslf.remindme.search.presentation.screens.SearchScreen
 import com.gpluslf.remindme.updates.presentation.NotificationsViewModel
 import com.gpluslf.remindme.updates.presentation.screens.UpdatesScreen
 import kotlinx.serialization.Serializable
@@ -59,10 +54,13 @@ sealed interface RemindMeRoute {
     data class TodoList(val listTitle: String) : RemindMeRoute
 
     @Serializable
+    data object ShowMultipleChoice : RemindMeRoute
+
+    @Serializable
     data object AddList : RemindMeRoute
 
     @Serializable
-    data class AddTask( val listTitle: String) : RemindMeRoute
+    data class AddTask(val listTitle: String) : RemindMeRoute
 
     @Serializable
     data object Calendar : RemindMeRoute
@@ -89,7 +87,7 @@ sealed interface RemindMeRoute {
 enum class Screens(
     val route: RemindMeRoute,
     val selectedIcon: ImageVector,
-    ) {
+) {
     Home(RemindMeRoute.Home, Icons.AutoMirrored.Outlined.List),
     Calendar(RemindMeRoute.Calendar, Icons.Outlined.CalendarMonth),
     Profile(RemindMeRoute.Profile, Icons.Outlined.PersonOutline),
@@ -114,8 +112,8 @@ fun RemindMeNavGraph(
         ) {
             composable<RemindMeRoute.Welcome> {
                 WelcomeScreen(
-                    onLoginAction =  { action ->
-                        when(action) {
+                    onLoginAction = { action ->
+                        when (action) {
                             LoginAction.SignIn -> navController.navigate(RemindMeRoute.SignIn)
                             LoginAction.SignUp -> navController.navigate(RemindMeRoute.AddList)
                             LoginAction.Guest -> {
@@ -138,7 +136,8 @@ fun RemindMeNavGraph(
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 HomeScreen(
                     state = state,
-                    onFloatingActionButtonClick = {
+                    onHomeScreenAction = viewModel::onHomeScreenAction,
+                    onAddListClick = {
                         navController.navigate(RemindMeRoute.AddList)
                     },
                     onCustomListItemClick = { name ->
@@ -146,6 +145,7 @@ fun RemindMeNavGraph(
                     },
                 )
             }
+
             composable<RemindMeRoute.TodoList> {
                 val listTitle = it.toRoute<RemindMeRoute.TodoList>().listTitle
                 val viewModel = koinViewModel<TasksViewModel>(
@@ -156,8 +156,11 @@ fun RemindMeNavGraph(
                     listTitle = listTitle,
                     state = state,
                     onAction = viewModel::onAction,
-                    onFloatingActionButtonClick = {
+                    onAddTaskClick = {
                         navController.navigate(RemindMeRoute.AddTask(listTitle))
+                    },
+                    onBackClick = {
+                        navController.popBackStack()
                     },
                 )
             }
@@ -183,7 +186,7 @@ fun RemindMeNavGraph(
                     parameters = { parametersOf(currentUserId, listTitle) }
                 )
                 val state by viewModel.state.collectAsStateWithLifecycle()
-                AddTaskScreen (
+                AddTaskScreen(
                     state = state,
                     onAddTaskAction = viewModel::onAddTaskAction,
                     onFloatingActionButtonClick = {
@@ -194,14 +197,15 @@ fun RemindMeNavGraph(
                     }
                 )
             }
-            composable<RemindMeRoute.Calendar>{
+            composable<RemindMeRoute.Calendar> {
                 val viewModel = koinViewModel<CalendarViewModel>(
                     parameters = { parametersOf(currentUserId) }
                 )
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 CalendarScreen(
                     taskState = state,
-                    viewModel::onAction
+                    viewModel::onAction,
+                    viewModel::hasEvents
                 )
             }
             composable<RemindMeRoute.Profile> {
@@ -225,7 +229,7 @@ fun RemindMeNavGraph(
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 UpdatesScreen(
                     state = state,
-                    onNotificationClick = {/*TODO*/}
+                    onNotificationClick = {/*TODO*/ }
                 )
             }
         }

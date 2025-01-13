@@ -17,4 +17,5 @@
     <string name="list_category">Category</string>
     <string name="add_task">Add Task</string>
     <string name="task_title">Task title</string>
+    <string name="login_error_message">Login Failed</string>
 </resources>

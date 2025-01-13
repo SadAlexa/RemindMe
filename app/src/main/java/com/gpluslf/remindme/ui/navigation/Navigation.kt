@@ -6,7 +6,12 @@ import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -17,6 +22,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.gpluslf.remindme.calendar.presentation.CalendarViewModel
 import com.gpluslf.remindme.calendar.presentation.screens.CalendarScreen
+import com.gpluslf.remindme.core.domain.LoggedUserDataSource
 import com.gpluslf.remindme.home.presentation.AddListViewModel
 import com.gpluslf.remindme.home.presentation.AddTaskViewModel
 import com.gpluslf.remindme.home.presentation.ListsViewModel
@@ -25,15 +31,21 @@ import com.gpluslf.remindme.home.presentation.screens.AddListScreen
 import com.gpluslf.remindme.home.presentation.screens.AddTaskScreen
 import com.gpluslf.remindme.home.presentation.screens.HomeScreen
 import com.gpluslf.remindme.home.presentation.screens.ListScreen
+import com.gpluslf.remindme.login.presentation.LoginViewModel
 import com.gpluslf.remindme.login.presentation.model.LoginAction
+import com.gpluslf.remindme.login.presentation.screens.SignInScreen
+import com.gpluslf.remindme.login.presentation.screens.SignUpScreen
 import com.gpluslf.remindme.login.presentation.screens.WelcomeScreen
 import com.gpluslf.remindme.profile.presentation.AchievementViewModel
 import com.gpluslf.remindme.profile.presentation.UserViewModel
+import com.gpluslf.remindme.profile.presentation.model.ProfileAction
 import com.gpluslf.remindme.profile.presentation.screens.ProfileScreen
 import com.gpluslf.remindme.updates.presentation.NotificationsViewModel
 import com.gpluslf.remindme.updates.presentation.screens.UpdatesScreen
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.getKoin
 import org.koin.core.parameter.parametersOf
 
 sealed interface RemindMeRoute {
@@ -52,9 +64,6 @@ sealed interface RemindMeRoute {
 
     @Serializable
     data class TodoList(val listTitle: String) : RemindMeRoute
-
-    @Serializable
-    data object ShowMultipleChoice : RemindMeRoute
 
     @Serializable
     data object AddList : RemindMeRoute
@@ -99,12 +108,24 @@ fun RemindMeNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    // TODO: get current user
-    val currentUserId = 1L
+    val coroutineScope = rememberCoroutineScope()
+    var currentUserId: Long? by remember {
+        mutableStateOf(null)
+    }
+
+    val loggedUserRepository = getKoin().get<LoggedUserDataSource>()
+
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            loggedUserRepository.getLoggedUserById().collect { id ->
+                currentUserId = id
+            }
+        }
+    }
 
     NavHost(
         navController = navController,
-        startDestination = RemindMeRoute.AUTH,
+        startDestination = if (currentUserId != null) RemindMeRoute.APP else RemindMeRoute.AUTH,
         modifier = modifier
     ) {
         navigation<RemindMeRoute.AUTH>(
@@ -115,11 +136,50 @@ fun RemindMeNavGraph(
                     onLoginAction = { action ->
                         when (action) {
                             LoginAction.SignIn -> navController.navigate(RemindMeRoute.SignIn)
-                            LoginAction.SignUp -> navController.navigate(RemindMeRoute.AddList)
+                            LoginAction.SignUp -> navController.navigate(RemindMeRoute.SignUp)
                             LoginAction.Guest -> {
+                                coroutineScope.launch {
+                                    loggedUserRepository.upsertLoggedUser(1)
+                                }
                                 navController.popBackStack()
                                 navController.navigate(RemindMeRoute.APP)
                             }
+                        }
+                    }
+                )
+            }
+
+            composable<RemindMeRoute.SignIn> {
+                val viewModel = koinViewModel<LoginViewModel>()
+                val state by viewModel.signInState.collectAsStateWithLifecycle()
+
+                LaunchedEffect(state.isLoggedIn) {
+                    if (state.isLoggedIn) {
+                        navController.popBackStack(
+                            route = RemindMeRoute.AUTH,
+                            inclusive = false
+                        )
+                        navController.navigate(RemindMeRoute.APP)
+                    }
+                }
+                SignInScreen(
+                    state = state,
+                    onSignInAction = viewModel::onSignInAction,
+                    onLoginAction = viewModel::onLoginAction,
+                    events = viewModel.events
+                )
+            }
+
+            composable<RemindMeRoute.SignUp> {
+                val viewModel = koinViewModel<LoginViewModel>()
+                val state by viewModel.signUpState.collectAsStateWithLifecycle()
+                SignUpScreen(
+                    state = state,
+                    onSignUpAction = viewModel::onSignUpAction,
+                    onLoginAction = { action ->
+                        viewModel.onLoginAction(action)
+                        if (action == LoginAction.SignUp) {
+                            navController.popBackStack()
                         }
                     }
                 )
@@ -219,6 +279,16 @@ fun RemindMeNavGraph(
                 val achievementState by achievementViewModel.state.collectAsStateWithLifecycle()
                 ProfileScreen(
                     userState = userState,
+                    onProfileAction = { action ->
+                        userViewModel.onProfileAction(action)
+
+                        if (action == ProfileAction.LogOut) {
+                            navController.popBackStack(
+                                route = RemindMeRoute.AUTH,
+                                inclusive = false
+                            )
+                        }
+                    },
                     achievementState = achievementState,
                 )
             }

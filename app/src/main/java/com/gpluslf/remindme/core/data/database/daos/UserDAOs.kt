@@ -16,6 +16,9 @@ interface UserDAOs {
     @Query("SELECT * FROM users")
     fun getAllUsers(): Flow<List<UserEntity>>
 
+    @Query("SELECT * FROM users WHERE email = :email AND password = :password")
+    suspend fun logInUser(email: String, password: String): UserEntity?
+
     @Upsert
     suspend fun upsertUser(user: UserEntity)
 

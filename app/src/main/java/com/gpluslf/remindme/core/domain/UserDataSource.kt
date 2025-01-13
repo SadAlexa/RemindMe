@@ -8,6 +8,8 @@ interface UserDataSource {
 
     fun getUserById(userId: Long): Flow<User>
 
+    suspend fun logInUser(email: String, password: String): User?
+
     suspend fun upsertUser(user: User)
 
     suspend fun deleteUser(user: User)

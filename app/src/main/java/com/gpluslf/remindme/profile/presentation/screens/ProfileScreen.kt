@@ -14,11 +14,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,23 +37,50 @@ import com.gpluslf.remindme.core.domain.Achievement
 import com.gpluslf.remindme.core.domain.User
 import com.gpluslf.remindme.profile.presentation.AchievementState
 import com.gpluslf.remindme.profile.presentation.UserState
+import com.gpluslf.remindme.profile.presentation.model.ProfileAction
 import com.gpluslf.remindme.profile.presentation.model.toAchievementUi
 import com.gpluslf.remindme.profile.presentation.model.toUserUi
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     userState: UserState,
     achievementState: AchievementState,
+    onProfileAction: (ProfileAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
         modifier = modifier,
+        topBar = {
+            TopAppBar(
+                modifier = Modifier.padding(horizontal = 30.dp),
+                expandedHeight = 80.dp,
+                title = {
+                    Text(
+                        "Your Profile",
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                actions = {
+                    TextButton(
+                        onClick = {
+                            onProfileAction(ProfileAction.LogOut)
+                        },
+                    ) {
+                        Text("Log Out",
+                            fontWeight = FontWeight.Bold)
+                    }
+                }
+            )
+        }
     ) { contentPadding ->
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(contentPadding)
-            .padding(horizontal = 20.dp),
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(contentPadding)
+                .padding(horizontal = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             val painter = rememberAsyncImagePainter(
@@ -105,7 +136,7 @@ fun ProfileScreen(
                                         "${achievement.percentage}%",
                                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                                         color = MaterialTheme.colorScheme.primary
-                                        )
+                                    )
                                 }
 
                             },
@@ -123,7 +154,7 @@ fun ProfileScreen(
 @Composable
 private fun ProfileScreenPreviewLight() {
     RemindMeTheme {
-        Scaffold  { padding ->
+        Scaffold { padding ->
             ProfileScreen(
                 userState = UserState(
                     User(
@@ -137,11 +168,15 @@ private fun ProfileScreenPreviewLight() {
                     ).toUserUi()
                 ),
                 achievementState = AchievementState(
-                    achievements = (0..10).map { sampleAchievement.toAchievementUi().copy(title = "achievement $it") }
+                    achievements = (0..10).map {
+                        sampleAchievement.toAchievementUi().copy(title = "achievement $it")
+                    }
                 ),
+                {},
                 modifier = Modifier
                     .padding(padding)
-                    .fillMaxSize())
+                    .fillMaxSize()
+            )
         }
     }
 }
@@ -154,13 +189,14 @@ internal val sampleAchievement = Achievement(
     percentage = 80
 )
 
-@Preview(showBackground = true, showSystemUi = true, device = "id:pixel_9_pro",
+@Preview(
+    showBackground = true, showSystemUi = true, device = "id:pixel_9_pro",
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 private fun ProfileScreenPreviewDark() {
     RemindMeTheme {
-        Scaffold  { padding ->
+        Scaffold { padding ->
             ProfileScreen(
                 userState = UserState(
                     User(
@@ -174,11 +210,15 @@ private fun ProfileScreenPreviewDark() {
                     ).toUserUi()
                 ),
                 achievementState = AchievementState(
-                    achievements = (0..10).map { sampleAchievement.toAchievementUi().copy(title = "achievement $it") }
+                    achievements = (0..10).map {
+                        sampleAchievement.toAchievementUi().copy(title = "achievement $it")
+                    }
                 ),
+                {},
                 modifier = Modifier
                     .padding(padding)
-                    .fillMaxSize())
+                    .fillMaxSize()
+            )
         }
     }
 }

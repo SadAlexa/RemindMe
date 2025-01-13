@@ -2,7 +2,9 @@ package com.gpluslf.remindme.profile.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gpluslf.remindme.core.domain.LoggedUserDataSource
 import com.gpluslf.remindme.core.domain.UserDataSource
+import com.gpluslf.remindme.profile.presentation.model.ProfileAction
 import com.gpluslf.remindme.profile.presentation.model.UserUi
 import com.gpluslf.remindme.profile.presentation.model.toUserUi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,11 +14,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class UserState (val user: UserUi? = null)
+data class UserState(val user: UserUi? = null)
 
 class UserViewModel(
     private val userId: Long,
-    private val repository: UserDataSource
+    private val userRepository: UserDataSource,
+    private val loggedUserRepository: LoggedUserDataSource
 ) : ViewModel() {
     private val _state = MutableStateFlow(UserState())
     val state = _state.onStart {
@@ -29,7 +32,7 @@ class UserViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
-            repository.getUserById(userId).collect {
+            userRepository.getUserById(userId).collect {
                 _state.update { state ->
                     state.copy(user = it.toUserUi())
                 }
@@ -41,7 +44,17 @@ class UserViewModel(
         // TODO
     }
 
-    fun deleteUser(user: UserUi)  = viewModelScope.launch {
+    fun deleteUser(user: UserUi) = viewModelScope.launch {
         // TODO
+    }
+
+    fun onProfileAction(action: ProfileAction) {
+        when (action) {
+            is ProfileAction.LogOut -> {
+                viewModelScope.launch {
+                    loggedUserRepository.deleteLoggedUser()
+                }
+            }
+        }
     }
 }

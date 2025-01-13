@@ -53,7 +53,7 @@ fun ListScreen(
 
     if (state.showDialog) {
         CustomAlertDialog(
-            "Category",
+            "Tag",
             state.tagTitle,
             onConfirmation = {
                 onAction(ListScreenAction.SaveTag)

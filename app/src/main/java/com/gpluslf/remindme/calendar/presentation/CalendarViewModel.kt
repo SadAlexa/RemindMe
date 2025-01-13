@@ -47,9 +47,9 @@ class CalendarViewModel(
             withContext(Dispatchers.IO) {
                 monthTasks =
                     taskDataSource.getAllTaskByYearMonth(start, end, userId).map { it.toTaskUi() }
-                selectDay(_state.value.selectedDay)
             }
         }
+        selectDay(_state.value.selectedDay)
     }
 
     fun onAction(action: CalendarAction) {
@@ -96,7 +96,7 @@ class CalendarViewModel(
 
     fun hasEvents(date: LocalDate): Boolean {
         return monthTasks.any {
-            it.endTime != null && it.endTime!!.toLong() in date.atStartOfDay().toLocalDate()
+            it.endTime != null && it.endTime.toLong() in date.atStartOfDay().toLocalDate()
                 .toLong()..<date.atStartOfDay().plusDays(1).toLocalDate().toLong()
         }
     }

@@ -3,8 +3,8 @@ package com.gpluslf.remindme.profile.presentation.model
 import android.net.Uri
 import com.gpluslf.remindme.core.domain.User
 
-data class UserUi (
-    val id: Long? = null,
+data class UserUi(
+    val id: Long,
 
     val username: String,
 
@@ -20,6 +20,16 @@ data class UserUi (
 )
 
 fun User.toUserUi() = UserUi(
+    id,
+    username,
+    name,
+    email,
+    password,
+    salt,
+    image
+)
+
+fun UserUi.toUser() = User(
     id,
     username,
     name,

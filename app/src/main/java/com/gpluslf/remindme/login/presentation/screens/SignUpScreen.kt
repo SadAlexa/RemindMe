@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -18,6 +21,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,40 +59,66 @@ fun SignUpScreen(
             fontWeight = FontWeight.Black
         )
 
-        CustomOutlinedTextField(
-            stringResource(R.string.name),
-            state.name
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(25.dp),
         ) {
-            onSignUpAction(SignUpAction.UpdateName(it))
-        }
-        CustomOutlinedTextField(
-            stringResource(R.string.username),
-            state.username
-        ) {
-            onSignUpAction(SignUpAction.UpdateUsername(it))
-        }
-        CustomOutlinedTextField(
-            stringResource(R.string.email),
-            state.email
-        ) {
-            onSignUpAction(SignUpAction.UpdateEmail(it))
-        }
-        CustomOutlinedTextField(
-            stringResource(R.string.password),
-            state.password
-        ) {
-            onSignUpAction(SignUpAction.UpdatePassword(it))
-        }
-        CustomOutlinedTextField(
-            stringResource(R.string.confirmPassword),
-            state.confirmPassword
-        ) {
-            onSignUpAction(SignUpAction.UpdateConfirmPassword(it))
-        }
-        CustomButton(
-            stringResource(R.string.sign_up)
-        ) {
-            onLoginAction(LoginAction.SignUp)
+            CustomOutlinedTextField(
+                stringResource(R.string.name),
+                state.name,
+                onValueChange = {
+                    onSignUpAction(SignUpAction.UpdateName(it))
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+            )
+            CustomOutlinedTextField(
+                stringResource(R.string.username),
+                state.username,
+                onValueChange = {
+                    onSignUpAction(SignUpAction.UpdateUsername(it))
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+            )
+            CustomOutlinedTextField(
+                stringResource(R.string.email),
+                state.email,
+                onValueChange = {
+                    onSignUpAction(SignUpAction.UpdateEmail(it))
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+            )
+            CustomOutlinedTextField(
+                stringResource(R.string.password),
+                state.password,
+                onValueChange = {
+                    onSignUpAction(SignUpAction.UpdatePassword(it))
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Next
+                ),
+                isPassword = true
+            )
+            CustomOutlinedTextField(
+                stringResource(R.string.confirmPassword),
+                state.confirmPassword,
+                onValueChange = {
+                    onSignUpAction(SignUpAction.UpdateConfirmPassword(it))
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                isPassword = true
+            )
+            CustomButton(
+                stringResource(R.string.sign_up)
+            ) {
+                onLoginAction(LoginAction.SignUp)
+            }
         }
     }
 }
@@ -96,26 +127,29 @@ fun SignUpScreen(
 @Composable
 private fun WelcomeScreenPreviewLight() {
     RemindMeTheme {
-        Scaffold  { padding ->
+        Scaffold { padding ->
             SignUpScreen(
                 Modifier
                     .padding(padding)
-                    .fillMaxSize())
+                    .fillMaxSize()
+            )
         }
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true, device = "id:pixel_9_pro",
+@Preview(
+    showBackground = true, showSystemUi = true, device = "id:pixel_9_pro",
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 private fun WelcomeScreenPreviewDark() {
     RemindMeTheme {
-        Scaffold  { padding ->
+        Scaffold { padding ->
             SignUpScreen(
                 Modifier
                     .padding(padding)
-                    .fillMaxSize())
+                    .fillMaxSize()
+            )
         }
     }
 }

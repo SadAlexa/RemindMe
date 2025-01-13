@@ -14,7 +14,7 @@ fun UserEntity.toUser() = User(
     image?.let { Uri.parse(it) },
 )
 
-fun User.toUserEntity() = UserEntity(
+fun User.toLoggedUserEntity() = UserEntity(
     id,
     username,
     name,

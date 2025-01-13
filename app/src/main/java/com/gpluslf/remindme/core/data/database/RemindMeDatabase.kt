@@ -5,15 +5,17 @@ import androidx.room.RoomDatabase
 import com.gpluslf.remindme.core.data.database.daos.AchievementDAOs
 import com.gpluslf.remindme.core.data.database.daos.CategoryDAOs
 import com.gpluslf.remindme.core.data.database.daos.ListDAOs
+import com.gpluslf.remindme.core.data.database.daos.LoggedUserDAOs
 import com.gpluslf.remindme.core.data.database.daos.NotificationDAOs
 import com.gpluslf.remindme.core.data.database.daos.SharedUserListDAOs
-import com.gpluslf.remindme.core.data.database.daos.TagsOnTaskDAOs
 import com.gpluslf.remindme.core.data.database.daos.TagDAOs
+import com.gpluslf.remindme.core.data.database.daos.TagsOnTaskDAOs
 import com.gpluslf.remindme.core.data.database.daos.TaskDAOs
 import com.gpluslf.remindme.core.data.database.daos.UserDAOs
 import com.gpluslf.remindme.core.data.database.entities.AchievementEntity
 import com.gpluslf.remindme.core.data.database.entities.CategoryEntity
 import com.gpluslf.remindme.core.data.database.entities.ListEntity
+import com.gpluslf.remindme.core.data.database.entities.LoggedUserEntity
 import com.gpluslf.remindme.core.data.database.entities.NotificationEntity
 import com.gpluslf.remindme.core.data.database.entities.SharedUserListEntity
 import com.gpluslf.remindme.core.data.database.entities.TagEntity
@@ -31,7 +33,8 @@ import com.gpluslf.remindme.core.data.database.entities.UserEntity
         NotificationEntity::class,
         AchievementEntity::class,
         SharedUserListEntity::class,
-        TagsOnTaskEntity::class
+        TagsOnTaskEntity::class,
+        LoggedUserEntity::class
     ],
     version = 1
 )
@@ -45,4 +48,5 @@ abstract class RemindMeDatabase : RoomDatabase() {
     abstract fun achievementDao(): AchievementDAOs
     abstract fun sharedUserListDao(): SharedUserListDAOs
     abstract fun tagsOnTaskDao(): TagsOnTaskDAOs
+    abstract fun loggedUserDao(): LoggedUserDAOs
 }

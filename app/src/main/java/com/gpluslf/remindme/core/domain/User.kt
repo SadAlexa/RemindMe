@@ -3,7 +3,7 @@ package com.gpluslf.remindme.core.domain
 import android.net.Uri
 
 data class User(
-    val id: Long? = null,
+    val id: Long,
 
     val username: String,
 

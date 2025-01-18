@@ -7,6 +7,7 @@ import com.gpluslf.remindme.core.domain.Category
 import com.gpluslf.remindme.core.domain.CategoryDataSource
 import com.gpluslf.remindme.core.domain.ListDataSource
 import com.gpluslf.remindme.core.presentation.model.TodoListUi
+import com.gpluslf.remindme.core.presentation.model.toTodoList
 import com.gpluslf.remindme.core.presentation.model.toTodoListUi
 import com.gpluslf.remindme.home.presentation.model.CategoryUi
 import com.gpluslf.remindme.home.presentation.model.HomeScreenAction
@@ -71,7 +72,7 @@ class ListsViewModel(
     }
 
     private fun filterByCategory(category: CategoryUi? = null): List<TodoListUi> {
-        return allLists.filter { it.category?.id == category?.id }
+        return allLists.filter { category == null || it.category?.id == category.id }
     }
 
     fun onHomeScreenAction(action: HomeScreenAction) {
@@ -111,6 +112,12 @@ class ListsViewModel(
                         selectedCategory = action.category,
                         lists = filterByCategory(action.category)
                     )
+                }
+            }
+
+            is HomeScreenAction.DeleteList -> {
+                viewModelScope.launch {
+                    listRepository.deleteList(action.list.toTodoList())
                 }
             }
         }

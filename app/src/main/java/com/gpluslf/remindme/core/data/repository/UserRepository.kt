@@ -1,4 +1,4 @@
-package com.gpluslf.remindme.core.data.database.repository
+package com.gpluslf.remindme.core.data.repository
 
 import com.gpluslf.remindme.core.data.database.daos.UserDAOs
 import com.gpluslf.remindme.core.data.mappers.toLoggedUserEntity
@@ -21,7 +21,8 @@ class UserRepository(private val userDAOs: UserDAOs) : UserDataSource {
         return userDAOs.logInUser(email, password)?.toUser()
     }
 
-    override suspend fun upsertUser(user: User) = userDAOs.upsertUser(user.toLoggedUserEntity())
+    override suspend fun createAccount(user: User) =
+        userDAOs.createAccount(user.toLoggedUserEntity())
 
     override suspend fun deleteUser(user: User) = userDAOs.deleteUser(user.toLoggedUserEntity())
 }

@@ -21,7 +21,9 @@ import com.gpluslf.remindme.core.data.database.entities.SharedUserListEntity
 import com.gpluslf.remindme.core.data.database.entities.TagEntity
 import com.gpluslf.remindme.core.data.database.entities.TagsOnTaskEntity
 import com.gpluslf.remindme.core.data.database.entities.TaskEntity
+import com.gpluslf.remindme.core.data.database.entities.UserAchievementEntity
 import com.gpluslf.remindme.core.data.database.entities.UserEntity
+import com.gpluslf.remindme.core.data.database.views.UserAchievementView
 
 @Database(
     entities = [
@@ -32,9 +34,13 @@ import com.gpluslf.remindme.core.data.database.entities.UserEntity
         TagEntity::class,
         NotificationEntity::class,
         AchievementEntity::class,
+        UserAchievementEntity::class,
         SharedUserListEntity::class,
         TagsOnTaskEntity::class,
-        LoggedUserEntity::class
+        LoggedUserEntity::class,
+    ],
+    views = [
+        UserAchievementView::class
     ],
     version = 1
 )

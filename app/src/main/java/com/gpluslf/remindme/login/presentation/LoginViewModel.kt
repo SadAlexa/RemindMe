@@ -68,7 +68,7 @@ class LoginViewModel(
 
     private fun createUser() {
         viewModelScope.launch {
-            userRepository.upsertUser(
+            userRepository.createAccount(
                 User(
                     id = 0,
                     username = signUpState.value.username,

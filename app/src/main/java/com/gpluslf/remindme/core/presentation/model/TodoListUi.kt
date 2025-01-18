@@ -3,6 +3,7 @@ package com.gpluslf.remindme.core.presentation.model
 import android.net.Uri
 import com.gpluslf.remindme.core.domain.TodoList
 import com.gpluslf.remindme.home.presentation.model.CategoryUi
+import com.gpluslf.remindme.home.presentation.model.toCategory
 import com.gpluslf.remindme.home.presentation.model.toCategoryUi
 
 data class TodoListUi(
@@ -34,5 +35,16 @@ fun TodoList.toTodoListUi() = TodoListUi(
     sharedUserId,
     isFavorite,
     category?.toCategoryUi(),
+)
+
+fun TodoListUi.toTodoList() = TodoList(
+    title,
+    userId,
+    body,
+    image,
+    isShared,
+    sharedUserId,
+    isFavorite,
+    category?.toCategory(),
 )
 

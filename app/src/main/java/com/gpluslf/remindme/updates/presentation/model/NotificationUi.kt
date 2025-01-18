@@ -22,7 +22,7 @@ data class NotificationUi(
 
     val taskListTitle: String?,
 
-    val achievementTitle: String?
+    val achievementId: Long?
 )
 
 fun Notification.toNotificationUi() = NotificationUi(
@@ -35,5 +35,5 @@ fun Notification.toNotificationUi() = NotificationUi(
     isRead,
     taskTitle,
     taskListTitle,
-    achievementTitle
+    achievementId
 )

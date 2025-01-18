@@ -13,7 +13,7 @@ fun NotificationEntity.toNotification() = Notification(
     isRead,
     taskTitle,
     taskListTitle,
-    achievementTitle
+    achievementId
 )
 
 fun Notification.toNotificationEntity() = NotificationEntity(
@@ -26,6 +26,6 @@ fun Notification.toNotificationEntity() = NotificationEntity(
     isRead,
     taskTitle,
     taskListTitle,
-    achievementTitle
+    achievementId
 )
 

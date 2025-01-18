@@ -2,35 +2,21 @@ package com.gpluslf.remindme.core.data.database.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "achievements",
-    primaryKeys = ["title", "user_id"],
-    foreignKeys = [
-        ForeignKey(
-            entity = UserEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["user_id"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
 )
 data class AchievementEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long,
 
     @ColumnInfo(name = "title")
     val title: String,
 
-    @ColumnInfo(name = "user_id")
-    val userId: Long,
-
     @ColumnInfo(name = "body")
     val body: String,
 
-    @ColumnInfo(name = "is_completed")
-    val isCompleted: Boolean,
-
-    @ColumnInfo(name = "percentage")
-    val percentage: Int
-
+    @ColumnInfo(name = "number")
+    val number: Int,
 )

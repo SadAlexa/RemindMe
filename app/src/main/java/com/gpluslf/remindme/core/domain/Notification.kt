@@ -22,6 +22,6 @@ data class Notification(
 
     val taskListTitle: String? = null,
 
-    val achievementTitle: String? = null
+    val achievementId: Long? = null
 )
 

@@ -33,8 +33,8 @@ import com.gpluslf.remindme.home.presentation.components.CustomListItem
 import com.gpluslf.remindme.home.presentation.components.CustomModalBottomSheet
 import com.gpluslf.remindme.home.presentation.components.FloatingActionAddButton
 import com.gpluslf.remindme.home.presentation.components.FloatingActionButtonMenuItem
+import com.gpluslf.remindme.home.presentation.components.SwipeToDeleteContainer
 import com.gpluslf.remindme.home.presentation.components.sampleTodoList
-import com.gpluslf.remindme.home.presentation.model.CategoryUi
 import com.gpluslf.remindme.home.presentation.model.HomeScreenAction
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
@@ -131,10 +131,18 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
                 items(state.lists) { item ->
-                    CustomListItem(
+                    SwipeToDeleteContainer(
                         item,
-                        onClick = {
-                            onCustomListItemClick(item.title)
+                        onDelete = {
+                            onHomeScreenAction(HomeScreenAction.DeleteList(it))
+                        },
+                        content = {
+                            CustomListItem(
+                                item,
+                                onClick = {
+                                    onCustomListItemClick(item.title)
+                                }
+                            )
                         }
                     )
                 }

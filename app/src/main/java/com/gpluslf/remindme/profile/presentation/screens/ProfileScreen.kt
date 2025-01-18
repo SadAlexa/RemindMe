@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -33,12 +32,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.gpluslf.remindme.core.domain.Achievement
 import com.gpluslf.remindme.core.domain.User
-import com.gpluslf.remindme.profile.presentation.AchievementState
+import com.gpluslf.remindme.core.domain.UserAchievement
+import com.gpluslf.remindme.profile.presentation.UserAchievementState
 import com.gpluslf.remindme.profile.presentation.UserState
 import com.gpluslf.remindme.profile.presentation.model.ProfileAction
-import com.gpluslf.remindme.profile.presentation.model.toAchievementUi
+import com.gpluslf.remindme.profile.presentation.model.toUserAchievementUi
 import com.gpluslf.remindme.profile.presentation.model.toUserUi
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
@@ -46,7 +45,7 @@ import com.gpluslf.remindme.ui.theme.RemindMeTheme
 @Composable
 fun ProfileScreen(
     userState: UserState,
-    achievementState: AchievementState,
+    userAchievementState: UserAchievementState,
     onProfileAction: (ProfileAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -69,8 +68,10 @@ fun ProfileScreen(
                             onProfileAction(ProfileAction.LogOut)
                         },
                     ) {
-                        Text("Log Out",
-                            fontWeight = FontWeight.Bold)
+                        Text(
+                            "Log Out",
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             )
@@ -93,7 +94,7 @@ fun ProfileScreen(
                 painter = painter,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(250.dp, 250.dp)
+                    .size(200.dp)
                     .padding(16.dp)
                     .clip(CircleShape)
             )
@@ -113,12 +114,12 @@ fun ProfileScreen(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                for (achievement in achievementState.achievements) {
+                for (userAchievement in userAchievementState.achievements) {
                     item {
                         ListItem(
-                            headlineContent = { Text(achievement.title) },
+                            headlineContent = { Text(userAchievement.achievementTitle) },
                             supportingContent = {
-                                Text(achievement.body)
+                                Text(userAchievement.achievementBody)
                             },
                             colors = ListItemDefaults.colors(
                                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -129,11 +130,11 @@ fun ProfileScreen(
                                 ) {
                                     CircularProgressIndicator(
                                         modifier = Modifier.size(70.dp),
-                                        progress = { achievement.percentage / 100f },
+                                        progress = { userAchievement.percentage },
                                         strokeWidth = 7.dp,
                                     )
                                     Text(
-                                        "${achievement.percentage}%",
+                                        "${userAchievement.percentage}%",
                                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                                         color = MaterialTheme.colorScheme.primary
                                     )
@@ -167,9 +168,10 @@ private fun ProfileScreenPreviewLight() {
                         email = "email"
                     ).toUserUi()
                 ),
-                achievementState = AchievementState(
+                userAchievementState = UserAchievementState(
                     achievements = (0..10).map {
-                        sampleAchievement.toAchievementUi().copy(title = "achievement $it")
+                        sampleUserAchievement.toUserAchievementUi()
+                            .copy(achievementTitle = "achievement $it")
                     }
                 ),
                 {},
@@ -181,12 +183,14 @@ private fun ProfileScreenPreviewLight() {
     }
 }
 
-internal val sampleAchievement = Achievement(
-    title = "title",
-    userId = 1,
-    body = "body",
-    isCompleted = false,
-    percentage = 80
+internal val sampleUserAchievement = UserAchievement(
+    1,
+    "title",
+    "AAAAAAA",
+    1,
+    1,
+    1,
+    true
 )
 
 @Preview(
@@ -209,9 +213,10 @@ private fun ProfileScreenPreviewDark() {
                         email = "email"
                     ).toUserUi()
                 ),
-                achievementState = AchievementState(
+                userAchievementState = UserAchievementState(
                     achievements = (0..10).map {
-                        sampleAchievement.toAchievementUi().copy(title = "achievement $it")
+                        sampleUserAchievement.toUserAchievementUi()
+                            .copy(achievementTitle = "achievement $it")
                     }
                 ),
                 {},

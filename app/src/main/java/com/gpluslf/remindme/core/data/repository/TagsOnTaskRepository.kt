@@ -1,4 +1,4 @@
-package com.gpluslf.remindme.core.data.database.repository
+package com.gpluslf.remindme.core.data.repository
 
 import com.gpluslf.remindme.core.data.database.daos.TagsOnTaskDAOs
 import com.gpluslf.remindme.core.data.database.entities.TagsOnTaskEntity

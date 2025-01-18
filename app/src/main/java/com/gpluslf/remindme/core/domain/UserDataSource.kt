@@ -10,7 +10,7 @@ interface UserDataSource {
 
     suspend fun logInUser(email: String, password: String): User?
 
-    suspend fun upsertUser(user: User)
+    suspend fun createAccount(user: User)
 
     suspend fun deleteUser(user: User)
 }

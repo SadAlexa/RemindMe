@@ -1,20 +1,24 @@
 package com.gpluslf.remindme.core.data.mappers
 
-import com.gpluslf.remindme.core.data.database.entities.AchievementEntity
-import com.gpluslf.remindme.core.domain.Achievement
+import com.gpluslf.remindme.core.data.database.views.UserAchievementView
+import com.gpluslf.remindme.core.domain.UserAchievement
 
-fun AchievementEntity.toAchievement() = Achievement(
-    title,
+fun UserAchievementView.toUserAchievement() = UserAchievement(
+    achievementId,
+    achievementTitle,
+    achievementBody,
+    achievementNumber,
     userId,
-    body,
-    isCompleted,
-    percentage
+    userNumber,
+    isCompleted
 )
 
-fun Achievement.toEntity() = AchievementEntity(
-    title,
+fun UserAchievement.toUserAchievementView() = UserAchievementView(
+    achievementId,
+    achievementTitle,
+    achievementBody,
+    achievementNumber,
     userId,
-    body,
-    isCompleted,
-    percentage
+    userNumber,
+    isCompleted
 )

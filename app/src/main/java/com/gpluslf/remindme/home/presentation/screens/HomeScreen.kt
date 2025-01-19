@@ -44,6 +44,7 @@ fun HomeScreen(
     state: ListsState,
     onHomeScreenAction: (HomeScreenAction) -> Unit,
     onAddListClick: () -> Unit,
+    onEditListSwipe: (String) -> Unit,
     onCustomListItemClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -130,21 +131,25 @@ fun HomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
-                items(state.lists) { item ->
+                items(state.lists, { it.title }) { item ->
                     SwipeToDeleteContainer(
                         item,
                         onDelete = {
                             onHomeScreenAction(HomeScreenAction.DeleteList(it))
                         },
-                        content = {
-                            CustomListItem(
-                                item,
-                                onClick = {
-                                    onCustomListItemClick(item.title)
-                                }
-                            )
-                        }
-                    )
+                        onEdit = {
+                            onHomeScreenAction(HomeScreenAction.EditList(it))
+                            onEditListSwipe(item.title)
+                        },
+                        modifier = Modifier.animateItem()
+                    ) {
+                        CustomListItem(
+                            item,
+                            onClick = {
+                                onCustomListItemClick(item.title)
+                            }
+                        )
+                    }
                 }
             }
         } else {
@@ -168,9 +173,10 @@ private fun HomeScreenPreviewLight() {
                 {},
                 {},
                 {},
+                {},
                 modifier = Modifier
                     .padding(padding)
-                    .fillMaxSize()
+                    .fillMaxSize(),
             )
         }
     }
@@ -188,6 +194,7 @@ private fun HomeScreenPreviewDark() {
                 state = ListsState(
                     lists = (0..10).map { sampleTodoList.toTodoListUi().copy(title = "List $it") }
                 ),
+                {},
                 {},
                 {},
                 {},

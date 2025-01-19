@@ -37,6 +37,8 @@ import com.gpluslf.remindme.home.presentation.components.CustomAlertDialog
 import com.gpluslf.remindme.home.presentation.components.CustomModalBottomSheet
 import com.gpluslf.remindme.home.presentation.components.FloatingActionAddButton
 import com.gpluslf.remindme.home.presentation.components.FloatingActionButtonMenuItem
+import com.gpluslf.remindme.home.presentation.components.SwipeToDeleteContainer
+import com.gpluslf.remindme.home.presentation.model.HomeScreenAction
 import com.gpluslf.remindme.home.presentation.model.ListScreenAction
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
@@ -47,6 +49,7 @@ fun ListScreen(
     state: TasksState,
     onAddTaskClick: () -> Unit,
     onAction: (ListScreenAction) -> Unit,
+    onEditTaskSwipe: (String) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -142,14 +145,26 @@ fun ListScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
-                items(state.tasks) { item ->
-                    TaskItem(
+                items(state.tasks, key = { it.title }) { item ->
+                    SwipeToDeleteContainer(
                         item,
-                        onCheckClick = {
-                            onAction(ListScreenAction.ToggleTask(item))
+                        onDelete = {
+                            onAction(ListScreenAction.DeleteTask(item))
                         },
-                        onTagClick = {/*TODO*/ }
-                    )
+                        onEdit = {
+                            onAction(ListScreenAction.EditTask(item))
+                            onEditTaskSwipe(item.title)
+                        },
+                        modifier = Modifier.animateItem()
+                    ) {
+                        TaskItem(
+                            item,
+                            onCheckClick = {
+                                onAction(ListScreenAction.ToggleTask(item))
+                            },
+                            onTagClick = {/*TODO*/ }
+                        )
+                    }
                 }
             }
         } else {
@@ -169,6 +184,7 @@ private fun ListScreenPreviewLight() {
             ListScreen(
                 listTitle = "List Title",
                 state = sampleState,
+                {},
                 {},
                 {},
                 onBackClick = {},
@@ -191,6 +207,7 @@ private fun ListScreenPreviewDark() {
             ListScreen(
                 listTitle = "List Title",
                 state = sampleState,
+                {},
                 {},
                 {},
                 onBackClick = {},

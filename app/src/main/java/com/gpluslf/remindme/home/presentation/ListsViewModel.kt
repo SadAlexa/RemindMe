@@ -120,6 +120,12 @@ class ListsViewModel(
                     listRepository.deleteList(action.list.toTodoList())
                 }
             }
+
+            is HomeScreenAction.EditList -> {
+                viewModelScope.launch {
+                    listRepository.upsertList(action.list.toTodoList())
+                }
+            }
         }
     }
 }

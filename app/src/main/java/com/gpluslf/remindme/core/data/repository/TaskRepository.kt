@@ -14,6 +14,13 @@ import java.time.LocalDate
 
 class TaskRepository(private val taskDAOs: TaskDAOs, private val tagsOnTaskDAOs: TagsOnTaskDAOs) :
     TaskDataSource {
+    override fun getTaskByTitle(taskTitle: String, listTitle: String, userId: Long): Flow<Task?> {
+        return taskDAOs.getTaskByTitle(taskTitle, listTitle, userId).map { taskEntity ->
+            taskEntity?.toTask(
+                tagsOnTaskDAOs.getAllTagsOnTask(taskTitle, listTitle, userId)
+            )
+        }
+    }
 
     override fun getAllTasksByList(listTitle: String, userId: Long): Flow<List<Task>> {
         return taskDAOs.getTasksByList(listTitle, userId).map { flow ->

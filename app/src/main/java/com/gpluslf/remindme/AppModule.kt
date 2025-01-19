@@ -62,7 +62,14 @@ val appModule = module {
     }
     viewModel<UserViewModel> { (userId: Long) -> UserViewModel(userId, get(), get()) }
     viewModel<ListsViewModel> { (userId: Long) -> ListsViewModel(userId, get(), get()) }
-    viewModel<AddListViewModel> { (userId: Long) -> AddListViewModel(userId, get(), get()) }
+    viewModel<AddListViewModel> { (userId: Long, listTitle: String?) ->
+        AddListViewModel(
+            userId,
+            listTitle,
+            get(),
+            get()
+        )
+    }
     viewModel<TasksViewModel> { (userId: Long, listTitle: String) ->
         TasksViewModel(
             userId,
@@ -71,10 +78,11 @@ val appModule = module {
             get()
         )
     }
-    viewModel<AddTaskViewModel> { (userId: Long, listTitle: String) ->
+    viewModel<AddTaskViewModel> { (userId: Long, listTitle: String, taskTitle: String) ->
         AddTaskViewModel(
             userId,
             listTitle,
+            taskTitle,
             get(),
             get()
         )

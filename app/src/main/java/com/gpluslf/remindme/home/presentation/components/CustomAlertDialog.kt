@@ -24,7 +24,7 @@ fun CustomAlertDialog(
         },
         text = {
             CustomTextField(
-                stringResource(R.string.list_title),
+                stringResource(R.string.title),
                 value
             ) {
                 onTitleValueChange(it)

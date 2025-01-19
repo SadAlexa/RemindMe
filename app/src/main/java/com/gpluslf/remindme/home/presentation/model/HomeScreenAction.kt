@@ -8,4 +8,5 @@ sealed interface HomeScreenAction {
     data class UpdateCategoryTitle(val title: String) : HomeScreenAction
     data class SetCategory(val category: CategoryUi?) : HomeScreenAction
     data class DeleteList(val list: TodoListUi) : HomeScreenAction
+    data class EditList(val list: TodoListUi) : HomeScreenAction
 }

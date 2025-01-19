@@ -10,12 +10,14 @@
     <string name="name">Name</string>
     <string name="username">Username</string>
     <string name="confirmPassword">Confirm password</string>
-    <string name="list_title">Title</string>
-    <string name="list_body">Description</string>
-    <string name="list_image">Image</string>
+    <string name="title">Title</string>
+    <string name="body">Note</string>
+    <string name="image">Image</string>
     <string name="add_image">Add an image</string>
     <string name="list_category">Category</string>
-    <string name="add_task">Add Task</string>
-    <string name="task_title">Task title</string>
+    <string name="new_task">New Task</string>
     <string name="login_error_message">Login Failed</string>
+    <string name="new_list">New List</string>
+    <string name="edit_list">Edit List</string>
+    <string name="edit_task">Edit Task</string>
 </resources>

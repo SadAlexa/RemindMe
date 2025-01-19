@@ -119,6 +119,19 @@ class TasksViewModel(
                 _state.update { state -> state.copy(showDialog = false, tagTitle = "") }
             }
 
+            is ListScreenAction.DeleteTask -> {
+                viewModelScope.launch {
+                    taskRepository.deleteTask(action.task.toTask())
+                }
+            }
+
+            is ListScreenAction.EditTask -> {
+                viewModelScope.launch {
+                    taskRepository.upsertTask(
+                        action.task.toTask()
+                    )
+                }
+            }
         }
     }
 }

@@ -50,6 +50,7 @@ import com.gpluslf.remindme.ui.theme.RemindMeTheme
 @Composable
 fun AddListScreen(
     modifier: Modifier = Modifier,
+    isNew: Boolean = false,
     state: TodoListState = TodoListState(),
     onAddListAction: (AddListAction) -> Unit = {},
     onFloatingActionButtonClick: () -> Unit = {},
@@ -75,9 +76,17 @@ fun AddListScreen(
                 modifier = Modifier.padding(horizontal = 30.dp),
                 expandedHeight = 80.dp,
                 title = {
-                    Text(
-                        "Add List", style = MaterialTheme.typography.headlineLarge
-                    )
+                    if (isNew) {
+                        Text(
+                            stringResource(R.string.new_list),
+                            style = MaterialTheme.typography.headlineLarge
+                        )
+                    } else {
+                        Text(
+                            stringResource(R.string.edit_list),
+                            style = MaterialTheme.typography.headlineLarge
+                        )
+                    }
                 },
                 actions = {
                     IconButton(onClick = onCloseActionButtonClick, content = {
@@ -97,17 +106,19 @@ fun AddListScreen(
             verticalArrangement = Arrangement.spacedBy(30.dp),
         ) {
             CustomTextField(
-                stringResource(R.string.list_title),
+                stringResource(R.string.title),
                 state.title
             ) {
                 onAddListAction(AddListAction.UpdateTitle(it))
             }
 
-            CustomTextField(
-                stringResource(R.string.list_body),
-                state.body ?: ""
-            ) {
-                onAddListAction(AddListAction.UpdateBody(it))
+            state.body?.let { text ->
+                CustomTextField(
+                    stringResource(R.string.body),
+                    text
+                ) {
+                    onAddListAction(AddListAction.UpdateBody(it))
+                }
             }
 
             LazyVerticalStaggeredGrid(

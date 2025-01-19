@@ -20,6 +20,7 @@ import kotlinx.coroutines.withContext
 
 class AddListViewModel(
     private val userId: Long,
+    private val listTitle: String? = null,
     private val todoListDataSource: ListDataSource,
     private val categoryDataSource: CategoryDataSource
 ) : ViewModel() {
@@ -35,6 +36,23 @@ class AddListViewModel(
     private fun loadData() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
+                if (listTitle != null) {
+                    todoListDataSource.getListByTitle(listTitle, userId).collect { list ->
+                        if (list != null) {
+                            _state.update { state ->
+                                state.copy(
+                                    title = list.title,
+                                    body = list.body,
+                                    image = list.image,
+                                    selectedCategory = list.category?.toCategoryUi(),
+                                    isShared = list.isShared,
+                                    isFavorite = list.isFavorite,
+                                    sharedUserId = list.sharedUserId
+                                )
+                            }
+                        }
+                    }
+                }
                 categoryDataSource.getAllCategories(userId).collect { list ->
                     _state.update { state ->
                         state.copy(categories = list.map { it.toCategoryUi() })

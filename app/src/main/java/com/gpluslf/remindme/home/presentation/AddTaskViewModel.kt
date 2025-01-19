@@ -23,6 +23,7 @@ import java.util.Date
 class AddTaskViewModel(
     private val userId: Long,
     private val listTitle: String,
+    private val taskTitle: String? = null,
     private val taskRepository: TaskDataSource,
     private val tagsRepository: TagDataSource
 ) : ViewModel() {
@@ -38,6 +39,26 @@ class AddTaskViewModel(
     private fun loadData() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
+                if (taskTitle != null) {
+                    taskRepository.getTaskByTitle(taskTitle, listTitle, userId).collect { task ->
+                        if (task != null) {
+                            _state.update { state ->
+                                state.copy(
+                                    title = task.title,
+                                    body = task.body,
+                                    image = task.image,
+                                    endTime = task.endTime,
+                                    frequency = task.frequency,
+                                    alert = task.alert,
+                                    isDone = task.isDone,
+                                    latitude = task.latitude,
+                                    longitude = task.longitude,
+                                    selectedTags = task.tags.map { it.toTagUi() }
+                                )
+                            }
+                        }
+                    }
+                }
                 tagsRepository.getAllTags(listTitle, userId).collect { list ->
                     _state.update { state ->
                         state.copy(tags = list.map { it.toTagUi() })

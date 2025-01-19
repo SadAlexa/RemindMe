@@ -68,6 +68,7 @@ import java.util.Date
 @Composable
 fun AddTaskScreen(
     modifier: Modifier = Modifier,
+    isNew: Boolean = false,
     state: CreateTaskState,
     onAddTaskAction: (AddTaskAction) -> Unit,
     onFloatingActionButtonClick: () -> Unit,
@@ -113,10 +114,17 @@ fun AddTaskScreen(
                 modifier = Modifier.padding(horizontal = 30.dp),
                 expandedHeight = 80.dp,
                 title = {
-                    Text(
-                        stringResource(R.string.add_task),
-                        style = MaterialTheme.typography.headlineLarge
-                    )
+                    if (isNew) {
+                        Text(
+                            stringResource(R.string.new_task),
+                            style = MaterialTheme.typography.headlineLarge
+                        )
+                    } else {
+                        Text(
+                            stringResource(R.string.edit_task),
+                            style = MaterialTheme.typography.headlineLarge
+                        )
+                    }
                 },
                 actions = {
                     IconButton(onClick = onCloseButtonClick,
@@ -138,17 +146,19 @@ fun AddTaskScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             CustomTextField(
-                stringResource(R.string.task_title),
+                stringResource(R.string.title),
                 state.title
             ) {
                 onAddTaskAction(AddTaskAction.UpdateTitle(it))
             }
 
-            CustomTextField(
-                stringResource(R.string.list_body),
-                state.body
-            ) {
-                onAddTaskAction(AddTaskAction.UpdateBody(it))
+            state.body?.let { text ->
+                CustomTextField(
+                    stringResource(R.string.body),
+                    text
+                ) {
+                    onAddTaskAction(AddTaskAction.UpdateBody(it))
+                }
             }
 
             HorizontalDivider()
@@ -347,7 +357,8 @@ private fun AddTaskScreenPreviewLight() {
                 Modifier
                     .padding(padding)
                     .fillMaxSize(),
-                state = sampleCreateTaskState,
+                false,
+                sampleCreateTaskState,
                 {},
                 {},
                 {}
@@ -368,7 +379,8 @@ private fun AddTaskScreenPreviewDark() {
                 Modifier
                     .padding(padding)
                     .fillMaxSize(),
-                state = sampleCreateTaskState,
+                false,
+                sampleCreateTaskState,
                 {},
                 {},
                 {}

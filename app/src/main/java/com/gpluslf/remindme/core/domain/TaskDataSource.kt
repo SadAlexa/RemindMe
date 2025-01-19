@@ -6,6 +6,8 @@ import java.time.LocalDate
 
 interface TaskDataSource {
 
+    fun getTaskByTitle(taskTitle: String, listTitle: String, userId: Long): Flow<Task?>
+
     fun getAllTasksByList(listTitle: String, userId: Long): Flow<List<Task>>
 
     suspend fun getAllTaskByYearMonth(

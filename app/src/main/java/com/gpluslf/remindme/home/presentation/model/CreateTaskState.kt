@@ -6,12 +6,12 @@ import com.gpluslf.remindme.core.presentation.model.TagUi
 import java.util.Date
 
 @Immutable
-data class CreateTaskState (
+data class CreateTaskState(
     val title: String = "",
 
     val listTitle: String = "",
 
-    val body: String = "",
+    val body: String? = null,
 
     val endTime: Date? = null,
 
@@ -29,7 +29,7 @@ data class CreateTaskState (
 
     val selectedTags: List<TagUi> = emptyList(),
 
-    val tags : List<TagUi> = emptyList(),
+    val tags: List<TagUi> = emptyList(),
 
     val isTimePickerOpen: Boolean = false,
 

@@ -19,6 +19,7 @@ import com.gpluslf.remindme.core.domain.TagDataSource
 import com.gpluslf.remindme.core.domain.TaskDataSource
 import com.gpluslf.remindme.core.domain.UserAchievementDataSource
 import com.gpluslf.remindme.core.domain.UserDataSource
+import com.gpluslf.remindme.core.model.LocationService
 import com.gpluslf.remindme.home.presentation.AddListViewModel
 import com.gpluslf.remindme.home.presentation.AddTaskViewModel
 import com.gpluslf.remindme.home.presentation.ListsViewModel
@@ -41,7 +42,7 @@ val appModule = module {
             .createFromAsset("database/remindme-database.db")
             .build()
     }
-
+    single { LocationService(get()) }
     single { get<RemindMeDatabase>().tagsOnTaskDao() }
     single { get<RemindMeDatabase>().categoryDao() }
     single<UserDataSource> { UserRepository(get<RemindMeDatabase>().userDao()) }
@@ -84,7 +85,7 @@ val appModule = module {
             listTitle,
             taskTitle,
             get(),
-            get()
+            get(),
         )
     }
     viewModel<CalendarViewModel> { (userId: Long) -> CalendarViewModel(userId, get()) }

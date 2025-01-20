@@ -74,4 +74,6 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.compose)
+    implementation(libs.osmdroid.android)
+    implementation(libs.osm.androd.compose)
 }

@@ -120,7 +120,6 @@ fun RemindMeNavGraph(
             }
         }
     }
-
     NavHost(
         navController = navController,
         startDestination = if (currentUserId != null) RemindMeRoute.APP else RemindMeRoute.AUTH,
@@ -247,22 +246,25 @@ fun RemindMeNavGraph(
                 )
             }
             composable<RemindMeRoute.AddTask> {
-                val taskTitle = it.toRoute<RemindMeRoute.AddTask>().taskTitle
-                val listTitle = it.toRoute<RemindMeRoute.AddTask>().listTitle
+                val addTask = it.toRoute<RemindMeRoute.AddTask>()
                 val viewModel = koinViewModel<AddTaskViewModel>(
-                    parameters = { parametersOf(currentUserId, listTitle, taskTitle) }
+                    parameters = {
+                        parametersOf(
+                            currentUserId,
+                            addTask.listTitle,
+                            addTask.taskTitle,
+                        )
+                    }
                 )
+
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 AddTaskScreen(
                     state = state,
-                    isNew = taskTitle == null,
+                    isNew = addTask.taskTitle == null,
                     onAddTaskAction = viewModel::onAddTaskAction,
-                    onFloatingActionButtonClick = {
+                    onBack = {
                         navController.popBackStack()
                     },
-                    onCloseButtonClick = {
-                        navController.popBackStack()
-                    }
                 )
             }
             composable<RemindMeRoute.Calendar> {
@@ -311,7 +313,5 @@ fun RemindMeNavGraph(
                 )
             }
         }
-
-        //TODO: add other routes
     }
 }

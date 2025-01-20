@@ -2,6 +2,7 @@ package com.gpluslf.remindme.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gpluslf.remindme.core.domain.Coordinates
 import com.gpluslf.remindme.core.domain.TagDataSource
 import com.gpluslf.remindme.core.domain.Task
 import com.gpluslf.remindme.core.domain.TaskDataSource
@@ -25,7 +26,7 @@ class AddTaskViewModel(
     private val listTitle: String,
     private val taskTitle: String? = null,
     private val taskRepository: TaskDataSource,
-    private val tagsRepository: TagDataSource
+    private val tagsRepository: TagDataSource,
 ) : ViewModel() {
     private val _state = MutableStateFlow(CreateTaskState())
     val state = _state.onStart {
@@ -51,8 +52,10 @@ class AddTaskViewModel(
                                     frequency = task.frequency,
                                     alert = task.alert,
                                     isDone = task.isDone,
-                                    latitude = task.latitude,
-                                    longitude = task.longitude,
+                                    coordinates = if (task.latitude == null || task.longitude == null) null else Coordinates(
+                                        task.latitude,
+                                        task.longitude
+                                    ),
                                     selectedTags = task.tags.map { it.toTagUi() }
                                 )
                             }
@@ -82,8 +85,8 @@ class AddTaskViewModel(
                     frequency = _state.value.frequency,
                     alert = _state.value.alert,
                     isDone = _state.value.isDone,
-                    latitude = _state.value.latitude,
-                    longitude = _state.value.longitude
+                    latitude = _state.value.coordinates?.latitude,
+                    longitude = _state.value.coordinates?.longitude
                 )
             )
         }
@@ -124,6 +127,12 @@ class AddTaskViewModel(
             is AddTaskAction.ShowTimePicker -> {
                 _state.update { state ->
                     state.copy(isTimePickerOpen = action.isOpen)
+                }
+            }
+
+            is AddTaskAction.ShowMap -> {
+                _state.update { state ->
+                    state.copy(isMapOpen = action.isOpen)
                 }
             }
 
@@ -176,7 +185,12 @@ class AddTaskViewModel(
             }
 
             is AddTaskAction.UpdateLocation -> {
-                // TODO()
+                _state.update { state ->
+                    state.copy(
+                        coordinates = action.coordinates,
+                        isMapOpen = false
+                    )
+                }
             }
 
             AddTaskAction.RemoveEndTime -> {
@@ -185,7 +199,9 @@ class AddTaskViewModel(
                 }
             }
 
-            AddTaskAction.SaveTask -> saveTask()
+            AddTaskAction.SaveTask -> {
+                saveTask()
+            }
         }
     }
 }

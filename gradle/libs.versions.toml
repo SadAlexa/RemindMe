@@ -16,9 +16,11 @@ activityCompose = "1.9.3"
 composeBom = "2024.12.01"
 lifecycleRuntimeKtxVersion = "2.8.7"
 navigationCompose = "2.8.5"
+osmdroidAndroid = "6.1.16"
 playServicesLocation = "21.3.0"
 roomVersion = "2.6.1"
 ksp = "2.1.0-1.0.29"
+osmdroidCompose = "0.0.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,6 +55,8 @@ ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "kto
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorVersion" }
 material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 material3 = { module = "androidx.compose.material3:material3" }
+osm-androd-compose = { module = "tech.utsmankece:osm-android-compose", version.ref = "osmdroidCompose" }
+osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroidAndroid" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 ui = { module = "androidx.compose.ui:ui" }
 ui-graphics = { module = "androidx.compose.ui:ui-graphics" }

@@ -38,7 +38,6 @@ import com.gpluslf.remindme.home.presentation.components.CustomModalBottomSheet
 import com.gpluslf.remindme.home.presentation.components.FloatingActionAddButton
 import com.gpluslf.remindme.home.presentation.components.FloatingActionButtonMenuItem
 import com.gpluslf.remindme.home.presentation.components.SwipeToDeleteContainer
-import com.gpluslf.remindme.home.presentation.model.HomeScreenAction
 import com.gpluslf.remindme.home.presentation.model.ListScreenAction
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 

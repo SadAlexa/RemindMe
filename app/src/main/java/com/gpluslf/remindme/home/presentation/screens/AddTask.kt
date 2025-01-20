@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.AlertDialog
@@ -44,6 +45,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -71,8 +73,7 @@ fun AddTaskScreen(
     isNew: Boolean = false,
     state: CreateTaskState,
     onAddTaskAction: (AddTaskAction) -> Unit,
-    onFloatingActionButtonClick: () -> Unit,
-    onCloseButtonClick: () -> Unit
+    onBack: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -97,176 +98,235 @@ fun AddTaskScreen(
             }
         )
     }
-    Scaffold(
-        modifier = modifier,
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    onAddTaskAction(AddTaskAction.SaveTask)
-                    onFloatingActionButtonClick()
+    AnimatedContent(state.isMapOpen) { isMapOpen ->
+        if (isMapOpen) {
+            MapScreen(
+                onFloatingActionButtonClick = {
+                    onAddTaskAction(AddTaskAction.UpdateLocation(it))
                 }
-            ) {
-                Icon(Icons.Outlined.Save, "Save Task")
-            }
-        },
-        topBar = {
-            TopAppBar(
-                modifier = Modifier.padding(horizontal = 30.dp),
-                expandedHeight = 80.dp,
-                title = {
-                    if (isNew) {
-                        Text(
-                            stringResource(R.string.new_task),
-                            style = MaterialTheme.typography.headlineLarge
-                        )
-                    } else {
-                        Text(
-                            stringResource(R.string.edit_task),
-                            style = MaterialTheme.typography.headlineLarge
-                        )
+            )
+        } else {
+            Scaffold(
+                modifier = modifier,
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = {
+                            onAddTaskAction(AddTaskAction.SaveTask)
+                            onBack()
+                        }
+                    ) {
+                        Icon(Icons.Outlined.Save, "Save Task")
                     }
                 },
-                actions = {
-                    IconButton(onClick = onCloseButtonClick,
-                        content = {
-                            Icon(
-                                Icons.Outlined.Close, contentDescription = "Close",
+                topBar = {
+                    TopAppBar(
+                        modifier = Modifier.padding(horizontal = 30.dp),
+                        expandedHeight = 80.dp,
+                        title = {
+                            if (isNew) {
+                                Text(
+                                    stringResource(R.string.new_task),
+                                    style = MaterialTheme.typography.headlineLarge
+                                )
+                            } else {
+                                Text(
+                                    stringResource(R.string.edit_task),
+                                    style = MaterialTheme.typography.headlineLarge
+                                )
+                            }
+                        },
+                        actions = {
+                            IconButton(onClick = onBack,
+                                content = {
+                                    Icon(
+                                        Icons.Outlined.Close, contentDescription = "Close",
+                                    )
+                                }
                             )
                         }
                     )
                 }
-            )
-        }
-    ) { contentPadding ->
-        Column(
-            modifier
-                .padding(contentPadding)
-                .padding(horizontal = 30.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-        ) {
-            CustomTextField(
-                stringResource(R.string.title),
-                state.title
-            ) {
-                onAddTaskAction(AddTaskAction.UpdateTitle(it))
-            }
-
-            state.body?.let { text ->
-                CustomTextField(
-                    stringResource(R.string.body),
-                    text
+            ) { contentPadding ->
+                Column(
+                    modifier
+                        .padding(contentPadding)
+                        .padding(horizontal = 30.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
-                    onAddTaskAction(AddTaskAction.UpdateBody(it))
-                }
-            }
-
-            HorizontalDivider()
-
-            AnimatedContent(
-                state.endTime != null,
-                label = "End Time",
-            ) { endTimePresent ->
-                if (endTimePresent) {
-                    val date = getDateInstance()
-                    val time = getTimeInstance()
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                    CustomTextField(
+                        stringResource(R.string.title),
+                        state.title
                     ) {
-                        Icon(Icons.Default.DateRange, contentDescription = "Date")
-                        Text(
-                            "Ends: ${state.endTime?.let { date.format(it) }}",
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.clickable {
-                                onAddTaskAction(
-                                    AddTaskAction.ShowDatePicker(
-                                        true
+                        onAddTaskAction(AddTaskAction.UpdateTitle(it))
+                    }
+
+                    CustomTextField(
+                        stringResource(R.string.body),
+                        state.body ?: ""
+                    ) {
+                        onAddTaskAction(AddTaskAction.UpdateBody(it))
+                    }
+
+                    HorizontalDivider()
+
+                    AnimatedContent(
+                        state.endTime != null,
+                        label = "End Time",
+                    ) { endTimePresent ->
+                        if (endTimePresent) {
+                            val date = getDateInstance()
+                            val time = getTimeInstance()
+                            CustomSelectorItem(
+                                leadingIcon = Icons.Default.DateRange,
+                                onClick = {
+                                    onAddTaskAction(AddTaskAction.RemoveEndTime)
+                                }) {
+                                Text(
+                                    "Ends: ${state.endTime?.let { date.format(it) }}",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.clickable {
+                                        onAddTaskAction(
+                                            AddTaskAction.ShowDatePicker(
+                                                true
+                                            )
+                                        )
+                                    }
+                                )
+                                Text("${state.endTime?.let { time.format(it) }}",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.clickable {
+                                        onAddTaskAction(
+                                            AddTaskAction.ShowTimePicker(
+                                                true
+                                            )
+                                        )
+                                    })
+                            }
+                        } else {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        onAddTaskAction(AddTaskAction.ShowDatePicker(true))
+                                    }
+                            ) {
+                                Icon(Icons.Default.DateRange, contentDescription = "Date")
+                                Text(
+                                    "Add end time", style = MaterialTheme.typography.bodyLarge,
+
                                     )
+                            }
+                        }
+                    }
+                    HorizontalDivider()
+                    AnimatedContent(state.coordinates) {
+                        if (it != null) {
+                            CustomSelectorItem(
+                                leadingIcon = Icons.Default.LocationOn,
+                                onClick = {
+                                    onAddTaskAction(AddTaskAction.UpdateLocation(null))
+                                }
+                            ) {
+                                Text(
+                                    "Location: ${it.latitude}, ${it.longitude}",
+                                    modifier = Modifier.weight(1f),
+                                    style = MaterialTheme.typography.bodyLarge,
                                 )
                             }
-                        )
-                        Text("${state.endTime?.let { time.format(it) }}",
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.clickable {
-                                onAddTaskAction(
-                                    AddTaskAction.ShowTimePicker(
-                                        true
-                                    )
+                        } else {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        onAddTaskAction(AddTaskAction.ShowMap(true))
+                                    }
+                            ) {
+                                Icon(Icons.Default.LocationOn, contentDescription = "Location")
+                                Text(
+                                    "Add location", style = MaterialTheme.typography.bodyLarge
                                 )
-                            })
-                        IconButton(onClick = {
-                            onAddTaskAction(AddTaskAction.RemoveEndTime)
-                        }, content = {
-                            Icon(
-                                Icons.Outlined.Close, contentDescription = "Close",
-                            )
-                        })
-                    }
-                } else {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                onAddTaskAction(AddTaskAction.ShowDatePicker(true))
                             }
+                        }
+                    }
+                    HorizontalDivider()
+                    LazyVerticalStaggeredGrid(
+                        columns = StaggeredGridCells.Adaptive(minSize = 100.dp),
+                        contentPadding = PaddingValues(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Icon(Icons.Default.DateRange, contentDescription = "Date")
-                        Text(
-                            "Add end time", style = MaterialTheme.typography.bodyLarge,
-
+                        items(state.tags) { tag ->
+                            FilterChip(
+                                selected = state.selectedTags.contains(tag),
+                                onClick = { onAddTaskAction(AddTaskAction.UpdateTags(tag)) },
+                                label = {
+                                    Text(
+                                        tag.title,
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                },
                             )
+                        }
                     }
-                }
-            }
-            HorizontalDivider()
 
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Adaptive(minSize = 100.dp),
-                contentPadding = PaddingValues(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(state.tags) { tag ->
-                    FilterChip(
-                        selected = state.selectedTags.contains(tag),
-                        onClick = { onAddTaskAction(AddTaskAction.UpdateTags(tag)) },
-                        label = { Text(tag.title, style = MaterialTheme.typography.bodyLarge) },
-                    )
-                }
-            }
+                    val launcher =
+                        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { image ->
+                            if (image != null) {
+                                context.contentResolver.takePersistableUriPermission(
+                                    image,
+                                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                )
+                                onAddTaskAction(AddTaskAction.UpdateImage(image))
+                            }
+                        }
+                    CustomPhotoButton(launcher)
 
-            val launcher =
-                rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { image ->
-                    if (image != null) {
-                        context.contentResolver.takePersistableUriPermission(
-                            image,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    state.image?.let { image ->
+                        val painter = rememberAsyncImagePainter(
+                            ImageRequest
+                                .Builder(LocalContext.current)
+                                .data(data = image)
+                                .build()
                         )
-                        onAddTaskAction(AddTaskAction.UpdateImage(image))
+                        Image(
+                            painter = painter,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(150.dp, 150.dp)
+                                .padding(16.dp)
+                                .clip(RoundedCornerShape(20.dp))
+                        )
                     }
                 }
-            CustomPhotoButton(launcher)
-
-            state.image?.let { image ->
-                val painter = rememberAsyncImagePainter(
-                    ImageRequest
-                        .Builder(LocalContext.current)
-                        .data(data = image)
-                        .build()
-                )
-                Image(
-                    painter = painter,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(150.dp, 150.dp)
-                        .padding(16.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                )
             }
         }
+    }
+}
+
+@Composable
+private fun CustomSelectorItem(
+    leadingIcon: ImageVector,
+    onClick: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Icon(leadingIcon, null)
+        content()
+        IconButton(onClick = onClick,
+            content = {
+                Icon(
+                    Icons.Outlined.Close, contentDescription = "Close",
+                )
+            }
+        )
     }
 }
 
@@ -361,7 +421,6 @@ private fun AddTaskScreenPreviewLight() {
                 sampleCreateTaskState,
                 {},
                 {},
-                {}
             )
         }
     }
@@ -383,7 +442,6 @@ private fun AddTaskScreenPreviewDark() {
                 sampleCreateTaskState,
                 {},
                 {},
-                {}
             )
         }
     }

@@ -2,6 +2,7 @@ package com.gpluslf.remindme.home.presentation.model
 
 import android.net.Uri
 import androidx.compose.runtime.Immutable
+import com.gpluslf.remindme.core.domain.Coordinates
 import com.gpluslf.remindme.core.presentation.model.TagUi
 import java.util.Date
 
@@ -23,9 +24,7 @@ data class CreateTaskState(
 
     val isDone: Boolean = false,
 
-    val latitude: Double? = null,
-
-    val longitude: Double? = null,
+    val coordinates: Coordinates? = null,
 
     val selectedTags: List<TagUi> = emptyList(),
 
@@ -34,4 +33,6 @@ data class CreateTaskState(
     val isTimePickerOpen: Boolean = false,
 
     val isDatePickerOpen: Boolean = false,
+
+    val isMapOpen: Boolean = false
 )

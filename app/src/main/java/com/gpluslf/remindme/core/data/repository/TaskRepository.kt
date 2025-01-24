@@ -49,6 +49,11 @@ class TaskRepository(private val taskDAOs: TaskDAOs, private val tagsOnTaskDAOs:
     override suspend fun upsertTask(task: Task) {
         // TODO A ROOM transaction is needed
         taskDAOs.upsertTask(task.toTaskEntity())
+        tagsOnTaskDAOs.deleteTagOnTask(
+            task.userId,
+            task.title,
+            task.listTitle,
+        )
         task.tags.forEach {
             tagsOnTaskDAOs.upsertTagOnTask(
                 it.toTagsOnTaskEntity(

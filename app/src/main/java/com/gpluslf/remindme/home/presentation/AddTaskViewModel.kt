@@ -41,25 +41,28 @@ class AddTaskViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 if (taskTitle != null) {
-                    taskRepository.getTaskByTitle(taskTitle, listTitle, userId).collect { task ->
-                        if (task != null) {
-                            _state.update { state ->
-                                state.copy(
-                                    title = task.title,
-                                    body = task.body,
-                                    image = task.image,
-                                    endTime = task.endTime,
-                                    frequency = task.frequency,
-                                    alert = task.alert,
-                                    isDone = task.isDone,
-                                    coordinates = if (task.latitude == null || task.longitude == null) null else Coordinates(
-                                        task.latitude,
-                                        task.longitude
-                                    ),
-                                    selectedTags = task.tags.map { it.toTagUi() }
-                                )
+                    launch {
+                        taskRepository.getTaskByTitle(taskTitle, listTitle, userId)
+                            .collect { task ->
+                                if (task != null) {
+                                    _state.update { state ->
+                                        state.copy(
+                                            title = task.title,
+                                            body = task.body,
+                                            image = task.image,
+                                            endTime = task.endTime,
+                                            frequency = task.frequency,
+                                            alert = task.alert,
+                                            isDone = task.isDone,
+                                            coordinates = if (task.latitude == null || task.longitude == null) null else Coordinates(
+                                                task.latitude,
+                                                task.longitude
+                                            ),
+                                            selectedTags = task.tags.map { it.toTagUi() }
+                                        )
+                                    }
+                                }
                             }
-                        }
                     }
                 }
                 tagsRepository.getAllTags(listTitle, userId).collect { list ->
@@ -72,21 +75,22 @@ class AddTaskViewModel(
     }
 
     private fun saveTask() {
+        val currentState = state.value
         viewModelScope.launch {
             taskRepository.upsertTask(
                 Task(
-                    title = _state.value.title,
-                    body = _state.value.body,
-                    image = _state.value.image,
-                    listTitle = listTitle,
                     userId = userId,
-                    tags = state.value.selectedTags.map { it.toTag() },
-                    endTime = _state.value.endTime,
-                    frequency = _state.value.frequency,
-                    alert = _state.value.alert,
-                    isDone = _state.value.isDone,
-                    latitude = _state.value.coordinates?.latitude,
-                    longitude = _state.value.coordinates?.longitude
+                    listTitle = listTitle,
+                    title = currentState.title,
+                    body = currentState.body,
+                    image = currentState.image,
+                    tags = currentState.selectedTags.map { it.toTag() },
+                    endTime = currentState.endTime,
+                    frequency = currentState.frequency,
+                    alert = currentState.alert,
+                    isDone = currentState.isDone,
+                    latitude = currentState.coordinates?.latitude,
+                    longitude = currentState.coordinates?.longitude
                 )
             )
         }
@@ -107,13 +111,13 @@ class AddTaskViewModel(
             }
 
             is AddTaskAction.UpdateTags -> {
+                val currentTags = state.value.selectedTags
                 _state.update { state ->
                     state.copy(
-                        selectedTags =
-                        if (_state.value.selectedTags.contains(action.tag))
-                            _state.value.selectedTags - action.tag
+                        selectedTags = if (currentTags.contains(action.tag))
+                            currentTags - action.tag
                         else
-                            _state.value.selectedTags + action.tag
+                            currentTags + action.tag
                     )
                 }
             }

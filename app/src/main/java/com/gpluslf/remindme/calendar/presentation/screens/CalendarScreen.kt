@@ -31,6 +31,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,6 +55,7 @@ import com.kizitonwose.calendar.core.WeekDay
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.core.yearMonth
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -159,9 +161,10 @@ fun MonthCalendar(
             )
         },
         monthHeader = {
-            LaunchedEffect(it) {
-                onAction(CalendarAction.SetCurrentMonth(it.yearMonth))
+            LaunchedEffect(state.firstVisibleMonth.yearMonth) {
+                onAction(CalendarAction.SelectMonth(state.firstVisibleMonth.yearMonth))
             }
+
             Column {
                 DaysOfWeekTitle(daysOfWeek)
             }
@@ -214,7 +217,9 @@ fun MonthChips(currentMonth: YearMonth, onClick: (YearMonth) -> Unit) {
         (1..12).forEach {
             FilterChip(
                 selected = currentMonth.month.value == it,
-                onClick = { onClick(YearMonth.of(currentMonth.year, it)) },
+                onClick = {
+                    onClick(YearMonth.of(currentMonth.year, it))
+                },
                 label = {
                     Text(
                         YearMonth.of(currentMonth.year, it).month.getDisplayName(
@@ -259,7 +264,6 @@ fun CalendarTopBar(month: YearMonth, isOpen: Boolean, onAction: (CalendarAction)
             )
         }
     )
-
 }
 
 
@@ -388,7 +392,7 @@ private fun CalendarScreenPreview() {
             CalendarScreen(
                 taskState = CalendarTaskState(
                     tasks = (1..10).map { sampleTask },
-                    isCalendarOpen = false
+                    isCalendarOpen = true
                 ),
                 {},
                 { false }

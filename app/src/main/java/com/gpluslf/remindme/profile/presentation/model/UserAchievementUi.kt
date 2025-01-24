@@ -2,6 +2,13 @@ package com.gpluslf.remindme.profile.presentation.model
 
 import com.gpluslf.remindme.core.domain.UserAchievement
 
+data class PercentageUi(val value: Float, val formatted: String)
+
+fun Float.toPercentageUi(): PercentageUi {
+    val formatted = "${(this * 100).toInt()}%"
+    return PercentageUi(this, formatted)
+}
+
 data class UserAchievementUi(
 
     val achievementId: Long,
@@ -18,16 +25,19 @@ data class UserAchievementUi(
 
     val isCompleted: Boolean,
 
-    val percentage: Float
+    val percentage: PercentageUi
 )
 
-fun UserAchievement.toUserAchievementUi() = UserAchievementUi(
-    achievementId,
-    achievementTitle,
-    achievementBody,
-    achievementNumber,
-    userId,
-    userNumber,
-    isCompleted,
-    userNumber.toFloat() / achievementNumber.toFloat()
-)
+fun UserAchievement.toUserAchievementUi(): UserAchievementUi {
+    return UserAchievementUi(
+        achievementId,
+        achievementTitle,
+        achievementBody,
+        achievementNumber,
+        userId,
+        userNumber,
+        isCompleted,
+        (userNumber.toFloat() / achievementNumber.toFloat()).toPercentageUi()
+    )
+}
+

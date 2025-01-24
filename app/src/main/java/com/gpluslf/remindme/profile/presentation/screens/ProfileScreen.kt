@@ -94,7 +94,7 @@ fun ProfileScreen(
                 painter = painter,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(200.dp)
+                    .size(150.dp)
                     .padding(16.dp)
                     .clip(CircleShape)
             )
@@ -130,11 +130,11 @@ fun ProfileScreen(
                                 ) {
                                     CircularProgressIndicator(
                                         modifier = Modifier.size(70.dp),
-                                        progress = { userAchievement.percentage },
+                                        progress = { userAchievement.percentage.value },
                                         strokeWidth = 7.dp,
                                     )
                                     Text(
-                                        "${userAchievement.percentage}%",
+                                        text = userAchievement.percentage.formatted,
                                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                                         color = MaterialTheme.colorScheme.primary
                                     )

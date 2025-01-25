@@ -4,6 +4,7 @@ import androidx.room.Room
 import com.gpluslf.remindme.calendar.presentation.CalendarViewModel
 import com.gpluslf.remindme.core.data.database.RemindMeDatabase
 import com.gpluslf.remindme.core.data.repository.CategoryRepository
+import com.gpluslf.remindme.core.data.repository.DataStoreRepository
 import com.gpluslf.remindme.core.data.repository.ListRepository
 import com.gpluslf.remindme.core.data.repository.LoggedUserRepository
 import com.gpluslf.remindme.core.data.repository.NotificationRepository
@@ -12,6 +13,7 @@ import com.gpluslf.remindme.core.data.repository.TaskRepository
 import com.gpluslf.remindme.core.data.repository.UserAchievementRepository
 import com.gpluslf.remindme.core.data.repository.UserRepository
 import com.gpluslf.remindme.core.domain.CategoryDataSource
+import com.gpluslf.remindme.core.domain.DataStoreSource
 import com.gpluslf.remindme.core.domain.ListDataSource
 import com.gpluslf.remindme.core.domain.LoggedUserDataSource
 import com.gpluslf.remindme.core.domain.NotificationDataSource
@@ -25,6 +27,7 @@ import com.gpluslf.remindme.home.presentation.AddTaskViewModel
 import com.gpluslf.remindme.home.presentation.ListsViewModel
 import com.gpluslf.remindme.home.presentation.TasksViewModel
 import com.gpluslf.remindme.login.presentation.LoginViewModel
+import com.gpluslf.remindme.profile.presentation.SettingsViewModel
 import com.gpluslf.remindme.profile.presentation.UserAchievementViewModel
 import com.gpluslf.remindme.profile.presentation.UserViewModel
 import com.gpluslf.remindme.updates.presentation.NotificationsViewModel
@@ -53,6 +56,7 @@ val appModule = module {
     single<NotificationDataSource> { NotificationRepository(get<RemindMeDatabase>().notificationDao()) }
     single<UserAchievementDataSource> { UserAchievementRepository(get<RemindMeDatabase>().achievementDao()) }
     single<LoggedUserDataSource> { LoggedUserRepository(get<RemindMeDatabase>().loggedUserDao()) }
+    single<DataStoreSource> { DataStoreRepository(get()) }
 
     viewModel<LoginViewModel> { LoginViewModel(get(), get()) }
     viewModel<UserAchievementViewModel> { (userId: Long) ->
@@ -90,4 +94,5 @@ val appModule = module {
     }
     viewModel<CalendarViewModel> { (userId: Long) -> CalendarViewModel(userId, get()) }
     viewModel<NotificationsViewModel> { (userId: Long) -> NotificationsViewModel(userId, get()) }
+    viewModel<SettingsViewModel> { SettingsViewModel(get()) }
 }

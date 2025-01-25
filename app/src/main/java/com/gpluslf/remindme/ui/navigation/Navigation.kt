@@ -36,6 +36,7 @@ import com.gpluslf.remindme.login.presentation.model.LoginAction
 import com.gpluslf.remindme.login.presentation.screens.SignInScreen
 import com.gpluslf.remindme.login.presentation.screens.SignUpScreen
 import com.gpluslf.remindme.login.presentation.screens.WelcomeScreen
+import com.gpluslf.remindme.profile.presentation.SettingsViewModel
 import com.gpluslf.remindme.profile.presentation.UserAchievementViewModel
 import com.gpluslf.remindme.profile.presentation.UserViewModel
 import com.gpluslf.remindme.profile.presentation.model.ProfileAction
@@ -285,13 +286,15 @@ fun RemindMeNavGraph(
                 val achievementViewModel = koinViewModel<UserAchievementViewModel>(
                     parameters = { parametersOf(currentUserId) }
                 )
+                val settingsViewModel = koinViewModel<SettingsViewModel>()
                 val userState by userViewModel.state.collectAsStateWithLifecycle()
                 val achievementState by achievementViewModel.state.collectAsStateWithLifecycle()
+                val settingsState by settingsViewModel.state.collectAsStateWithLifecycle()
                 ProfileScreen(
                     userState = userState,
+                    settingState = settingsState,
                     onProfileAction = { action ->
                         userViewModel.onProfileAction(action)
-
                         if (action == ProfileAction.LogOut) {
                             navController.popBackStack(
                                 route = RemindMeRoute.AUTH,
@@ -299,6 +302,7 @@ fun RemindMeNavGraph(
                             )
                         }
                     },
+                    onSettingAction = settingsViewModel::onAction,
                     userAchievementState = achievementState,
                 )
             }

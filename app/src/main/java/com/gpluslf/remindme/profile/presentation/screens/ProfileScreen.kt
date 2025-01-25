@@ -13,30 +13,46 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.gpluslf.remindme.R
 import com.gpluslf.remindme.core.domain.User
 import com.gpluslf.remindme.core.domain.UserAchievement
 import com.gpluslf.remindme.profile.presentation.UserAchievementState
 import com.gpluslf.remindme.profile.presentation.UserState
+import com.gpluslf.remindme.profile.presentation.components.CustomSegmentedButton
 import com.gpluslf.remindme.profile.presentation.model.ProfileAction
+import com.gpluslf.remindme.profile.presentation.model.SettingsAction
+import com.gpluslf.remindme.profile.presentation.model.SettingsState
+import com.gpluslf.remindme.profile.presentation.model.toThemeUi
 import com.gpluslf.remindme.profile.presentation.model.toUserAchievementUi
 import com.gpluslf.remindme.profile.presentation.model.toUserUi
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
@@ -45,10 +61,53 @@ import com.gpluslf.remindme.ui.theme.RemindMeTheme
 @Composable
 fun ProfileScreen(
     userState: UserState,
+    settingState: SettingsState,
     userAchievementState: UserAchievementState,
     onProfileAction: (ProfileAction) -> Unit,
+    onSettingAction: (SettingsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    var showBottomSheet by remember { mutableStateOf(false) }
+
+    if (showBottomSheet) {
+        val bottomSheetState = rememberModalBottomSheetState()
+        ModalBottomSheet(
+            sheetState = bottomSheetState,
+            onDismissRequest = { showBottomSheet = false }
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        stringResource(R.string.change_theme)
+                    )
+                    CustomSegmentedButton(
+                        settingState.theme.value,
+                    ) {
+                        onSettingAction(SettingsAction.ChangeTheme(it))
+                    }
+                }
+                TextButton(
+                    onClick = {
+                        onProfileAction(ProfileAction.LogOut)
+                    },
+                ) {
+                    Text(
+                        "Log Out",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+        }
+    }
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -63,15 +122,13 @@ fun ProfileScreen(
                     )
                 },
                 actions = {
-                    TextButton(
+                    IconButton(
+                        modifier = Modifier.size(50.dp),
                         onClick = {
-                            onProfileAction(ProfileAction.LogOut)
-                        },
+                            showBottomSheet = true
+                        }
                     ) {
-                        Text(
-                            "Log Out",
-                            fontWeight = FontWeight.Bold
-                        )
+                        Icon(Icons.Outlined.Menu, contentDescription = "options")
                     }
                 }
             )
@@ -87,7 +144,10 @@ fun ProfileScreen(
             val painter = rememberAsyncImagePainter(
                 ImageRequest
                     .Builder(LocalContext.current)
-                    .data(data = if (userState.user?.image != null) userState.user.image else "https://cdn-icons-png.flaticon.com/512/149/149071.png")
+                    .data(
+                        data = userState.user?.image
+                            ?: "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                    )
                     .build()
             )
             Image(
@@ -168,12 +228,14 @@ private fun ProfileScreenPreviewLight() {
                         email = "email"
                     ).toUserUi()
                 ),
+                settingState = sampleSettingsState,
                 userAchievementState = UserAchievementState(
                     achievements = (0..10).map {
                         sampleUserAchievement.toUserAchievementUi()
                             .copy(achievementTitle = "achievement $it")
                     }
                 ),
+                {},
                 {},
                 modifier = Modifier
                     .padding(padding)
@@ -191,6 +253,10 @@ internal val sampleUserAchievement = UserAchievement(
     1,
     1,
     true
+)
+
+internal val sampleSettingsState = SettingsState(
+    theme = 0.toThemeUi()
 )
 
 @Preview(
@@ -213,12 +279,14 @@ private fun ProfileScreenPreviewDark() {
                         email = "email"
                     ).toUserUi()
                 ),
+                settingState = sampleSettingsState,
                 userAchievementState = UserAchievementState(
                     achievements = (0..10).map {
                         sampleUserAchievement.toUserAchievementUi()
                             .copy(achievementTitle = "achievement $it")
                     }
                 ),
+                {},
                 {},
                 modifier = Modifier
                     .padding(padding)

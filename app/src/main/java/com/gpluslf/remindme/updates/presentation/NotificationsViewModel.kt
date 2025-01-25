@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class NotificationsState (val notifications: List<NotificationUi>)
+data class NotificationsState(val notifications: List<NotificationUi>)
 
 class NotificationsViewModel(
     private val userId: Long,
@@ -41,7 +41,7 @@ class NotificationsViewModel(
         // TODO
     }
 
-    fun deleteNotification(list: NotificationUi)  = viewModelScope.launch {
+    fun deleteNotification(list: NotificationUi) = viewModelScope.launch {
         // TODO
     }
 }

@@ -2,10 +2,10 @@ package com.gpluslf.remindme.home.presentation.model
 
 import android.net.Uri
 import androidx.compose.runtime.Immutable
-import com.gpluslf.remindme.core.presentation.model.TodoListUi
 
 @Immutable
 data class TodoListState(
+
     val title: String = "",
 
     val body: String? = "",
@@ -20,6 +20,7 @@ data class TodoListState(
 
     val selectedCategory: CategoryUi? = null,
 
-    val categories: List<CategoryUi> = emptyList()
+    val categories: List<CategoryUi> = emptyList(),
 
+    val isPickerVisible: Boolean = false
 )

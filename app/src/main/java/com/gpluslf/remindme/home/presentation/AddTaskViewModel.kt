@@ -206,6 +206,10 @@ class AddTaskViewModel(
             AddTaskAction.SaveTask -> {
                 saveTask()
             }
+
+            is AddTaskAction.ShowImagePicker -> {
+                _state.update { state -> state.copy(isImagePickerVisible = action.isOpen) }
+            }
         }
     }
 }

@@ -25,4 +25,8 @@ class UserRepository(private val userDAOs: UserDAOs) : UserDataSource {
         userDAOs.createAccount(user.toLoggedUserEntity())
 
     override suspend fun deleteUser(user: User) = userDAOs.deleteUser(user.toLoggedUserEntity())
+
+    override suspend fun upsertImage(userId: Long, image: String) {
+        userDAOs.upsertImage(userId, image)
+    }
 }

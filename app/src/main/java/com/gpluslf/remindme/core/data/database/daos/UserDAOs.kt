@@ -29,6 +29,9 @@ interface UserDAOs {
     @Delete
     suspend fun deleteUser(user: UserEntity)
 
+    @Query("UPDATE users SET image = :image WHERE id = :userId")
+    suspend fun upsertImage(userId: Long, image: String)
+
 
     @Query("SELECT * FROM achievements")
     suspend fun getAllAchievements(): List<AchievementEntity>

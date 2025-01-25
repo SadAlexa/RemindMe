@@ -1,9 +1,6 @@
 package com.gpluslf.remindme.home.presentation.screens
 
-import android.content.Intent
 import android.content.res.Configuration
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -54,6 +51,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.gpluslf.remindme.R
 import com.gpluslf.remindme.core.data.mappers.toDate
+import com.gpluslf.remindme.core.presentation.components.ImagePickerBottomSheet
 import com.gpluslf.remindme.core.presentation.model.TagUi
 import com.gpluslf.remindme.home.presentation.components.CustomPhotoButton
 import com.gpluslf.remindme.home.presentation.components.CustomTextField
@@ -75,7 +73,16 @@ fun AddTaskScreen(
     onAddTaskAction: (AddTaskAction) -> Unit,
     onBack: () -> Unit,
 ) {
-    val context = LocalContext.current
+    if (state.isImagePickerVisible) {
+        ImagePickerBottomSheet(
+            onSelected = { image ->
+                onAddTaskAction(AddTaskAction.UpdateImage(image))
+            },
+            onDismissRequest = {
+                onAddTaskAction(AddTaskAction.ShowImagePicker(false))
+            }
+        )
+    }
 
     if (state.isDatePickerOpen) {
         DatePickerModal(
@@ -273,17 +280,7 @@ fun AddTaskScreen(
                         }
                     }
 
-                    val launcher =
-                        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { image ->
-                            if (image != null) {
-                                context.contentResolver.takePersistableUriPermission(
-                                    image,
-                                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                                )
-                                onAddTaskAction(AddTaskAction.UpdateImage(image))
-                            }
-                        }
-                    CustomPhotoButton(launcher)
+                    CustomPhotoButton { onAddTaskAction(AddTaskAction.ShowImagePicker(true)) }
 
                     state.image?.let { image ->
                         val painter = rememberAsyncImagePainter(

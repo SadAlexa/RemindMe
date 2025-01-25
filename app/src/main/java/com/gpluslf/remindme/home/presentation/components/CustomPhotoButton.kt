@@ -1,9 +1,5 @@
 package com.gpluslf.remindme.home.presentation.components
 
-import android.net.Uri
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -20,13 +16,9 @@ import androidx.compose.ui.unit.dp
 import com.gpluslf.remindme.R
 
 @Composable
-fun CustomPhotoButton (launcher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>) {
-    Button (onClick = {
-        launcher.launch(
-            PickVisualMediaRequest(mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly)
-        )
-    }) {
-        Row (
+fun CustomPhotoButton(onClick: () -> Unit) {
+    Button(onClick = onClick) {
+        Row(
             modifier = Modifier.padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)

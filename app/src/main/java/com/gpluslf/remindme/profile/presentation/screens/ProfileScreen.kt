@@ -2,6 +2,7 @@ package com.gpluslf.remindme.profile.presentation.screens
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,7 @@ import coil.request.ImageRequest
 import com.gpluslf.remindme.R
 import com.gpluslf.remindme.core.domain.User
 import com.gpluslf.remindme.core.domain.UserAchievement
+import com.gpluslf.remindme.core.presentation.components.ImagePickerBottomSheet
 import com.gpluslf.remindme.profile.presentation.UserAchievementState
 import com.gpluslf.remindme.profile.presentation.UserState
 import com.gpluslf.remindme.profile.presentation.components.CustomSegmentedButton
@@ -67,6 +69,16 @@ fun ProfileScreen(
     onSettingAction: (SettingsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    if (userState.isImagePickerVisible) {
+        ImagePickerBottomSheet(
+            onSelected = { image ->
+                onProfileAction(ProfileAction.UpdateImage(image))
+            },
+            onDismissRequest = {
+                onProfileAction(ProfileAction.ShowImagePicker(false))
+            }
+        )
+    }
 
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -157,6 +169,7 @@ fun ProfileScreen(
                     .size(150.dp)
                     .padding(16.dp)
                     .clip(CircleShape)
+                    .clickable { onProfileAction(ProfileAction.ShowImagePicker(true)) },
             )
             Text(
                 text = userState.user?.name ?: "",

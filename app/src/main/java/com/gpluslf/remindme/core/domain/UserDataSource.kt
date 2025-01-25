@@ -13,4 +13,6 @@ interface UserDataSource {
     suspend fun createAccount(user: User)
 
     suspend fun deleteUser(user: User)
+
+    suspend fun upsertImage(userId: Long, image: String)
 }

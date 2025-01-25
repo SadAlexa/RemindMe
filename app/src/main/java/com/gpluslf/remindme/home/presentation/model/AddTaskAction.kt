@@ -19,6 +19,7 @@ sealed interface AddTaskAction {
     data class ShowTimePicker(val isOpen: Boolean) : AddTaskAction
     data class ShowDatePicker(val isOpen: Boolean) : AddTaskAction
     data class ShowMap(val isOpen: Boolean) : AddTaskAction
+    data class ShowImagePicker(val isOpen: Boolean) : AddTaskAction
     data object RemoveEndTime : AddTaskAction
     data object SaveTask : AddTaskAction
 }

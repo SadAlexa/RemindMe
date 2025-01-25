@@ -116,7 +116,12 @@ class AddListViewModel(
                 _state.update { state -> state.copy(sharedUserId = action.sharedUserId) }
             }
 
+            is AddListAction.ShowPicker -> {
+                _state.update { state -> state.copy(isPickerVisible = action.value) }
+            }
+
             AddListAction.SaveList -> saveList()
+
         }
     }
 }

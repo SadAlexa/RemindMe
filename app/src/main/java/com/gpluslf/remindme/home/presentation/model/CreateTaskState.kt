@@ -34,5 +34,7 @@ data class CreateTaskState(
 
     val isDatePickerOpen: Boolean = false,
 
-    val isMapOpen: Boolean = false
+    val isMapOpen: Boolean = false,
+
+    val isImagePickerVisible: Boolean = false
 )

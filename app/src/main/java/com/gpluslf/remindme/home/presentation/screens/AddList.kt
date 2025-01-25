@@ -39,6 +39,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.gpluslf.remindme.R
 import com.gpluslf.remindme.core.domain.Category
+import com.gpluslf.remindme.core.presentation.components.ImagePickerBottomSheet
 import com.gpluslf.remindme.home.presentation.components.CustomPhotoButton
 import com.gpluslf.remindme.home.presentation.components.CustomTextField
 import com.gpluslf.remindme.home.presentation.model.AddListAction
@@ -105,6 +106,18 @@ fun AddListScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(30.dp),
         ) {
+
+            if (state.isPickerVisible) {
+                ImagePickerBottomSheet(
+                    onSelected = { image ->
+                        onAddListAction(AddListAction.UpdateImage(image))
+                    },
+                    onDismissRequest = {
+                        onAddListAction(AddListAction.ShowPicker(false))
+                    }
+                )
+            }
+
             CustomTextField(
                 stringResource(R.string.title),
                 state.title
@@ -150,7 +163,7 @@ fun AddListScreen(
                         onAddListAction(AddListAction.UpdateImage(image))
                     }
                 }
-            CustomPhotoButton(launcher)
+            CustomPhotoButton({ onAddListAction(AddListAction.ShowPicker(true)) })
 
             state.image?.let { image ->
                 val painter = rememberAsyncImagePainter(

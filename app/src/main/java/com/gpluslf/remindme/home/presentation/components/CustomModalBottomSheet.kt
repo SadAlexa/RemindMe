@@ -2,9 +2,10 @@ package com.gpluslf.remindme.home.presentation.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -30,6 +31,8 @@ fun <T : Any> CustomModalBottomSheet(
     key: (T) -> String = { it.toString() },
     onDismissRequest: () -> Unit,
     selected: T? = null,
+    deleteAction: (T) -> Unit,
+    editAction: (T) -> Unit
 ) {
     val bottomSheetState = rememberModalBottomSheetState()
 
@@ -42,21 +45,29 @@ fun <T : Any> CustomModalBottomSheet(
         sheetState = bottomSheetState,
         onDismissRequest = onDismissRequest
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            CustomModalBottomSheetTextItem(
-                title = "All",
-                onClick = { onClick(null) },
-                isSelected = selected == null
-            )
-            elements.forEach { comp: T ->
+            item {
                 CustomModalBottomSheetTextItem(
-                    title = key(comp),
-                    onClick = { onClick(comp) },
-                    isSelected = selected == comp
+                    title = "All",
+                    onClick = { onClick(null) },
+                    isSelected = selected == null
                 )
+            }
+            items(elements, key) { comp: T ->
+                SwipeToDeleteContainer(
+                    item = comp,
+                    onDelete = { deleteAction(comp) },
+                    onEdit = { editAction(comp) }
+                ) {
+                    CustomModalBottomSheetTextItem(
+                        title = key(comp),
+                        onClick = { onClick(comp) },
+                        isSelected = selected == comp
+                    )
+                }
             }
         }
     }
@@ -93,7 +104,9 @@ private fun CustomModalBottomSheetPreview() {
             CustomModalBottomSheet(
                 action = {},
                 elements = listOf("1", "2", "3"),
-                onDismissRequest = {}
+                onDismissRequest = {},
+                deleteAction = {},
+                editAction = {}
             )
         }
     }

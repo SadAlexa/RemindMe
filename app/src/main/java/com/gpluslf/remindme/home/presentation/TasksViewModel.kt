@@ -7,6 +7,7 @@ import com.gpluslf.remindme.core.domain.TagDataSource
 import com.gpluslf.remindme.core.domain.TaskDataSource
 import com.gpluslf.remindme.core.presentation.model.TagUi
 import com.gpluslf.remindme.core.presentation.model.TaskUi
+import com.gpluslf.remindme.core.presentation.model.toTag
 import com.gpluslf.remindme.core.presentation.model.toTagUi
 import com.gpluslf.remindme.core.presentation.model.toTask
 import com.gpluslf.remindme.core.presentation.model.toTaskUi
@@ -26,6 +27,7 @@ data class TasksState(
     val showDialog: Boolean = false,
     val tagTitle: String = "",
     val selectedTag: TagUi? = null,
+    val selectedEditTag: TagUi? = null,
     val tags: List<TagUi> = emptyList()
 )
 
@@ -89,7 +91,13 @@ class TasksViewModel(
             }
 
             is ListScreenAction.ShowDialog -> {
-                _state.update { state -> state.copy(showDialog = action.showDialog) }
+                _state.update { state ->
+                    state.copy(
+                        showDialog = action.showDialog,
+                        selectedEditTag = action.tag,
+                        tagTitle = action.tag?.title ?: ""
+                    )
+                }
             }
 
             is ListScreenAction.UpdateTagTitle -> {
@@ -109,14 +117,20 @@ class TasksViewModel(
                 viewModelScope.launch {
                     tagRepository.upsertTag(
                         Tag(
-                            id = 0,
+                            id = state.value.selectedEditTag?.id ?: 0,
                             title = state.value.tagTitle,
                             listTitle = listTitle,
                             userId
                         )
                     )
                 }
-                _state.update { state -> state.copy(showDialog = false, tagTitle = "") }
+                _state.update { state ->
+                    state.copy(
+                        showDialog = false,
+                        tagTitle = "",
+                        selectedEditTag = null
+                    )
+                }
             }
 
             is ListScreenAction.DeleteTask -> {
@@ -129,6 +143,20 @@ class TasksViewModel(
                 viewModelScope.launch {
                     taskRepository.upsertTask(
                         action.task.toTask()
+                    )
+                }
+            }
+
+            is ListScreenAction.DeleteTag -> {
+                viewModelScope.launch {
+                    tagRepository.deleteTag(action.tag.toTag())
+                }
+            }
+
+            is ListScreenAction.EditTag -> {
+                viewModelScope.launch {
+                    tagRepository.upsertTag(
+                        action.tag.toTag()
                     )
                 }
             }

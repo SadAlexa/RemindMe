@@ -202,7 +202,7 @@ fun RemindMeNavGraph(
                     },
                     onCustomListItemClick = { name ->
                         navController.navigate(RemindMeRoute.TodoList(name))
-                    },
+                    }
                 )
             }
 

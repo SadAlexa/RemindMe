@@ -81,7 +81,13 @@ fun ListScreen(
             onDismissRequest = {
                 showBottomSheet = false
             },
-            selected = state.selectedTag
+            selected = state.selectedTag,
+            deleteAction = {
+                onAction(ListScreenAction.DeleteTag(it))
+            },
+            editAction = {
+                onAction(ListScreenAction.ShowDialog(true, it))
+            }
         )
     }
 

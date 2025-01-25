@@ -77,7 +77,13 @@ fun HomeScreen(
             onDismissRequest = {
                 showBottomSheet = false
             },
-            selected = state.selectedCategory
+            selected = state.selectedCategory,
+            deleteAction = {
+                onHomeScreenAction(HomeScreenAction.DeleteCategory(it))
+            },
+            editAction = {
+                onHomeScreenAction(HomeScreenAction.ShowDialog(true, it))
+            }
         )
     }
 

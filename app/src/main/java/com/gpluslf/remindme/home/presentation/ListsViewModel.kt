@@ -11,6 +11,7 @@ import com.gpluslf.remindme.core.presentation.model.toTodoList
 import com.gpluslf.remindme.core.presentation.model.toTodoListUi
 import com.gpluslf.remindme.home.presentation.model.CategoryUi
 import com.gpluslf.remindme.home.presentation.model.HomeScreenAction
+import com.gpluslf.remindme.home.presentation.model.toCategory
 import com.gpluslf.remindme.home.presentation.model.toCategoryUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +29,8 @@ data class ListsState(
     val showDialog: Boolean = false,
     val categoryTitle: String = "",
     val categories: List<CategoryUi> = emptyList(),
-    val selectedCategory: CategoryUi? = null
+    val selectedCategory: CategoryUi? = null,
+    val selectedEditCategory: CategoryUi? = null
 )
 
 class ListsViewModel(
@@ -81,19 +83,27 @@ class ListsViewModel(
                 viewModelScope.launch {
                     categoryRepository.upsertCategory(
                         Category(
-                            id = 0,
+                            id = state.value.selectedEditCategory?.id ?: 0,
                             title = state.value.categoryTitle,
                             userId
                         )
                     )
                 }
-                _state.update { state -> state.copy(showDialog = false, categoryTitle = "") }
+                _state.update { state ->
+                    state.copy(
+                        showDialog = false,
+                        categoryTitle = "",
+                        selectedEditCategory = null
+                    )
+                }
             }
 
             is HomeScreenAction.ShowDialog -> {
                 _state.update { state ->
                     state.copy(
                         showDialog = action.showDialog,
+                        selectedEditCategory = action.category,
+                        categoryTitle = action.category?.title ?: ""
                     )
                 }
             }
@@ -124,6 +134,18 @@ class ListsViewModel(
             is HomeScreenAction.EditList -> {
                 viewModelScope.launch {
                     listRepository.upsertList(action.list.toTodoList())
+                }
+            }
+
+            is HomeScreenAction.DeleteCategory -> {
+                viewModelScope.launch {
+                    categoryRepository.deleteCategory(action.category.toCategory())
+                }
+            }
+
+            is HomeScreenAction.EditCategory -> {
+                viewModelScope.launch {
+                    categoryRepository.upsertCategory(action.category.toCategory())
                 }
             }
         }

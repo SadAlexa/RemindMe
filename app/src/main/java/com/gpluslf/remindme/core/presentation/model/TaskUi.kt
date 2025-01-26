@@ -1,6 +1,7 @@
 package com.gpluslf.remindme.core.presentation.model
 
 import android.net.Uri
+import com.gpluslf.remindme.core.domain.Coordinates
 import com.gpluslf.remindme.core.domain.Task
 import java.util.Date
 
@@ -14,9 +15,8 @@ data class TaskUi(
     val alert: Date?,
     val image: Uri?,
     val isDone: Boolean,
-    val latitude: Double?,
-    val longitude: Double?,
-    val tags : List<TagUi> = emptyList()
+    val coordinates: Coordinates?,
+    val tags: List<TagUi> = emptyList()
 )
 
 fun Task.toTaskUi() = TaskUi(
@@ -29,8 +29,10 @@ fun Task.toTaskUi() = TaskUi(
     alert,
     image,
     isDone,
-    latitude,
-    longitude,
+    coordinates = if (latitude == null || longitude == null) null else Coordinates(
+        latitude,
+        longitude
+    ),
     tags.map { it.toTagUi() }
 )
 
@@ -44,8 +46,8 @@ fun TaskUi.toTask() = Task(
     alert,
     image,
     isDone,
-    latitude,
-    longitude,
+    coordinates?.latitude,
+    coordinates?.longitude,
     tags.map { it.toTag() }
 )
 

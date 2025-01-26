@@ -7,13 +7,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -54,23 +59,40 @@ fun TaskItem(
                 }
             },
         headlineContent = {
-            Column(
-                horizontalAlignment = Alignment.Start
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(
-                    text = task.title,
-                    fontWeight = FontWeight.Bold,
-                )
-                task.endTime?.let {
+                Column(
+                    horizontalAlignment = Alignment.Start
+                ) {
                     Text(
-                        text = getTimeInstance().format(task.endTime),
-                        color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontWeight = FontWeight.Bold
-                        )
+                        text = task.title,
+                        fontWeight = FontWeight.Bold,
                     )
+                    task.endTime?.let {
+                        Text(
+                            text = getTimeInstance().format(task.endTime),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    }
                 }
-                //TODO add position
+                Spacer(modifier = Modifier.weight(1f))
+                if (task.coordinates != null) {
+                    IconButton(
+                        modifier = Modifier.size(30.dp),
+                        onClick = { /*TODO*/ }
+                    ) {
+                        Icon(
+                            Icons.Default.LocationOn,
+                            contentDescription = "Location",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(30.dp),
+                        )
+                    }
+                }
             }
         },
         supportingContent = {
@@ -142,6 +164,8 @@ internal val sampleTask = Task(
     image = Uri.parse("https://cdn-icons-png.flaticon.com/512/149/149071.png"),
     endTime = Date.from(Date().toInstant()),
     body = "Lorem ipsum dolor sit amet",
+    longitude = 14721986725629376.0,
+    latitude = 14721986725629376.0,
     tags = listOf(
         Tag(
             id = 1,

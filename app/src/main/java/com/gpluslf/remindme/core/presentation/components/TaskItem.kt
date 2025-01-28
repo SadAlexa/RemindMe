@@ -1,5 +1,6 @@
 package com.gpluslf.remindme.core.presentation.components
 
+import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -28,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,6 +49,8 @@ fun TaskItem(
     onTaskClick: () -> Unit = {},
     onCheckClick: (() -> Unit)? = null
 ) {
+
+    val context = LocalContext.current
     ListItem(
         modifier = Modifier
             .fillMaxWidth()
@@ -83,7 +87,13 @@ fun TaskItem(
                 if (task.coordinates != null) {
                     IconButton(
                         modifier = Modifier.size(30.dp),
-                        onClick = { /*TODO*/ }
+                        onClick = {
+                            val uri =
+                                Uri.parse("geo:${task.coordinates.latitude},${task.coordinates.longitude}?z=16")
+                            
+                            val intent = Intent(Intent.ACTION_VIEW, uri)
+                            context.startActivity(intent)
+                        }
                     ) {
                         Icon(
                             Icons.Default.LocationOn,

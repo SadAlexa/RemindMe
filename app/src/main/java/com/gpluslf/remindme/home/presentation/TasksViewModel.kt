@@ -84,7 +84,7 @@ class TasksViewModel(
                 viewModelScope.launch {
                     taskRepository.upsertTask(
                         action.task.copy(
-                            isDone = !action.task.isDone
+                            isDone = !action.task.isDone,
                         ).toTask()
                     )
                 }

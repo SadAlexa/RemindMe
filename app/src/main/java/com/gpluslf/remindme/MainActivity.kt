@@ -40,7 +40,11 @@ class MainActivity : ComponentActivity() {
             RemindMeTheme(darkTheme = if (isDarkTheme != null) isDarkTheme!! else isSystemInDarkTheme()) {
                 LaunchedEffect(Unit) {
                     getKoin().get<DataStoreSource>().getInt("theme").collect {
-                        isDarkTheme = it == 2
+                        isDarkTheme = when (it) {
+                            1 -> false
+                            2 -> true
+                            else -> null
+                        }
                     }
                 }
                 Surface(

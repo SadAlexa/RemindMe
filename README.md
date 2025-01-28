@@ -1,7 +1,7 @@
 # RemindMe
 
 <div align="center">
-<img width="192" height="192" src="app/images/RemindMe-logo.png" align="center" alt="">
+<img width="192" height="192" src="images/RemindMe-logo.png" align="center" alt="">
 </div>
 <br></br>
 
@@ -10,10 +10,10 @@
 <div align="left">
 
 <div align="center">
-    <img src="app/images/welcome_screen.png" width="20%"  alt=""/>
-    <img src="app/images/yourlists_screen.png" width="20%"  alt=""/>
-    <img src="app/images/tasksonlist_screen.png" width="20%"  alt=""/>
-    <img src="app/images/calendar_screen.png" width="20%"  alt=""/>
+    <img src="images/welcome_screen.png" width="20%"  alt=""/>
+    <img src="images/yourlists_screen.png" width="20%"  alt=""/>
+    <img src="images/tasksonlist_screen.png" width="20%"  alt=""/>
+    <img src="images/calendar_screen.png" width="20%"  alt=""/>
 </div>
 </div>
 

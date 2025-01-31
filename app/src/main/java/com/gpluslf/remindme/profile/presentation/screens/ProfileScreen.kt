@@ -149,7 +149,7 @@ fun ProfileScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(contentPadding)
+                .padding(top = contentPadding.calculateTopPadding())
                 .padding(horizontal = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -265,6 +265,7 @@ internal val sampleUserAchievement = UserAchievement(
     1,
     1,
     1,
+    true,
     true
 )
 

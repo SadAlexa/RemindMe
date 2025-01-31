@@ -5,7 +5,7 @@ data class UserAchievement(
     val achievementId: Long,
 
     val achievementTitle: String,
-    
+
     val achievementBody: String,
 
     val achievementNumber: Int,
@@ -14,5 +14,7 @@ data class UserAchievement(
 
     val userNumber: Int,
 
-    val isCompleted: Boolean
+    val isCompleted: Boolean,
+
+    val isNotified: Boolean
 )

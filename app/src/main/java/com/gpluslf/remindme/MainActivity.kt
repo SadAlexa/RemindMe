@@ -10,14 +10,20 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -88,6 +94,10 @@ class MainActivity : ComponentActivity() {
                         } ?: false
                     }
 
+                    val badgeCount = Screens.entries.map {
+                        it to remember { mutableIntStateOf(0) }
+                    }
+
                     Scaffold(
                         bottomBar = {
                             AnimatedVisibility(showBottomBar) {
@@ -110,7 +120,9 @@ class MainActivity : ComponentActivity() {
                                                     restoreState = true
                                                 }
                                             },
-                                            icon = { Icon(currentScreen.selectedIcon, null) },
+                                            icon = {
+                                                GetBadgeIcon(currentScreen, badgeCount)
+                                            },
                                         )
                                     }
                                 }
@@ -120,11 +132,33 @@ class MainActivity : ComponentActivity() {
                         RemindMeNavGraph(
                             navController,
                             goToUpdates,
+                            updateBadgeCount = { screen: Screens, count: Int ->
+                                badgeCount.first { it.first == screen }.second.intValue = count
+                            },
                             modifier = Modifier.padding(innerPadding)
                         )
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun GetBadgeIcon(
+    currentScreen: Screens,
+    badgeCount: List<Pair<Screens, MutableState<Int>>>
+) {
+    val count = badgeCount.first { it.first == currentScreen }.second.value
+    BadgedBox(
+        badge = {
+            if (count > 0) {
+                Badge {
+                    Text(text = count.toString())
+                }
+            }
+        }
+    ) {
+        Icon(currentScreen.selectedIcon, null)
     }
 }

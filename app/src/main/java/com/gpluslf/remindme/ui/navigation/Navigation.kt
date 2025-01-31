@@ -45,6 +45,7 @@ import com.gpluslf.remindme.profile.presentation.UserAchievementViewModel
 import com.gpluslf.remindme.profile.presentation.UserViewModel
 import com.gpluslf.remindme.profile.presentation.model.ProfileAction
 import com.gpluslf.remindme.profile.presentation.screens.ProfileScreen
+import com.gpluslf.remindme.updates.presentation.NotificationsState
 import com.gpluslf.remindme.updates.presentation.NotificationsViewModel
 import com.gpluslf.remindme.updates.presentation.screens.UpdatesScreen
 import kotlinx.coroutines.launch
@@ -99,7 +100,7 @@ sealed interface RemindMeRoute {
 
 enum class Screens(
     val route: RemindMeRoute,
-    val selectedIcon: ImageVector,
+    val selectedIcon: ImageVector
 ) {
     Home(RemindMeRoute.Home, Icons.AutoMirrored.Outlined.List),
     Calendar(RemindMeRoute.Calendar, Icons.Outlined.CalendarMonth),
@@ -111,6 +112,7 @@ enum class Screens(
 fun RemindMeNavGraph(
     navController: NavHostController,
     goToUpdates: Boolean = false,
+    updateBadgeCount: (Screens, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -131,30 +133,55 @@ fun RemindMeNavGraph(
             }
         }
     }
-
     LaunchedEffect(currentUserId) {
         val user = currentUserId
         if (user != null) {
             coroutineScope.launch {
-                achievementRepository.getAllUnnotifiedAchievements(user).collect { achievements ->
-                    achievements.forEach { achievement ->
-                        val scheduleId =
-                            "$currentUserId/${achievement.achievementId}/${achievement.achievementTitle}".hashCode()
-                                .toLong()
-                        val notificationItem = Notification(
-                            id = scheduleId,
-                            sendTime = Date(),
-                            userId = user,
-                            body = "You have unlocked the ${achievement.achievementTitle}",
-                            title = "ACHIEVEMENT UNLOCKED!",
-                            achievementId = achievement.achievementId
-                        )
-                        alarmScheduler.schedule(notificationItem)
+                achievementRepository.getAllUnnotifiedAchievements(user)
+                    .collect { achievements ->
+                        achievements.forEach { achievement ->
+                            val scheduleId =
+                                "$currentUserId/${achievement.achievementId}/${achievement.achievementTitle}".hashCode()
+                                    .toLong()
+                            val notificationItem = Notification(
+                                id = scheduleId,
+                                sendTime = Date(),
+                                userId = user,
+                                body = "You have unlocked the ${achievement.achievementTitle}",
+                                title = "ACHIEVEMENT UNLOCKED!",
+                                achievementId = achievement.achievementId
+                            )
+                            alarmScheduler.schedule(notificationItem)
+                        }
+
+                        achievementRepository.updateUserAchievement(achievements.map {
+                            it.copy(
+                                isNotified = true
+                            )
+                        })
                     }
-                }
             }
+
+
         }
     }
+
+    lateinit var notificationsViewModel: NotificationsViewModel
+    var notificationsState by remember { mutableStateOf(NotificationsState()) }
+    if (currentUserId != null) {
+        notificationsViewModel = koinViewModel<NotificationsViewModel>(
+            parameters = { parametersOf(currentUserId) }
+        )
+        notificationsState = notificationsViewModel.state.collectAsStateWithLifecycle().value
+        LaunchedEffect(notificationsState.notifications) {
+            updateBadgeCount(
+                Screens.Updates,
+                notificationsState.notifications.filterNot { it.isRead }.size
+            )
+        }
+    }
+
+
 
     NavHost(
         navController = navController,
@@ -354,13 +381,21 @@ fun RemindMeNavGraph(
                 )
             }
             composable<RemindMeRoute.Updates> {
-                val viewModel = koinViewModel<NotificationsViewModel>(
-                    parameters = { parametersOf(currentUserId) }
-                )
-                val state by viewModel.state.collectAsStateWithLifecycle()
                 UpdatesScreen(
-                    state = state,
-                    onNotificationClick = {/*TODO*/ }
+                    state = notificationsState,
+                    onNotificationAction = notificationsViewModel::onAction,
+                    onTaskNotificationClick = {
+                        navController.navigate(RemindMeRoute.TodoList(it))
+                    },
+                    onAchievementNotificationClick = {
+                        navController.navigate(RemindMeRoute.Profile) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
                 )
             }
         }

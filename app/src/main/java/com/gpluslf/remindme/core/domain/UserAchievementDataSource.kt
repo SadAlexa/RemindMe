@@ -10,4 +10,6 @@ interface UserAchievementDataSource {
     fun getAllUnnotifiedAchievements(
         userId: Long,
     ): Flow<List<UserAchievement>>
+
+    suspend fun updateUserAchievement(userAchievement: List<UserAchievement>)
 }

@@ -1,5 +1,6 @@
 package com.gpluslf.remindme.core.data.mappers
 
+import com.gpluslf.remindme.core.data.database.entities.UserAchievementEntity
 import com.gpluslf.remindme.core.data.database.views.UserAchievementView
 import com.gpluslf.remindme.core.domain.UserAchievement
 
@@ -10,15 +11,14 @@ fun UserAchievementView.toUserAchievement() = UserAchievement(
     achievementNumber,
     userId,
     userNumber,
-    isCompleted
+    isCompleted,
+    isNotified
 )
 
-fun UserAchievement.toUserAchievementView() = UserAchievementView(
+fun UserAchievement.toUserAchievementEntity() = UserAchievementEntity(
     achievementId,
-    achievementTitle,
-    achievementBody,
-    achievementNumber,
     userId,
-    userNumber,
-    isCompleted
+    isCompleted,
+    isNotified,
+    userNumber
 )

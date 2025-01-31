@@ -35,8 +35,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun <T> SwipeToDeleteContainer(
     item: T,
-    onDelete: (T) -> Unit,
-    onEdit: (T) -> Unit,
+    onDelete: ((T) -> Unit)? = null,
+    onEdit: ((T) -> Unit)? = null,
     animationDuration: Int = 500,
     modifier: Modifier = Modifier,
     content: @Composable (T) -> Unit
@@ -67,12 +67,12 @@ fun <T> SwipeToDeleteContainer(
     )
 
     LaunchedEffect(key1 = isRemoved, key2 = isEdit) {
-        if (isRemoved) {
+        if (isRemoved && onDelete != null) {
             delay(animationDuration.toLong())
             onDelete(item)
         }
 
-        if (isEdit) {
+        if (isEdit && onEdit != null) {
             onEdit(item)
             state.dismiss(SwipeToDismissBoxValue.Settled)
         }
@@ -89,7 +89,9 @@ fun <T> SwipeToDeleteContainer(
         SwipeToDismissBox(
             state = state,
             backgroundContent = { DismissBackground(state) },
-            content = { content(item) }
+            content = { content(item) },
+            enableDismissFromStartToEnd = onEdit != null,
+            enableDismissFromEndToStart = onDelete != null
         )
     }
 }

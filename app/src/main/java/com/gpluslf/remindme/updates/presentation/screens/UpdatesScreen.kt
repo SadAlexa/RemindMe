@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gpluslf.remindme.core.domain.Notification
 import com.gpluslf.remindme.core.presentation.components.NoItemsPlaceholder
+import com.gpluslf.remindme.home.presentation.components.SwipeToDeleteContainer
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 import com.gpluslf.remindme.updates.presentation.NotificationsState
 import com.gpluslf.remindme.updates.presentation.model.NotificationAction
@@ -39,7 +40,9 @@ import java.util.Date
 @Composable
 fun UpdatesScreen(
     state: NotificationsState,
-    onNotificationClick: (NotificationAction) -> Unit,
+    onNotificationAction: (NotificationAction) -> Unit,
+    onTaskNotificationClick: (String) -> Unit,
+    onAchievementNotificationClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -61,43 +64,61 @@ fun UpdatesScreen(
         if (state.notifications.isNotEmpty()) {
             LazyColumn(
                 modifier = Modifier
-                    .padding(contentPadding)
+                    .padding(top = contentPadding.calculateTopPadding())
                     .padding(horizontal = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
-                items(state.notifications, key = { it.id }) { item ->
-                    ListItem(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(20.dp))
-                            .clickable { onNotificationClick(NotificationAction.Click(item)) },
-                        colors = ListItemDefaults.colors(
-                            containerColor = if (item.isRead) {
-                                MaterialTheme.colorScheme.surfaceContainerLow
-                            } else {
-                                MaterialTheme.colorScheme.primaryContainer
-                            }
-                        ),
-                        headlineContent = {
-                            Column {
-                                Text(
-                                    item.title,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    item.body,
-                                    fontWeight = FontWeight.Medium,
-                                )
-                                Text(
-                                    getTimeInstance().format(item.sendTime),
-                                )
-                            }
+                items(state.notifications.reversed(), key = { it.id }) { item ->
+                    SwipeToDeleteContainer(
+                        item,
+                        onDelete = {
+                            onNotificationAction(NotificationAction.Delete(item))
                         },
-                        trailingContent = {
-                            Icon(Icons.AutoMirrored.Filled.ArrowRight, contentDescription = "Go to")
-                        },
-                    )
+                        modifier = Modifier.animateItem()
+                    ) {
+                        ListItem(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(20.dp))
+                                .clickable {
+                                    onNotificationAction(NotificationAction.Click(item))
+                                    if (item.taskListTitle != null) {
+                                        onTaskNotificationClick(item.taskListTitle)
+                                    } else {
+                                        onAchievementNotificationClick()
+                                    }
+                                },
+                            colors = ListItemDefaults.colors(
+                                containerColor = if (item.isRead) {
+                                    MaterialTheme.colorScheme.surfaceContainerLow
+                                } else {
+                                    MaterialTheme.colorScheme.primaryContainer
+                                }
+                            ),
+                            headlineContent = {
+                                Column {
+                                    Text(
+                                        item.title,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        item.body,
+                                        fontWeight = FontWeight.Medium,
+                                    )
+                                    Text(
+                                        getTimeInstance().format(item.sendTime),
+                                    )
+                                }
+                            },
+                            trailingContent = {
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowRight,
+                                    contentDescription = "Go to"
+                                )
+                            },
+                        )
+                    }
                 }
             }
         } else {
@@ -118,6 +139,8 @@ private fun UpdatesScreenPreviewLight() {
                             .copy(id = it.toLong(), title = "Notification $it")
                     }
                 ),
+                {},
+                {},
                 {},
                 modifier = Modifier
                     .padding(padding)
@@ -151,6 +174,8 @@ private fun UpdatesScreenPreviewDark() {
                             .copy(id = it.toLong(), title = "Notification $it")
                     }
                 ),
+                {},
+                {},
                 {},
                 modifier = Modifier
                     .padding(padding)

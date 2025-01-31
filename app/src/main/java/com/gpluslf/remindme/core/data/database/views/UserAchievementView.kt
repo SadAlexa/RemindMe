@@ -12,7 +12,8 @@ import androidx.room.DatabaseView
                 achievements.number as achievement_number,
                 user_achievements.user_id as user_id,
                 user_achievements.number as user_number,
-                user_achievements.is_completed as isCompleted
+                user_achievements.is_completed as isCompleted,
+                user_achievements.is_notified as is_notified
         FROM achievements
         JOIN user_achievements ON achievements.id = user_achievements.achievement_id
     """,
@@ -39,5 +40,8 @@ data class UserAchievementView(
     val userNumber: Int,
 
     @ColumnInfo(name = "isCompleted")
-    val isCompleted: Boolean
+    val isCompleted: Boolean,
+
+    @ColumnInfo(name = "is_notified")
+    val isNotified: Boolean = false,
 )

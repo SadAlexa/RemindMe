@@ -37,3 +37,16 @@ fun Notification.toNotificationUi() = NotificationUi(
     taskListTitle,
     achievementId
 )
+
+fun NotificationUi.toNotification() = Notification(
+    id,
+    title,
+    body,
+    userId,
+    senderUserId,
+    sendTime,
+    isRead,
+    taskTitle,
+    taskListTitle,
+    achievementId
+)

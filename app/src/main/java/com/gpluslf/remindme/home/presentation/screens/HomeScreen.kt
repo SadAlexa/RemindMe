@@ -132,7 +132,7 @@ fun HomeScreen(
         if (state.lists.isNotEmpty()) {
             LazyColumn(
                 modifier = Modifier
-                    .padding(contentPadding)
+                    .padding(top = contentPadding.calculateTopPadding())
                     .padding(horizontal = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(20.dp),

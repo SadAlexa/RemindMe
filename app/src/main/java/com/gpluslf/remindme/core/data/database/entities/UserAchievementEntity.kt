@@ -27,6 +27,9 @@ data class UserAchievementEntity(
     @ColumnInfo(name = "is_completed")
     val isCompleted: Boolean = false,
 
+    @ColumnInfo(name = "is_notified")
+    val isNotified: Boolean = false,
+
     @ColumnInfo(name = "number")
     val number: Int = 0
 

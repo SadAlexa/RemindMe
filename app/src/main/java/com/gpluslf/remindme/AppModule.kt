@@ -12,6 +12,7 @@ import com.gpluslf.remindme.core.data.repository.TagRepository
 import com.gpluslf.remindme.core.data.repository.TaskRepository
 import com.gpluslf.remindme.core.data.repository.UserAchievementRepository
 import com.gpluslf.remindme.core.data.repository.UserRepository
+import com.gpluslf.remindme.core.domain.AlarmScheduler
 import com.gpluslf.remindme.core.domain.CategoryDataSource
 import com.gpluslf.remindme.core.domain.DataStoreSource
 import com.gpluslf.remindme.core.domain.ListDataSource
@@ -21,7 +22,8 @@ import com.gpluslf.remindme.core.domain.TagDataSource
 import com.gpluslf.remindme.core.domain.TaskDataSource
 import com.gpluslf.remindme.core.domain.UserAchievementDataSource
 import com.gpluslf.remindme.core.domain.UserDataSource
-import com.gpluslf.remindme.core.model.LocationService
+import com.gpluslf.remindme.core.presentation.model.LocationService
+import com.gpluslf.remindme.core.presentation.model.NotificationAlarmScheduler
 import com.gpluslf.remindme.home.presentation.AddListViewModel
 import com.gpluslf.remindme.home.presentation.AddTaskViewModel
 import com.gpluslf.remindme.home.presentation.ListsViewModel
@@ -45,6 +47,7 @@ val appModule = module {
             .createFromAsset("database/remindme-database.db")
             .build()
     }
+    single<AlarmScheduler> { NotificationAlarmScheduler(get()) }
     single { LocationService(get()) }
     single { get<RemindMeDatabase>().tagsOnTaskDao() }
     single { get<RemindMeDatabase>().categoryDao() }
@@ -88,6 +91,8 @@ val appModule = module {
             userId,
             listTitle,
             taskTitle,
+            get(),
+            get(),
             get(),
             get(),
         )

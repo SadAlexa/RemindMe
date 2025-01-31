@@ -3,7 +3,9 @@ package com.gpluslf.remindme.updates.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gpluslf.remindme.core.domain.NotificationDataSource
+import com.gpluslf.remindme.updates.presentation.model.NotificationAction
 import com.gpluslf.remindme.updates.presentation.model.NotificationUi
+import com.gpluslf.remindme.updates.presentation.model.toNotification
 import com.gpluslf.remindme.updates.presentation.model.toNotificationUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -12,7 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class NotificationsState(val notifications: List<NotificationUi>)
+data class NotificationsState(val notifications: List<NotificationUi> = emptyList())
 
 class NotificationsViewModel(
     private val userId: Long,
@@ -37,11 +39,23 @@ class NotificationsViewModel(
         }
     }
 
-    fun upsertNotification(list: NotificationUi) = viewModelScope.launch {
-        // TODO
+    private fun upsertNotification(notification: NotificationUi) = viewModelScope.launch {
+        repository.upsertNotification(notification.copy(isRead = true).toNotification())
     }
 
-    fun deleteNotification(list: NotificationUi) = viewModelScope.launch {
-        // TODO
+    private fun deleteNotification(notification: NotificationUi) = viewModelScope.launch {
+        repository.deleteNotification(notification.toNotification())
+    }
+
+    fun onAction(action: NotificationAction) {
+        when (action) {
+            is NotificationAction.Click -> {
+                upsertNotification(action.item)
+            }
+
+            is NotificationAction.Delete -> {
+                deleteNotification(action.item)
+            }
+        }
     }
 }

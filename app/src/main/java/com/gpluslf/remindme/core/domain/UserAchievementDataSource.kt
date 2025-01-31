@@ -7,4 +7,7 @@ interface UserAchievementDataSource {
 
     fun getAllUserAchievements(userId: Long): Flow<List<UserAchievement>>
 
+    fun getAllUnnotifiedAchievements(
+        userId: Long,
+    ): Flow<List<UserAchievement>>
 }

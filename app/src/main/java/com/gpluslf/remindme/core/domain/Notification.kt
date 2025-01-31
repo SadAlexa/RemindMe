@@ -16,7 +16,7 @@ data class Notification(
 
     val sendTime: Date,
 
-    val isRead: Boolean,
+    val isRead: Boolean = false,
 
     val taskTitle: String? = null,
 

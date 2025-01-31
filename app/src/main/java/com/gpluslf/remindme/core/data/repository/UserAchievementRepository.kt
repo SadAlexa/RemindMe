@@ -10,4 +10,9 @@ class UserAchievementRepository(private val achievementDAOs: AchievementDAOs) :
     override fun getAllUserAchievements(userId: Long) =
         achievementDAOs.getAllUserAchievements(userId)
             .map { flow -> flow.map { it.toUserAchievement() } }
+
+    override fun getAllUnnotifiedAchievements(
+        userId: Long,
+    ) = achievementDAOs.getAllUnnotifiedAchievements(userId)
+        .map { flow -> flow.map { it.toUserAchievement() } }
 }

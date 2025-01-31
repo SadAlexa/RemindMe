@@ -25,7 +25,7 @@ Remainder is a prototype Jetpack Compose Android application designed to help us
 
 - [x] **Task Management**: Create, edit, and delete _tasks_ with ease. Store them in _lists_, and use _categories_ and _tags_ to order them in the best way possible.
 - [x] **Calendar**: Use it to see all your tasks with a deadline and have everything under control.
-- [ ] **Notifications**: Receive a notification for each task with a deadline so you never forget anything.
+- [x] **Notifications**: Receive a notification for each task with a deadline so you never forget anything.
 - [ ] **Set the _frequency_ of a task and choose how long before it should notify you**
 
 ## Technologies Used

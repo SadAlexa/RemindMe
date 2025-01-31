@@ -83,7 +83,7 @@ fun WelcomeScreen(
 @Composable
 private fun WelcomeScreenPreviewLight() {
     RemindMeTheme {
-        Scaffold  { padding ->
+        Scaffold { padding ->
             WelcomeScreen(
                 Modifier
                     .padding(padding)
@@ -93,13 +93,14 @@ private fun WelcomeScreenPreviewLight() {
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true, device = "id:pixel_9_pro",
+@Preview(
+    showBackground = true, showSystemUi = true, device = "id:pixel_9_pro",
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 private fun WelcomeScreenPreviewDark() {
     RemindMeTheme {
-        Scaffold  { padding ->
+        Scaffold { padding ->
             WelcomeScreen(
                 Modifier
                     .padding(padding)

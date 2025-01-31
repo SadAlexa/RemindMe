@@ -11,8 +11,7 @@ class NotificationRepository(private val notificationDAOs: NotificationDAOs) :
     NotificationDataSource {
 
     override fun getNotificationById(notificationId: Long) =
-        notificationDAOs.getNotificationById(notificationId)
-            .map { notification -> notification.toNotification() }
+        notificationDAOs.getNotificationById(notificationId).toNotification()
 
     override fun getAllNotifications(userId: Long) = notificationDAOs.getAllNotifications(userId)
         .map { flow -> flow.map { it.toNotification() } }

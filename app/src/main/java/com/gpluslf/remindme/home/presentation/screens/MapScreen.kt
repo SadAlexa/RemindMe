@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gpluslf.remindme.R
 import com.gpluslf.remindme.core.domain.Coordinates
-import com.gpluslf.remindme.core.model.LocationService
+import com.gpluslf.remindme.core.presentation.model.LocationService
 import com.gpluslf.remindme.core.utils.permissions.PermissionStatus
 import com.gpluslf.remindme.core.utils.permissions.rememberPermission
 import com.utsman.osmandcompose.DefaultMapProperties

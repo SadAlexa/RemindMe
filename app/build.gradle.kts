@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.gpluslf.remindme"
-        minSdk = 28
+        minSdk = 33
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -76,4 +76,5 @@ dependencies {
     implementation(libs.compose)
     implementation(libs.osmdroid.android)
     implementation(libs.osm.androd.compose)
+    implementation(libs.accompanist.permissions)
 }

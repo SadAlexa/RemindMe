@@ -1,4 +1,5 @@
 [versions]
+accompanistPermissions = "0.33.1-alpha"
 agp = "8.7.3"
 coilCompose = "2.3.0"
 compose = "2.6.1"
@@ -23,6 +24,7 @@ ksp = "2.1.0-1.0.29"
 osmdroidCompose = "0.0.5"
 
 [libraries]
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtxVersion" }

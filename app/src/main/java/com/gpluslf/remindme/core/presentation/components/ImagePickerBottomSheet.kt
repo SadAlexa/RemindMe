@@ -58,7 +58,6 @@ fun ImagePickerBottomSheet(
     )
 
 
-    // Create an ActivityResultLauncher for picking images
     val pickImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->

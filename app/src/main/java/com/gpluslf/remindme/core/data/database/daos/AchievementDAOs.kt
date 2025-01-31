@@ -10,4 +10,17 @@ interface AchievementDAOs {
 
     @Query("SELECT * FROM user_achievements_view WHERE user_id = :userId")
     fun getAllUserAchievements(userId: Long): Flow<List<UserAchievementView>>
+
+    @Query(
+        """
+        SELECT user_achievements_view.*
+        FROM user_achievements_view LEFT JOIN notifications ON 
+        user_achievements_view.achievement_id = notifications.achievement_id AND
+        user_achievements_view.user_id = notifications.user_id
+        WHERE user_achievements_view.user_id = :userId AND 
+        user_achievements_view.isCompleted = 1 AND 
+        notifications.achievement_id IS NULL
+        """
+    )
+    fun getAllUnnotifiedAchievements(userId: Long): Flow<List<UserAchievementView>>
 }

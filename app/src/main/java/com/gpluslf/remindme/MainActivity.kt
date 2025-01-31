@@ -2,8 +2,10 @@ package com.gpluslf.remindme
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +28,8 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.gpluslf.remindme.core.domain.DataStoreSource
+import com.gpluslf.remindme.core.presentation.model.NotificationAlarmScheduler
+import com.gpluslf.remindme.core.utils.permissions.rememberPermission
 import com.gpluslf.remindme.ui.navigation.RemindMeNavGraph
 import com.gpluslf.remindme.ui.navigation.Screens
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
@@ -36,6 +40,30 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val requestPermissionLauncher =
+                rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.RequestPermission(),
+                    onResult = { isGranted ->
+                        if (isGranted) {
+                            val notificationAlarmScheduler by lazy {
+                                NotificationAlarmScheduler(this)
+                            }
+                        }
+                    }
+                )
+            val notificationPermissionState = rememberPermission(
+                permission = android.Manifest.permission.POST_NOTIFICATIONS,
+                onResult = { permission ->
+                    if (permission.isGranted) {
+                        requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                }
+            )
+            LaunchedEffect(Unit) {
+                notificationPermissionState.launchPermissionRequest()
+            }
+
+            val goToUpdates = intent.getBooleanExtra("goToUpdates", false)
             var isDarkTheme: Boolean? by remember { mutableStateOf(null) }
             RemindMeTheme(darkTheme = if (isDarkTheme != null) isDarkTheme!! else isSystemInDarkTheme()) {
                 LaunchedEffect(Unit) {
@@ -91,6 +119,7 @@ class MainActivity : ComponentActivity() {
                     ) { innerPadding ->
                         RemindMeNavGraph(
                             navController,
+                            goToUpdates,
                             modifier = Modifier.padding(innerPadding)
                         )
                     }

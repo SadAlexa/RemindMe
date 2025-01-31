@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface NotificationDAOs {
 
     @Query("SELECT * FROM notifications WHERE id = :notificationId")
-    fun getNotificationById(notificationId: Long): Flow<NotificationEntity>
+    fun getNotificationById(notificationId: Long): NotificationEntity
 
     @Query("SELECT * FROM notifications WHERE user_id = :userId")
     fun getAllNotifications(userId: Long): Flow<List<NotificationEntity>>

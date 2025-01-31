@@ -2,7 +2,10 @@ package com.gpluslf.remindme.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gpluslf.remindme.core.domain.AlarmScheduler
 import com.gpluslf.remindme.core.domain.Coordinates
+import com.gpluslf.remindme.core.domain.Notification
+import com.gpluslf.remindme.core.domain.NotificationDataSource
 import com.gpluslf.remindme.core.domain.TagDataSource
 import com.gpluslf.remindme.core.domain.Task
 import com.gpluslf.remindme.core.domain.TaskDataSource
@@ -27,6 +30,8 @@ class AddTaskViewModel(
     private val taskTitle: String? = null,
     private val taskRepository: TaskDataSource,
     private val tagsRepository: TagDataSource,
+    private val notificationRepository: NotificationDataSource,
+    private val alarmScheduler: AlarmScheduler
 ) : ViewModel() {
     private val _state = MutableStateFlow(CreateTaskState())
     val state = _state.onStart {
@@ -92,6 +97,26 @@ class AddTaskViewModel(
                     latitude = currentState.coordinates?.latitude,
                     longitude = currentState.coordinates?.longitude
                 )
+            )
+        }
+
+
+        if (currentState.endTime != null) {
+            val scheduleId = "$userId/$listTitle/${currentState.title}".hashCode()
+                .toLong() + currentState.endTime.time
+
+            val notificationItem = Notification(
+                id = scheduleId,
+                sendTime = currentState.endTime,
+                taskListTitle = listTitle,
+                userId = userId,
+                taskTitle = currentState.title,
+                body = "it's time to ${currentState.title}",
+                title = "REMINDER!",
+            )
+            alarmScheduler.cancel(notificationItem)
+            alarmScheduler.schedule(
+                notificationItem
             )
         }
     }

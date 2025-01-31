@@ -1,4 +1,4 @@
-package com.gpluslf.remindme.core.model
+package com.gpluslf.remindme.core.presentation.model
 
 import android.Manifest
 import android.content.Context

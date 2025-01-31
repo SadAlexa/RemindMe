@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,7 +23,10 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.gpluslf.remindme.calendar.presentation.CalendarViewModel
 import com.gpluslf.remindme.calendar.presentation.screens.CalendarScreen
+import com.gpluslf.remindme.core.domain.AlarmScheduler
 import com.gpluslf.remindme.core.domain.LoggedUserDataSource
+import com.gpluslf.remindme.core.domain.Notification
+import com.gpluslf.remindme.core.domain.UserAchievementDataSource
 import com.gpluslf.remindme.home.presentation.AddListViewModel
 import com.gpluslf.remindme.home.presentation.AddTaskViewModel
 import com.gpluslf.remindme.home.presentation.ListsViewModel
@@ -48,6 +52,7 @@ import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.getKoin
 import org.koin.core.parameter.parametersOf
+import java.util.Date
 
 sealed interface RemindMeRoute {
 
@@ -105,6 +110,7 @@ enum class Screens(
 @Composable
 fun RemindMeNavGraph(
     navController: NavHostController,
+    goToUpdates: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -112,7 +118,11 @@ fun RemindMeNavGraph(
         mutableStateOf(null)
     }
 
+    var flag by remember { mutableStateOf(false) }
+
     val loggedUserRepository = getKoin().get<LoggedUserDataSource>()
+    val achievementRepository = getKoin().get<UserAchievementDataSource>()
+    val alarmScheduler = getKoin().get<AlarmScheduler>()
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
@@ -121,6 +131,31 @@ fun RemindMeNavGraph(
             }
         }
     }
+
+    LaunchedEffect(currentUserId) {
+        val user = currentUserId
+        if (user != null) {
+            coroutineScope.launch {
+                achievementRepository.getAllUnnotifiedAchievements(user).collect { achievements ->
+                    achievements.forEach { achievement ->
+                        val scheduleId =
+                            "$currentUserId/${achievement.achievementId}/${achievement.achievementTitle}".hashCode()
+                                .toLong()
+                        val notificationItem = Notification(
+                            id = scheduleId,
+                            sendTime = Date(),
+                            userId = user,
+                            body = "You have unlocked the ${achievement.achievementTitle}",
+                            title = "ACHIEVEMENT UNLOCKED!",
+                            achievementId = achievement.achievementId
+                        )
+                        alarmScheduler.schedule(notificationItem)
+                    }
+                }
+            }
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = if (currentUserId != null) RemindMeRoute.APP else RemindMeRoute.AUTH,
@@ -188,6 +223,19 @@ fun RemindMeNavGraph(
             startDestination = RemindMeRoute.Home
         ) {
             composable<RemindMeRoute.Home> {
+                LaunchedEffect(Unit) {
+                    if (goToUpdates && !flag) {
+                        navController.navigate(RemindMeRoute.Updates) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                        flag = true
+                    }
+                }
+
                 val viewModel = koinViewModel<ListsViewModel>(
                     parameters = { parametersOf(currentUserId) }
                 )
@@ -206,7 +254,6 @@ fun RemindMeNavGraph(
                     }
                 )
             }
-
             composable<RemindMeRoute.TodoList> {
                 val listTitle = it.toRoute<RemindMeRoute.TodoList>().listTitle
                 val viewModel = koinViewModel<TasksViewModel>(

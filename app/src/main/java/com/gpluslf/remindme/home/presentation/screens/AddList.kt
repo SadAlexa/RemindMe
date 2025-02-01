@@ -1,9 +1,6 @@
 package com.gpluslf.remindme.home.presentation.screens
 
-import android.content.Intent
 import android.content.res.Configuration
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,9 +55,6 @@ fun AddListScreen(
     onFloatingActionButtonClick: () -> Unit = {},
     onCloseActionButtonClick: () -> Unit = {},
 ) {
-
-    val context = LocalContext.current
-
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
@@ -133,37 +128,28 @@ fun AddListScreen(
                     onAddListAction(AddListAction.UpdateBody(it))
                 }
             }
-
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Adaptive(minSize = 100.dp),
-                contentPadding = PaddingValues(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(state.categories) { category ->
-                    FilterChip(
-                        selected = category == state.selectedCategory,
-                        onClick = { onAddListAction(AddListAction.UpdateCategory(category)) },
-                        label = {
-                            Text(
-                                category.title,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
-                    )
+            if (state.categories.isNotEmpty()) {
+                LazyVerticalStaggeredGrid(
+                    columns = StaggeredGridCells.Adaptive(minSize = 100.dp),
+                    contentPadding = PaddingValues(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(state.categories) { category ->
+                        FilterChip(
+                            selected = category == state.selectedCategory,
+                            onClick = { onAddListAction(AddListAction.UpdateCategory(category)) },
+                            label = {
+                                Text(
+                                    category.title,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                        )
+                    }
                 }
             }
 
-            val launcher =
-                rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { image ->
-                    if (image != null) {
-                        context.contentResolver.takePersistableUriPermission(
-                            image,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        )
-                        onAddListAction(AddListAction.UpdateImage(image))
-                    }
-                }
-            CustomPhotoButton({ onAddListAction(AddListAction.ShowPicker(true)) })
+            CustomPhotoButton { onAddListAction(AddListAction.ShowPicker(true)) }
 
             state.image?.let { image ->
                 val painter = rememberAsyncImagePainter(
@@ -175,9 +161,9 @@ fun AddListScreen(
                 Image(
                     painter = painter,
                     contentDescription = null,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(150.dp, 150.dp)
-                        .padding(16.dp)
+                        .size(150.dp)
                         .clip(CircleShape)
                 )
             }

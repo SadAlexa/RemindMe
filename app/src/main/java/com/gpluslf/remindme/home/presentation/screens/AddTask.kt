@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -261,22 +262,25 @@ fun AddTaskScreen(
                         }
                     }
                     HorizontalDivider()
-                    LazyVerticalStaggeredGrid(
-                        columns = StaggeredGridCells.Adaptive(minSize = 100.dp),
-                        contentPadding = PaddingValues(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        items(state.tags) { tag ->
-                            FilterChip(
-                                selected = state.selectedTags.contains(tag),
-                                onClick = { onAddTaskAction(AddTaskAction.UpdateTags(tag)) },
-                                label = {
-                                    Text(
-                                        tag.title,
-                                        style = MaterialTheme.typography.bodyLarge
-                                    )
-                                },
-                            )
+
+                    if (state.tags.isNotEmpty()) {
+                        LazyVerticalStaggeredGrid(
+                            columns = StaggeredGridCells.Adaptive(minSize = 100.dp),
+                            contentPadding = PaddingValues(8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            items(state.tags) { tag ->
+                                FilterChip(
+                                    selected = state.selectedTags.contains(tag),
+                                    onClick = { onAddTaskAction(AddTaskAction.UpdateTags(tag)) },
+                                    label = {
+                                        Text(
+                                            tag.title,
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                    },
+                                )
+                            }
                         }
                     }
 
@@ -292,10 +296,10 @@ fun AddTaskScreen(
                         Image(
                             painter = painter,
                             contentDescription = null,
+                            contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                .size(150.dp, 150.dp)
-                                .padding(16.dp)
-                                .clip(RoundedCornerShape(20.dp))
+                                .size(150.dp)
+                                .clip(CircleShape)
                         )
                     }
                 }

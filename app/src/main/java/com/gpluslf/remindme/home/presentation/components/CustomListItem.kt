@@ -14,20 +14,33 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.gpluslf.remindme.core.domain.Category
 import com.gpluslf.remindme.core.domain.TodoList
+import com.gpluslf.remindme.core.presentation.components.ImageDialog
 import com.gpluslf.remindme.core.presentation.model.TodoListUi
 import com.gpluslf.remindme.core.presentation.model.toTodoListUi
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 
 @Composable
 fun CustomListItem(item: TodoListUi, onClick: () -> Unit = {}) {
+
+    var isDialogOpen by remember { mutableStateOf(false) }
+
+    if (isDialogOpen) {
+        item.image?.let { ImageDialog(imageUri = it, onDismiss = { isDialogOpen = false }) }
+    }
+
     ListItem(
         modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
@@ -49,9 +62,11 @@ fun CustomListItem(item: TodoListUi, onClick: () -> Unit = {}) {
                 Image(
                     painter = rememberAsyncImagePainter(it),
                     contentDescription = null,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(70.dp)
                         .clip(CircleShape)
+                        .clickable { isDialogOpen = true }
                 )
             }
         },

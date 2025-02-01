@@ -79,23 +79,25 @@ class AddTaskViewModel(
 
     private fun saveTask() {
         val currentState = state.value
+        val task = Task(
+            userId = userId,
+            listTitle = listTitle,
+            title = currentState.title,
+            body = currentState.body,
+            image = currentState.image,
+            tags = currentState.selectedTags.map { it.toTag() },
+            endTime = currentState.endTime,
+            frequency = currentState.frequency,
+            alert = currentState.alert,
+            isDone = currentState.isDone,
+            latitude = currentState.coordinates?.latitude,
+            longitude = currentState.coordinates?.longitude
+        )
         viewModelScope.launch {
-            taskRepository.upsertTask(
-                Task(
-                    userId = userId,
-                    listTitle = listTitle,
-                    title = currentState.title,
-                    body = currentState.body,
-                    image = currentState.image,
-                    tags = currentState.selectedTags.map { it.toTag() },
-                    endTime = currentState.endTime,
-                    frequency = currentState.frequency,
-                    alert = currentState.alert,
-                    isDone = currentState.isDone,
-                    latitude = currentState.coordinates?.latitude,
-                    longitude = currentState.coordinates?.longitude
-                )
-            )
+            if (taskTitle != null && taskTitle != currentState.title) {
+                taskRepository.deleteTask(task.copy(title = taskTitle))
+            }
+            taskRepository.upsertTask(task)
         }
 
 

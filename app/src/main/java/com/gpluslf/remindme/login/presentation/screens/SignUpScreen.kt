@@ -30,17 +30,22 @@ import com.gpluslf.remindme.R
 import com.gpluslf.remindme.login.presentation.components.CustomButton
 import com.gpluslf.remindme.login.presentation.components.CustomOutlinedTextField
 import com.gpluslf.remindme.login.presentation.model.LoginAction
+import com.gpluslf.remindme.login.presentation.model.LoginEvent
 import com.gpluslf.remindme.login.presentation.model.SignUpAction
 import com.gpluslf.remindme.login.presentation.model.SignUpState
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 fun SignUpScreen(
     modifier: Modifier = Modifier,
     state: SignUpState = SignUpState(),
+    events: Flow<LoginEvent> = emptyFlow(),
     onSignUpAction: (SignUpAction) -> Unit = {},
     onLoginAction: (LoginAction) -> Unit = {},
 ) {
+
     Column(
         modifier.padding(horizontal = 50.dp, vertical = 70.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

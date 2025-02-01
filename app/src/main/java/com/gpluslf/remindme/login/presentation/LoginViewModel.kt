@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,7 +30,8 @@ class LoginViewModel(
     private val _signInState = MutableStateFlow(SignInState())
     val signInState = _signInState.asStateFlow()
 
-    val events = Channel<LoginEvent>()
+    private val _events = Channel<LoginEvent>()
+    val events = _events.receiveAsFlow()
 
     fun onSignUpAction(action: SignUpAction) {
         when (action) {
@@ -79,12 +81,12 @@ class LoginViewModel(
                     image = null
                 )
             )
+            _events.send(LoginEvent.SignUpSuccess)
         }
     }
 
     fun onLoginAction(action: LoginAction) {
         when (action) {
-            LoginAction.Guest -> TODO()
             LoginAction.SignIn -> {
                 viewModelScope.launch {
                     withContext(Dispatchers.IO) {
@@ -95,7 +97,7 @@ class LoginViewModel(
                         if (user != null) {
                             loggedUserRepository.upsertLoggedUser(user.id)
                         } else {
-                            events.send(LoginEvent.LoginFailed)
+                            _events.send(LoginEvent.LoginFailed)
                         }
                         _signInState.update { state ->
                             state.copy(
@@ -108,6 +110,7 @@ class LoginViewModel(
             }
 
             LoginAction.SignUp -> createUser()
+            else -> Unit
         }
     }
 

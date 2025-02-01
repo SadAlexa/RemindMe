@@ -1,6 +1,7 @@
 package com.gpluslf.remindme.home.presentation.screens
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,15 +21,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gpluslf.remindme.R
 import com.gpluslf.remindme.core.presentation.components.NoItemsPlaceholder
 import com.gpluslf.remindme.core.presentation.components.TaskItem
 import com.gpluslf.remindme.core.presentation.components.sampleTask
@@ -39,7 +43,10 @@ import com.gpluslf.remindme.home.presentation.components.FloatingActionAddButton
 import com.gpluslf.remindme.home.presentation.components.FloatingActionButtonMenuItem
 import com.gpluslf.remindme.home.presentation.components.SwipeToDeleteContainer
 import com.gpluslf.remindme.home.presentation.model.ListScreenAction
+import com.gpluslf.remindme.home.presentation.model.TagEvent
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,8 +57,24 @@ fun ListScreen(
     onAction: (ListScreenAction) -> Unit,
     onEditTaskSwipe: (String) -> Unit,
     onBackClick: () -> Unit,
+    events: Flow<TagEvent> = emptyFlow(),
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        events.collect {
+            when (it) {
+                TagEvent.TagCreated -> {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.tag_created),
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+            }
+        }
+    }
 
     if (state.showDialog) {
         CustomAlertDialog(

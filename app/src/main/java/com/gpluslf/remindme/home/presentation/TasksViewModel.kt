@@ -12,11 +12,14 @@ import com.gpluslf.remindme.core.presentation.model.toTagUi
 import com.gpluslf.remindme.core.presentation.model.toTask
 import com.gpluslf.remindme.core.presentation.model.toTaskUi
 import com.gpluslf.remindme.home.presentation.model.ListScreenAction
+import com.gpluslf.remindme.home.presentation.model.TagEvent
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -47,6 +50,9 @@ class TasksViewModel(
     )
 
     private var allTasks: List<TaskUi> = emptyList()
+
+    private val _events = Channel<TagEvent>()
+    val events = _events.receiveAsFlow()
 
     private fun loadData() {
         viewModelScope.launch {
@@ -123,6 +129,7 @@ class TasksViewModel(
                             userId
                         )
                     )
+                    _events.send(TagEvent.TagCreated)
                 }
                 _state.update { state ->
                     state.copy(

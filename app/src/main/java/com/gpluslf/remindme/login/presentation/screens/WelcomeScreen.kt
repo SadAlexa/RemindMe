@@ -87,8 +87,9 @@ private fun WelcomeScreenPreviewLight() {
             WelcomeScreen(
                 Modifier
                     .padding(padding)
-                    .fillMaxSize()
-            ) {}
+                    .fillMaxSize(),
+
+                ) {}
         }
     }
 }

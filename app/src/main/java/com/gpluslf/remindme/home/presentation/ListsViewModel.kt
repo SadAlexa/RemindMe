@@ -9,15 +9,18 @@ import com.gpluslf.remindme.core.domain.ListDataSource
 import com.gpluslf.remindme.core.presentation.model.TodoListUi
 import com.gpluslf.remindme.core.presentation.model.toTodoList
 import com.gpluslf.remindme.core.presentation.model.toTodoListUi
+import com.gpluslf.remindme.home.presentation.model.CategoryEvent
 import com.gpluslf.remindme.home.presentation.model.CategoryUi
 import com.gpluslf.remindme.home.presentation.model.HomeScreenAction
 import com.gpluslf.remindme.home.presentation.model.toCategory
 import com.gpluslf.remindme.home.presentation.model.toCategoryUi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -48,6 +51,8 @@ class ListsViewModel(
     )
 
     private var allLists: List<TodoListUi> = emptyList()
+    private val _events = Channel<CategoryEvent>()
+    val events = _events.receiveAsFlow()
 
     private fun loadData() {
         viewModelScope.launch {
@@ -88,6 +93,7 @@ class ListsViewModel(
                             userId
                         )
                     )
+                    _events.send(CategoryEvent.CategoryCreated)
                 }
                 _state.update { state ->
                     state.copy(

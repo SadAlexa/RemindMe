@@ -1,5 +1,6 @@
 package com.gpluslf.remindme.ui.navigation
 
+import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.outlined.CalendarMonth
@@ -14,6 +15,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -21,6 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
+import com.gpluslf.remindme.R
 import com.gpluslf.remindme.calendar.presentation.CalendarViewModel
 import com.gpluslf.remindme.calendar.presentation.screens.CalendarScreen
 import com.gpluslf.remindme.core.domain.AlarmScheduler
@@ -37,6 +40,7 @@ import com.gpluslf.remindme.home.presentation.screens.HomeScreen
 import com.gpluslf.remindme.home.presentation.screens.ListScreen
 import com.gpluslf.remindme.login.presentation.LoginViewModel
 import com.gpluslf.remindme.login.presentation.model.LoginAction
+import com.gpluslf.remindme.login.presentation.model.LoginEvent
 import com.gpluslf.remindme.login.presentation.screens.SignInScreen
 import com.gpluslf.remindme.login.presentation.screens.SignUpScreen
 import com.gpluslf.remindme.login.presentation.screens.WelcomeScreen
@@ -48,6 +52,7 @@ import com.gpluslf.remindme.profile.presentation.screens.ProfileScreen
 import com.gpluslf.remindme.updates.presentation.NotificationsState
 import com.gpluslf.remindme.updates.presentation.NotificationsViewModel
 import com.gpluslf.remindme.updates.presentation.screens.UpdatesScreen
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -115,6 +120,7 @@ fun RemindMeNavGraph(
     updateBadgeCount: (Screens, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var currentUserId: Long? by remember {
         mutableStateOf(null)
@@ -181,13 +187,36 @@ fun RemindMeNavGraph(
         }
     }
 
+    val loginViewModel = koinViewModel<LoginViewModel>()
 
+    LaunchedEffect(Unit) {
+        loginViewModel.events.collectLatest {
+            when (it) {
+                LoginEvent.LoginFailed -> {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.login_error_message),
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+
+                LoginEvent.SignUpSuccess -> {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.sign_up_success),
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+            }
+        }
+    }
 
     NavHost(
         navController = navController,
         startDestination = if (currentUserId != null) RemindMeRoute.APP else RemindMeRoute.AUTH,
         modifier = modifier
     ) {
+
         navigation<RemindMeRoute.AUTH>(
             startDestination = RemindMeRoute.Welcome
         ) {
@@ -205,13 +234,12 @@ fun RemindMeNavGraph(
                                 navController.navigate(RemindMeRoute.APP)
                             }
                         }
-                    }
+                    },
                 )
             }
 
             composable<RemindMeRoute.SignIn> {
-                val viewModel = koinViewModel<LoginViewModel>()
-                val state by viewModel.signInState.collectAsStateWithLifecycle()
+                val state by loginViewModel.signInState.collectAsStateWithLifecycle()
 
                 LaunchedEffect(state.isLoggedIn) {
                     if (state.isLoggedIn) {
@@ -224,20 +252,19 @@ fun RemindMeNavGraph(
                 }
                 SignInScreen(
                     state = state,
-                    onSignInAction = viewModel::onSignInAction,
-                    onLoginAction = viewModel::onLoginAction,
-                    events = viewModel.events
+                    onSignInAction = loginViewModel::onSignInAction,
+                    onLoginAction = loginViewModel::onLoginAction,
                 )
             }
 
             composable<RemindMeRoute.SignUp> {
-                val viewModel = koinViewModel<LoginViewModel>()
-                val state by viewModel.signUpState.collectAsStateWithLifecycle()
+                val state by loginViewModel.signUpState.collectAsStateWithLifecycle()
+
                 SignUpScreen(
                     state = state,
-                    onSignUpAction = viewModel::onSignUpAction,
+                    onSignUpAction = loginViewModel::onSignUpAction,
                     onLoginAction = { action ->
-                        viewModel.onLoginAction(action)
+                        loginViewModel.onLoginAction(action)
                         if (action == LoginAction.SignUp) {
                             navController.popBackStack()
                         }
@@ -278,7 +305,8 @@ fun RemindMeNavGraph(
                     },
                     onCustomListItemClick = { name ->
                         navController.navigate(RemindMeRoute.TodoList(name))
-                    }
+                    },
+                    events = viewModel.events
                 )
             }
             composable<RemindMeRoute.TodoList> {
@@ -300,6 +328,7 @@ fun RemindMeNavGraph(
                     onBackClick = {
                         navController.popBackStack()
                     },
+                    events = viewModel.events
                 )
             }
             composable<RemindMeRoute.AddList> {

@@ -167,7 +167,9 @@ fun ListScreen(
                             onCheckClick = {
                                 onAction(ListScreenAction.ToggleTask(item))
                             },
-                            onTagClick = {/*TODO*/ }
+                            onTagClick = { tag ->
+                                onAction(ListScreenAction.SelectTag(tag))
+                            }
                         )
                     }
                 }

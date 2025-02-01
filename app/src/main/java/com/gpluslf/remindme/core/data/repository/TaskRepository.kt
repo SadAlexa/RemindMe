@@ -1,9 +1,7 @@
 package com.gpluslf.remindme.core.data.repository
 
-import com.gpluslf.remindme.core.data.database.daos.TagsOnTaskDAOs
 import com.gpluslf.remindme.core.data.database.daos.TaskDAOs
 import com.gpluslf.remindme.core.data.mappers.toLong
-import com.gpluslf.remindme.core.data.mappers.toTagsOnTaskEntity
 import com.gpluslf.remindme.core.data.mappers.toTask
 import com.gpluslf.remindme.core.data.mappers.toTaskEntity
 import com.gpluslf.remindme.core.domain.Task
@@ -12,12 +10,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 
-class TaskRepository(private val taskDAOs: TaskDAOs, private val tagsOnTaskDAOs: TagsOnTaskDAOs) :
+class TaskRepository(private val taskDAOs: TaskDAOs) :
     TaskDataSource {
     override fun getTaskByTitle(taskTitle: String, listTitle: String, userId: Long): Flow<Task?> {
         return taskDAOs.getTaskByTitle(taskTitle, listTitle, userId).map { taskEntity ->
             taskEntity?.toTask(
-                tagsOnTaskDAOs.getAllTagsOnTask(taskTitle, listTitle, userId)
+                taskDAOs.getAllTagsOnTask(taskTitle, listTitle, userId)
             )
         }
     }
@@ -25,7 +23,7 @@ class TaskRepository(private val taskDAOs: TaskDAOs, private val tagsOnTaskDAOs:
     override fun getAllTasksByList(listTitle: String, userId: Long): Flow<List<Task>> {
         return taskDAOs.getTasksByList(listTitle, userId).map { flow ->
             flow.map { taskEntity ->
-                val tags = tagsOnTaskDAOs.getAllTagsOnTask(taskEntity.title, listTitle, userId)
+                val tags = taskDAOs.getAllTagsOnTask(taskEntity.title, listTitle, userId)
                 taskEntity.toTask(
                     tags
                 )
@@ -42,28 +40,13 @@ class TaskRepository(private val taskDAOs: TaskDAOs, private val tagsOnTaskDAOs:
         return taskDAOs.getAllTaskByYearMonth(start.toLong(), end.toLong(), userId)
             .map { taskEntity ->
                 taskEntity.toTask(
-                    tagsOnTaskDAOs.getAllTagsOnTask(taskEntity.title, taskEntity.listTitle, userId)
+                    taskDAOs.getAllTagsOnTask(taskEntity.title, taskEntity.listTitle, userId)
                 )
             }
     }
 
     override suspend fun upsertTask(task: Task) {
-        // TODO A ROOM transaction is needed
-        taskDAOs.upsertTask(task.toTaskEntity())
-        tagsOnTaskDAOs.deleteTagOnTask(
-            task.userId,
-            task.title,
-            task.listTitle,
-        )
-        task.tags.forEach {
-            tagsOnTaskDAOs.upsertTagOnTask(
-                it.toTagsOnTaskEntity(
-                    task.title,
-                    task.listTitle,
-                    task.userId
-                )
-            )
-        }
+        taskDAOs.updateTask(task)
     }
 
     override suspend fun deleteTask(task: Task) = taskDAOs.deleteTask(task.toTaskEntity())

@@ -9,7 +9,6 @@ import com.gpluslf.remindme.core.data.database.daos.LoggedUserDAOs
 import com.gpluslf.remindme.core.data.database.daos.NotificationDAOs
 import com.gpluslf.remindme.core.data.database.daos.SharedUserListDAOs
 import com.gpluslf.remindme.core.data.database.daos.TagDAOs
-import com.gpluslf.remindme.core.data.database.daos.TagsOnTaskDAOs
 import com.gpluslf.remindme.core.data.database.daos.TaskDAOs
 import com.gpluslf.remindme.core.data.database.daos.UserDAOs
 import com.gpluslf.remindme.core.data.database.entities.AchievementEntity
@@ -53,6 +52,5 @@ abstract class RemindMeDatabase : RoomDatabase() {
     abstract fun notificationDao(): NotificationDAOs
     abstract fun achievementDao(): AchievementDAOs
     abstract fun sharedUserListDao(): SharedUserListDAOs
-    abstract fun tagsOnTaskDao(): TagsOnTaskDAOs
     abstract fun loggedUserDao(): LoggedUserDAOs
 }

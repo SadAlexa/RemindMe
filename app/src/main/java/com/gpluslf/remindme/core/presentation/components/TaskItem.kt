@@ -3,7 +3,6 @@ package com.gpluslf.remindme.core.presentation.components
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,17 +37,17 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.gpluslf.remindme.core.domain.Tag
 import com.gpluslf.remindme.core.domain.Task
+import com.gpluslf.remindme.core.presentation.model.TagUi
 import com.gpluslf.remindme.core.presentation.model.TaskUi
 import com.gpluslf.remindme.core.presentation.model.toTaskUi
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
 import java.text.DateFormat.getDateTimeInstance
-import java.text.DateFormat.getTimeInstance
 import java.util.Date
 
 @Composable
 fun TaskItem(
     task: TaskUi,
-    onTagClick: () -> Unit,
+    onTagClick: (TagUi) -> Unit,
     onTaskClick: () -> Unit = {},
     onCheckClick: (() -> Unit)? = null
 ) {
@@ -93,7 +92,7 @@ fun TaskItem(
                         onClick = {
                             val uri =
                                 Uri.parse("geo:${task.coordinates.latitude},${task.coordinates.longitude}?z=16")
-                            
+
                             val intent = Intent(Intent.ACTION_VIEW, uri)
                             context.startActivity(intent)
                         }
@@ -119,7 +118,7 @@ fun TaskItem(
                             selected = false,
                             label = { Text(item.title) },
                             onClick = {
-                                onTagClick()
+                                onTagClick(item)
                             }
                         )
                     }

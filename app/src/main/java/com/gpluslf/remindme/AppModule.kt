@@ -49,12 +49,11 @@ val appModule = module {
     }
     single<AlarmScheduler> { NotificationAlarmScheduler(get()) }
     single { LocationService(get()) }
-    single { get<RemindMeDatabase>().tagsOnTaskDao() }
     single { get<RemindMeDatabase>().categoryDao() }
     single<UserDataSource> { UserRepository(get<RemindMeDatabase>().userDao()) }
     single<ListDataSource> { ListRepository(get<RemindMeDatabase>().listDao(), get()) }
     single<CategoryDataSource> { CategoryRepository(get()) }
-    single<TaskDataSource> { TaskRepository(get<RemindMeDatabase>().taskDao(), get()) }
+    single<TaskDataSource> { TaskRepository(get<RemindMeDatabase>().taskDao()) }
     single<TagDataSource> { TagRepository(get<RemindMeDatabase>().tagDao()) }
     single<NotificationDataSource> { NotificationRepository(get<RemindMeDatabase>().notificationDao()) }
     single<UserAchievementDataSource> { UserAchievementRepository(get<RemindMeDatabase>().achievementDao()) }
@@ -91,7 +90,6 @@ val appModule = module {
             userId,
             listTitle,
             taskTitle,
-            get(),
             get(),
             get(),
             get(),

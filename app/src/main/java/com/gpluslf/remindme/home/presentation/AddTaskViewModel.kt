@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.gpluslf.remindme.core.domain.AlarmScheduler
 import com.gpluslf.remindme.core.domain.Coordinates
 import com.gpluslf.remindme.core.domain.Notification
-import com.gpluslf.remindme.core.domain.NotificationDataSource
 import com.gpluslf.remindme.core.domain.TagDataSource
 import com.gpluslf.remindme.core.domain.Task
 import com.gpluslf.remindme.core.domain.TaskDataSource
@@ -30,7 +29,6 @@ class AddTaskViewModel(
     private val taskTitle: String? = null,
     private val taskRepository: TaskDataSource,
     private val tagsRepository: TagDataSource,
-    private val notificationRepository: NotificationDataSource,
     private val alarmScheduler: AlarmScheduler
 ) : ViewModel() {
     private val _state = MutableStateFlow(CreateTaskState())

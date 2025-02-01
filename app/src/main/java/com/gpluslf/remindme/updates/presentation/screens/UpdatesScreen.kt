@@ -33,7 +33,7 @@ import com.gpluslf.remindme.ui.theme.RemindMeTheme
 import com.gpluslf.remindme.updates.presentation.NotificationsState
 import com.gpluslf.remindme.updates.presentation.model.NotificationAction
 import com.gpluslf.remindme.updates.presentation.model.toNotificationUi
-import java.text.DateFormat.getTimeInstance
+import java.text.DateFormat.getDateTimeInstance
 import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -107,7 +107,7 @@ fun UpdatesScreen(
                                         fontWeight = FontWeight.Medium,
                                     )
                                     Text(
-                                        getTimeInstance().format(item.sendTime),
+                                        getDateTimeInstance().format(item.sendTime),
                                     )
                                 }
                             },

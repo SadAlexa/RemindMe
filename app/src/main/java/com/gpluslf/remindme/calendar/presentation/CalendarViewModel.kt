@@ -21,7 +21,7 @@ import java.time.YearMonth
 data class CalendarTaskState(
     val tasks: List<TaskUi> = emptyList(),
     val currentMonth: YearMonth = YearMonth.now(),
-    val selectedDay: LocalDate = LocalDate.now(),
+    val selectedDay: LocalDate = LocalDate.now().atStartOfDay().toLocalDate(),
     val isCalendarOpen: Boolean = false
 )
 
@@ -33,8 +33,7 @@ class CalendarViewModel(
     private val _state = MutableStateFlow(CalendarTaskState())
     val state = _state.onStart {
         getMonthTasks(
-            _state.value.currentMonth.atDay(1),
-            _state.value.currentMonth.atEndOfMonth()
+            _state.value.currentMonth
         )
     }.stateIn(
         viewModelScope,
@@ -42,14 +41,18 @@ class CalendarViewModel(
         CalendarTaskState()
     )
 
-    private fun getMonthTasks(start: LocalDate, end: LocalDate) {
+    private fun getMonthTasks(month: YearMonth) {
+
+        val start = month.atDay(1)
+        val end = month.atEndOfMonth().plusDays(1)
+
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 monthTasks =
                     taskDataSource.getAllTaskByYearMonth(start, end, userId).map { it.toTaskUi() }
+                selectDay(_state.value.selectedDay)
             }
         }
-        selectDay(_state.value.selectedDay)
     }
 
     fun onAction(action: CalendarAction) {
@@ -61,18 +64,7 @@ class CalendarViewModel(
             }
 
             is CalendarAction.SetCurrentMonth -> {
-                if (action.month != _state.value.currentMonth) {
-                    getMonthTasks(action.month.atDay(1), action.month.atEndOfMonth())
-                    _state.update { state ->
-                        state.copy(currentMonth = action.month)
-                    }
-                }
-            }
-
-            is CalendarAction.SelectMonth -> {
-                _state.update { state ->
-                    state.copy(currentMonth = action.month)
-                }
+                setCurrentMonth(action.month)
             }
 
             is CalendarAction.SelectDay -> {
@@ -81,11 +73,18 @@ class CalendarViewModel(
         }
     }
 
+    private fun setCurrentMonth(month: YearMonth) {
+        getMonthTasks(month)
+        _state.update { state ->
+            state.copy(currentMonth = month)
+        }
+    }
+
     private fun selectDay(date: LocalDate) {
         val startOfDay = date.atStartOfDay().toLocalDate().toLong()
         val endOfDay = date.atStartOfDay().plusDays(1).toLocalDate().toLong()
-        val tasks = monthTasks.filter { it.endTime != null }
-            .filter { it.endTime!!.toLong() in startOfDay..<endOfDay }
+        val tasks =
+            monthTasks.filter { it.endTime != null && it.endTime.toLong() in startOfDay..<endOfDay }
         _state.update { state ->
             state.copy(
                 tasks = tasks,

@@ -31,7 +31,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,7 +54,6 @@ import com.kizitonwose.calendar.core.WeekDay
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.core.yearMonth
-import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -66,6 +64,7 @@ import java.util.Locale
 fun CalendarScreen(
     taskState: CalendarTaskState,
     onAction: (CalendarAction) -> Unit,
+    navigateToList: (String) -> Unit,
     checkDay: (LocalDate) -> Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -117,7 +116,7 @@ fun CalendarScreen(
                 )
             }
             MonthChips(currentMonth, onClick = {
-                onAction(CalendarAction.SelectMonth(it))
+                onAction(CalendarAction.SetCurrentMonth(it))
             })
             Spacer(modifier = Modifier.size(16.dp))
             HorizontalDivider()
@@ -132,7 +131,7 @@ fun CalendarScreen(
                     TaskItem(
                         task = task,
                         onTagClick = {},
-                        onTaskClick = {}
+                        onTaskClick = { navigateToList(task.listTitle) }
                     )
                 }
             }
@@ -162,7 +161,7 @@ fun MonthCalendar(
         },
         monthHeader = {
             LaunchedEffect(state.firstVisibleMonth.yearMonth) {
-                onAction(CalendarAction.SelectMonth(state.firstVisibleMonth.yearMonth))
+                onAction(CalendarAction.SetCurrentMonth(state.firstVisibleMonth.yearMonth))
             }
 
             Column {
@@ -303,7 +302,7 @@ fun MonthDay(
                 .background(
                     when (day.date) {
                         LocalDate.now() -> MaterialTheme.colorScheme.primaryContainer
-                        currentDay -> MaterialTheme.colorScheme.surfaceDim
+                        currentDay -> MaterialTheme.colorScheme.surfaceContainerHighest
                         else -> Color.Transparent
                     }
                 ),
@@ -394,6 +393,7 @@ private fun CalendarScreenPreview() {
                     tasks = (1..10).map { sampleTask },
                     isCalendarOpen = true
                 ),
+                {},
                 {},
                 { false }
             )

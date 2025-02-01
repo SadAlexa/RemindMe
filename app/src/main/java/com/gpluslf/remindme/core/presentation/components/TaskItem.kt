@@ -2,6 +2,7 @@ package com.gpluslf.remindme.core.presentation.components
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
@@ -39,6 +41,7 @@ import com.gpluslf.remindme.core.domain.Task
 import com.gpluslf.remindme.core.presentation.model.TaskUi
 import com.gpluslf.remindme.core.presentation.model.toTaskUi
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
+import java.text.DateFormat.getDateTimeInstance
 import java.text.DateFormat.getTimeInstance
 import java.util.Date
 
@@ -75,7 +78,7 @@ fun TaskItem(
                     )
                     task.endTime?.let {
                         Text(
-                            text = getTimeInstance().format(task.endTime),
+                            text = getDateTimeInstance().format(task.endTime),
                             color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 fontWeight = FontWeight.Bold
@@ -139,15 +142,22 @@ fun TaskItem(
             }
         },
         trailingContent = {
-            AnimatedVisibility(onCheckClick != null) {
-                Checkbox(
-                    checked = task.isDone,
-                    onCheckedChange = {
-                        if (onCheckClick != null) {
-                            onCheckClick()
+            AnimatedContent(onCheckClick != null) {
+                if (it) {
+                    Checkbox(
+                        checked = task.isDone,
+                        onCheckedChange = {
+                            if (onCheckClick != null) {
+                                onCheckClick()
+                            }
                         }
-                    }
-                )
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowRight,
+                        contentDescription = "Navigate"
+                    )
+                }
             }
         }
     )

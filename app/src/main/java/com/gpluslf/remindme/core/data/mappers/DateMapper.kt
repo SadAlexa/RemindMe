@@ -13,5 +13,5 @@ fun Date.toLong(): Long {
 }
 
 fun LocalDate.toLong(): Long {
-    return this.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+    return this.atStartOfDay().atZone(ZoneOffset.UTC).toInstant().toEpochMilli()
 }

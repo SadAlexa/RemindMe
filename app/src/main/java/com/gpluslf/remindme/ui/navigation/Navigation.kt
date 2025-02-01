@@ -350,6 +350,7 @@ fun RemindMeNavGraph(
                 CalendarScreen(
                     taskState = state,
                     viewModel::onAction,
+                    { navController.navigate(RemindMeRoute.TodoList(it)) },
                     viewModel::hasEvents
                 )
             }

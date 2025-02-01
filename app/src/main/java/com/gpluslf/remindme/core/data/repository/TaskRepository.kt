@@ -38,6 +38,7 @@ class TaskRepository(private val taskDAOs: TaskDAOs, private val tagsOnTaskDAOs:
         end: LocalDate,
         userId: Long
     ): List<Task> {
+
         return taskDAOs.getAllTaskByYearMonth(start.toLong(), end.toLong(), userId)
             .map { taskEntity ->
                 taskEntity.toTask(

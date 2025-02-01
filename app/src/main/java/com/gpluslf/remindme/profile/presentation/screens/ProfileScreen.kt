@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +16,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AddAPhoto
 import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -48,6 +51,7 @@ import coil.request.ImageRequest
 import com.gpluslf.remindme.R
 import com.gpluslf.remindme.core.domain.User
 import com.gpluslf.remindme.core.domain.UserAchievement
+import com.gpluslf.remindme.core.presentation.components.ImageDialog
 import com.gpluslf.remindme.core.presentation.components.ImagePickerBottomSheet
 import com.gpluslf.remindme.profile.presentation.UserAchievementState
 import com.gpluslf.remindme.profile.presentation.UserState
@@ -70,6 +74,16 @@ fun ProfileScreen(
     onSettingAction: (SettingsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isDialogOpen by remember { mutableStateOf(false) }
+
+    if (isDialogOpen) {
+        userState.user?.image?.let {
+            ImageDialog(
+                imageUri = it,
+                onDismiss = { isDialogOpen = false })
+        }
+    }
+
     if (userState.isImagePickerVisible) {
         ImagePickerBottomSheet(
             onSelected = { image ->
@@ -163,15 +177,30 @@ fun ProfileScreen(
                     )
                     .build()
             )
-            Image(
-                painter = painter,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(150.dp)
-                    .clip(CircleShape)
-                    .clickable { onProfileAction(ProfileAction.ShowImagePicker(true)) },
-            )
+            Box {
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(150.dp)
+                        .clip(CircleShape)
+                        .clickable { isDialogOpen = true },
+                )
+                Button(
+                    onClick = { onProfileAction(ProfileAction.ShowImagePicker(true)) },
+                    contentPadding = PaddingValues(0.dp),
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .size(40.dp)
+                        .clip(CircleShape),
+                ) {
+                    Icon(
+                        Icons.Outlined.AddAPhoto,
+                        contentDescription = "camera",
+                    )
+                }
+            }
             Text(
                 text = userState.user?.name ?: "",
                 style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),

@@ -91,7 +91,7 @@ fun TaskItem(
                         modifier = Modifier.size(30.dp),
                         onClick = {
                             val uri =
-                                Uri.parse("geo:${task.coordinates.latitude},${task.coordinates.longitude}?z=16")
+                                Uri.parse("geo:${task.coordinates.latitude},${task.coordinates.longitude}?q=${task.coordinates.latitude},${task.coordinates.longitude}(${task.title})&z=16")
 
                             val intent = Intent(Intent.ACTION_VIEW, uri)
                             context.startActivity(intent)

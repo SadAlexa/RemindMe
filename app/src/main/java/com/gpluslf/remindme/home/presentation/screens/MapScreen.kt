@@ -51,27 +51,13 @@ fun GeoPoint.toCoordinates() = Coordinates(latitude, longitude)
 fun MapScreen(
     onFloatingActionButtonClick: (Coordinates) -> Unit,
 ) {
-
-
     val locationService = getKoin().get<LocationService>()
 
     val locationPermission = rememberPermission(
         Manifest.permission.ACCESS_COARSE_LOCATION
     ) { status ->
-        when (status) {
-            PermissionStatus.Granted -> {
-                locationService.requestCurrentLocation()
-            }
-
-            PermissionStatus.Denied -> {
-                //TODO actions.setShowLocationPermissionDeniedAlert(true)
-            }
-
-            PermissionStatus.PermanentlyDenied -> {
-                // TODO actions.setShowLocationPermissionPermanentlyDeniedSnackbar(true)
-            }
-
-            PermissionStatus.Unknown -> {}
+        if (status == PermissionStatus.Granted) {
+            locationService.requestCurrentLocation()
         }
     }
 
@@ -93,17 +79,14 @@ fun MapScreen(
 
     val context = LocalContext.current
 
-    var point by remember {
-        mutableStateOf(locationService.coordinates?.toGeoPoint() ?: GeoPoint(0.0, 0.0))
-    }
 
     val cameraState = rememberCameraState {
-        geoPoint = point
+        geoPoint = GeoPoint(0.0, 0.0)
         zoom = 12.0
     }
 
     val markerState = rememberMarkerState(
-        geoPoint = point
+        geoPoint = GeoPoint(0.0, 0.0)
     )
 
     var mapProperties by remember {
@@ -114,7 +97,9 @@ fun MapScreen(
 
     LaunchedEffect(locationService.coordinates) {
         val coordinates = locationService.coordinates ?: return@LaunchedEffect
-        point = coordinates.toGeoPoint()
+        val point = coordinates.toGeoPoint()
+        markerState.geoPoint = point
+        cameraState.geoPoint = point
     }
 
     SideEffect {
@@ -129,7 +114,7 @@ fun MapScreen(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { onFloatingActionButtonClick(point.toCoordinates()) },
+                onClick = { onFloatingActionButtonClick(markerState.geoPoint.toCoordinates()) },
             ) {
                 Icon(Icons.Outlined.Save, "Save Position")
             }
@@ -142,7 +127,7 @@ fun MapScreen(
             cameraState = cameraState,
             properties = mapProperties,
             onMapClick = {
-                point = it
+                markerState.geoPoint = it
             },
             overlayManagerState = overlayManagerState,
             onFirstLoadListener = {

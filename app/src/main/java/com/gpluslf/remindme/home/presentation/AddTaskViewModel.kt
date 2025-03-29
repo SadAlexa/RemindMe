@@ -25,8 +25,8 @@ import java.util.Date
 
 class AddTaskViewModel(
     private val userId: Long,
-    private val listTitle: String,
-    private val taskTitle: String? = null,
+    private val listId: Long,
+    private val taskId: Long? = null,
     private val taskRepository: TaskDataSource,
     private val tagsRepository: TagDataSource,
     private val alarmScheduler: AlarmScheduler
@@ -43,13 +43,14 @@ class AddTaskViewModel(
     private fun loadData() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                if (taskTitle != null) {
+                if (taskId != null) {
                     launch {
-                        taskRepository.getTaskByTitle(taskTitle, listTitle, userId)
+                        taskRepository.getTaskById(taskId)
                             .collect { task ->
                                 if (task != null) {
                                     _state.update { state ->
                                         state.copy(
+                                            id = task.id,
                                             title = task.title,
                                             body = task.body,
                                             image = task.image,
@@ -68,7 +69,7 @@ class AddTaskViewModel(
                             }
                     }
                 }
-                tagsRepository.getAllTags(listTitle, userId).collect { list ->
+                tagsRepository.getAllTags(listId, userId).collect { list ->
                     _state.update { state ->
                         state.copy(tags = list.map { it.toTagUi() })
                     }
@@ -80,8 +81,9 @@ class AddTaskViewModel(
     private fun saveTask() {
         val currentState = state.value
         val task = Task(
+            id = currentState.id,
             userId = userId,
-            listTitle = listTitle,
+            listId = listId,
             title = currentState.title,
             body = currentState.body,
             image = currentState.image,
@@ -94,22 +96,20 @@ class AddTaskViewModel(
             longitude = currentState.coordinates?.longitude
         )
         viewModelScope.launch {
-            if (taskTitle != null && taskTitle != currentState.title) {
-                taskRepository.deleteTask(task.copy(title = taskTitle))
-            }
             taskRepository.upsertTask(task)
         }
 
 
         if (currentState.endTime != null) {
-            val scheduleId = "$userId/$listTitle/${currentState.title}".hashCode()
+            val scheduleId = "$userId/$listId/${currentState.title}".hashCode()
                 .toLong() + currentState.endTime.time
 
             val notificationItem = Notification(
                 id = scheduleId,
                 sendTime = currentState.endTime,
-                taskListTitle = listTitle,
+                taskListId = listId,
                 userId = userId,
+                taskId = currentState.id,
                 taskTitle = currentState.title,
                 body = "it's time to ${currentState.title}",
                 title = "REMINDER!",

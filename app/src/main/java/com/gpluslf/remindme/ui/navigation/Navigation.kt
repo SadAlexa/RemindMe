@@ -75,13 +75,13 @@ sealed interface RemindMeRoute {
     data object SignUp : RemindMeRoute
 
     @Serializable
-    data class TodoList(val listTitle: String) : RemindMeRoute
+    data class TodoList(val listId: Long, val listTitle: String? = null) : RemindMeRoute
 
     @Serializable
-    data class AddList(val listTitle: String? = null) : RemindMeRoute
+    data class AddList(val listId: Long? = null) : RemindMeRoute
 
     @Serializable
-    data class AddTask(val listTitle: String, val taskTitle: String? = null) : RemindMeRoute
+    data class AddTask(val listId: Long, val taskId: Long? = null) : RemindMeRoute
 
     @Serializable
     data object Calendar : RemindMeRoute
@@ -300,30 +300,31 @@ fun RemindMeNavGraph(
                     onAddListClick = {
                         navController.navigate(RemindMeRoute.AddList())
                     },
-                    onEditListSwipe = { name ->
-                        navController.navigate(RemindMeRoute.AddList(name))
+                    onEditListSwipe = { id ->
+                        navController.navigate(RemindMeRoute.AddList(id))
                     },
-                    onCustomListItemClick = { name ->
-                        navController.navigate(RemindMeRoute.TodoList(name))
+                    onCustomListItemClick = { id, title ->
+                        navController.navigate(RemindMeRoute.TodoList(id, title))
                     },
                     events = viewModel.events
                 )
             }
             composable<RemindMeRoute.TodoList> {
+                val listId = it.toRoute<RemindMeRoute.TodoList>().listId
                 val listTitle = it.toRoute<RemindMeRoute.TodoList>().listTitle
                 val viewModel = koinViewModel<TasksViewModel>(
-                    parameters = { parametersOf(currentUserId, listTitle) }
+                    parameters = { parametersOf(currentUserId, listId) }
                 )
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 ListScreen(
-                    listTitle = listTitle,
+                    listTitle = listTitle ?: "",
                     state = state,
                     onAction = viewModel::onAction,
                     onAddTaskClick = {
-                        navController.navigate(RemindMeRoute.AddTask(listTitle))
+                        navController.navigate(RemindMeRoute.AddTask(listId))
                     },
-                    onEditTaskSwipe = { name ->
-                        navController.navigate(RemindMeRoute.AddTask(listTitle, name))
+                    onEditTaskSwipe = { taskId ->
+                        navController.navigate(RemindMeRoute.AddTask(listId, taskId))
                     },
                     onBackClick = {
                         navController.popBackStack()
@@ -332,14 +333,14 @@ fun RemindMeNavGraph(
                 )
             }
             composable<RemindMeRoute.AddList> {
-                val listTitle = it.toRoute<RemindMeRoute.AddList>().listTitle
+                val listId = it.toRoute<RemindMeRoute.AddList>().listId
                 val viewModel = koinViewModel<AddListViewModel>(
-                    parameters = { parametersOf(currentUserId, listTitle) }
+                    parameters = { parametersOf(currentUserId, listId) }
                 )
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 AddListScreen(
                     state = state,
-                    isNew = listTitle == null,
+                    isNew = listId == null,
                     onAddListAction = viewModel::onAddListAction,
                     onFloatingActionButtonClick = {
                         navController.navigate(RemindMeRoute.Home)
@@ -355,8 +356,8 @@ fun RemindMeNavGraph(
                     parameters = {
                         parametersOf(
                             currentUserId,
-                            addTask.listTitle,
-                            addTask.taskTitle,
+                            addTask.listId,
+                            addTask.taskId,
                         )
                     }
                 )
@@ -364,7 +365,7 @@ fun RemindMeNavGraph(
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 AddTaskScreen(
                     state = state,
-                    isNew = addTask.taskTitle == null,
+                    isNew = addTask.taskId == null,
                     onAddTaskAction = viewModel::onAddTaskAction,
                     onBack = {
                         navController.popBackStack()

@@ -8,6 +8,8 @@ import java.util.Date
 
 @Immutable
 data class CreateTaskState(
+    val id: Long = 0,
+
     val title: String = "",
 
     val listTitle: String = "",

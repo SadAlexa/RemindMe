@@ -11,8 +11,9 @@ fun NotificationEntity.toNotification() = Notification(
     senderUserId,
     sendTime.toDate(),
     isRead,
+    taskId,
     taskTitle,
-    taskListTitle,
+    taskListId,
     achievementId
 )
 
@@ -24,8 +25,9 @@ fun Notification.toNotificationEntity() = NotificationEntity(
     senderUserId,
     sendTime.toLong(),
     isRead,
+    taskId,
     taskTitle,
-    taskListTitle,
+    taskListId,
     achievementId
 )
 

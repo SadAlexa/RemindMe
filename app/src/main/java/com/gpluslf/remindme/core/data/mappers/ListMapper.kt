@@ -6,6 +6,7 @@ import com.gpluslf.remindme.core.data.database.entities.ListEntity
 import com.gpluslf.remindme.core.domain.TodoList
 
 fun ListEntity.toTodoList(category: CategoryEntity?) = TodoList(
+    id,
     title,
     userId,
     body,
@@ -17,6 +18,7 @@ fun ListEntity.toTodoList(category: CategoryEntity?) = TodoList(
 )
 
 fun TodoList.toListEntity() = ListEntity(
+    id,
     title,
     userId,
     body,

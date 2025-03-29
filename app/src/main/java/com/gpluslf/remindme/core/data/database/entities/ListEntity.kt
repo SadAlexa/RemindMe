@@ -3,10 +3,14 @@ package com.gpluslf.remindme.core.data.database.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
+import androidx.room.PrimaryKey
 
 @Entity(
+    indices = [
+        Index(value = ["id", "user_id"], unique = true)
+    ],
     tableName = "lists",
-    primaryKeys = ["title", "user_id"],
     foreignKeys = [
         ForeignKey(
             entity = UserEntity::class,
@@ -29,6 +33,9 @@ import androidx.room.ForeignKey
     ]
 )
 data class ListEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long,
+
     @ColumnInfo(name = "title")
     val title: String,
 

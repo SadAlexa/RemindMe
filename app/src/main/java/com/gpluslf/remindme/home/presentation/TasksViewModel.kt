@@ -36,7 +36,7 @@ data class TasksState(
 
 class TasksViewModel(
     private val userId: Long,
-    private val listTitle: String,
+    private val listId: Long,
     private val taskRepository: TaskDataSource,
     private val tagRepository: TagDataSource
 ) : ViewModel() {
@@ -58,8 +58,8 @@ class TasksViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 combine(
-                    taskRepository.getAllTasksByList(listTitle, userId),
-                    tagRepository.getAllTags(listTitle, userId)
+                    taskRepository.getAllTasksByList(listId, userId),
+                    tagRepository.getAllTags(listId, userId)
                 ) { tasks, tags ->
                     Pair(
                         tasks.map { it.toTaskUi() },
@@ -125,7 +125,7 @@ class TasksViewModel(
                         Tag(
                             id = state.value.selectedEditTag?.id ?: 0,
                             title = state.value.tagTitle,
-                            listTitle = listTitle,
+                            listId = listId,
                             userId
                         )
                     )

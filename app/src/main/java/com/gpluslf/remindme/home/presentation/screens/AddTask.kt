@@ -449,14 +449,14 @@ private fun AddTaskScreenPreviewDark() {
 }
 
 internal val sampleCreateTaskState = CreateTaskState(
-    title = "title",
+    id = 8,
     body = "body",
     endTime = Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000),
     tags = listOf(
         TagUi(
             id = 1,
             title = "title",
-            listTitle = "listTitle",
+            listId = 2,
             userId = 1
         )
     ),

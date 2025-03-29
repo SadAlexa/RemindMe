@@ -13,8 +13,8 @@ interface TagDAOs {
     @Query("SELECT * FROM tags WHERE id = :categoryId")
     fun getTagById(categoryId: Long): Flow<TagEntity?>
 
-    @Query("SELECT * FROM tags WHERE list_title = :listTitle AND user_id = :userId")
-    fun getAllTags(listTitle: String, userId: Long): Flow<List<TagEntity>>
+    @Query("SELECT * FROM tags WHERE list_id = :listId AND user_id = :userId")
+    fun getAllTags(listId: Long, userId: Long): Flow<List<TagEntity>>
 
     @Upsert
     suspend fun upsertTag(tag: TagEntity)

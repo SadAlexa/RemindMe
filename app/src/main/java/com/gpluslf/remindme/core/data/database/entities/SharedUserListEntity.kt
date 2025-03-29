@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 
 @Entity(
     tableName = "shared_user_list",
-    primaryKeys = ["user_id", "list_shared_user_id", "list_title"],
+    primaryKeys = ["user_id", "list_shared_user_id", "list_id"],
     foreignKeys = [
         ForeignKey(
             entity = UserEntity::class,
@@ -22,8 +22,8 @@ import androidx.room.ForeignKey
         ),
         ForeignKey(
             entity = ListEntity::class,
-            parentColumns = ["title", "user_id"],
-            childColumns = ["list_title", "user_id"],
+            parentColumns = ["id", "user_id"],
+            childColumns = ["list_id", "user_id"],
             onDelete = ForeignKey.CASCADE
         )
     ]
@@ -36,6 +36,6 @@ data class SharedUserListEntity(
     @ColumnInfo(name = "list_shared_user_id")
     val listsSharedUserId: Long,
 
-    @ColumnInfo(name = "list_title")
-    val listTitle: String
+    @ColumnInfo(name = "list_id")
+    val listId: Long
 )

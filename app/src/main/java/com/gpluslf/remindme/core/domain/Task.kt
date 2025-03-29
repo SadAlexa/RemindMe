@@ -4,9 +4,12 @@ import android.net.Uri
 import java.util.Date
 
 data class Task(
+    
+    val id: Long,
+
     val title: String,
 
-    val listTitle: String,
+    val listId: Long,
 
     val userId: Long,
 

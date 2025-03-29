@@ -8,8 +8,8 @@ class SharedUserListRepository(private val sharedUserListDAOs: SharedUserListDAO
     fun getAllSharedLists(userId: Long, sharedUserId: Long) =
         sharedUserListDAOs.getAllSharedLists(userId, sharedUserId)
 
-    fun getSharedList(userId: Long, sharedUserId: Long, listTitle: String) =
-        sharedUserListDAOs.getSharedList(userId, sharedUserId, listTitle)
+    fun getSharedList(userId: Long, sharedUserId: Long, listId: Long) =
+        sharedUserListDAOs.getSharedList(userId, sharedUserId, listId)
 
     suspend fun upsertSharedList(sharedUserList: SharedUserListEntity) =
         sharedUserListDAOs.upsertSharedList(sharedUserList)

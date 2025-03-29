@@ -23,6 +23,8 @@ class AlarmReceiver : BroadcastReceiver() {
         }.k
         val notificationDataSource = koin.get<NotificationDataSource>()
         val achievementId = intent.getLongExtra("achievementId", 0)
+        val listId = intent.getLongExtra("taskListId", 0)
+        val taskId = intent.getLongExtra("taskId", 0)
         val notification = Notification(
             intent.getLongExtra("id", 0),
             intent.getStringExtra("title") ?: "title default",
@@ -31,8 +33,9 @@ class AlarmReceiver : BroadcastReceiver() {
             null,
             intent.getLongExtra("sendTime", 0).toDate(),
             intent.getBooleanExtra("isRead", false),
+            if (taskId != 0L) taskId else null,
             intent.getStringExtra("taskTitle"),
-            intent.getStringExtra("taskListTitle"),
+            if (listId != 0L) listId else null,
             if (achievementId != 0L) achievementId else null
         )
 

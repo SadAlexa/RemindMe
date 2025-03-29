@@ -6,8 +6,9 @@ import com.gpluslf.remindme.core.data.database.entities.TaskEntity
 import com.gpluslf.remindme.core.domain.Task
 
 fun TaskEntity.toTask(tags: List<TagEntity>) = Task(
+    id,
     title,
-    listTitle,
+    listId,
     userId,
     body,
     endTime?.toDate(),
@@ -21,8 +22,9 @@ fun TaskEntity.toTask(tags: List<TagEntity>) = Task(
 )
 
 fun Task.toTaskEntity() = TaskEntity(
+    id,
     title,
-    listTitle,
+    listId,
     userId,
     body,
     endTime?.toLong(),

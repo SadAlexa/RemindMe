@@ -7,11 +7,11 @@ import com.gpluslf.remindme.core.domain.SharedUserList
 fun SharedUserListEntity.toSharedUserList() = SharedUserList(
     usersId,
     listsSharedUserId,
-    listTitle
+    listId
 )
 
 fun SharedUserList.toSharedUserListEntity() = SharedUserListEntity(
     usersId,
     listsSharedUserId,
-    listTitle
+    listId
 )

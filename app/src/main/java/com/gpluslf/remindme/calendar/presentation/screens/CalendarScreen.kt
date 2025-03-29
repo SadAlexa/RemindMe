@@ -64,7 +64,7 @@ import java.util.Locale
 fun CalendarScreen(
     taskState: CalendarTaskState,
     onAction: (CalendarAction) -> Unit,
-    navigateToList: (String) -> Unit,
+    navigateToList: (Long) -> Unit,
     checkDay: (LocalDate) -> Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -131,7 +131,7 @@ fun CalendarScreen(
                     TaskItem(
                         task = task,
                         onTagClick = {},
-                        onTaskClick = { navigateToList(task.listTitle) }
+                        onTaskClick = { navigateToList(task.listId) }
                     )
                 }
             }
@@ -312,10 +312,10 @@ fun MonthDay(
                 text = day.date.dayOfMonth.toString(),
                 fontWeight = FontWeight.Medium,
                 color =
-                if (day.date.yearMonth == currentMonth)
-                    MaterialTheme.colorScheme.onBackground
-                else
-                    MaterialTheme.colorScheme.outline
+                    if (day.date.yearMonth == currentMonth)
+                        MaterialTheme.colorScheme.onBackground
+                    else
+                        MaterialTheme.colorScheme.outline
 
             )
         }

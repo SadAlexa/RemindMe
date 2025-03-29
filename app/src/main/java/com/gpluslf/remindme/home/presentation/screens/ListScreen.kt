@@ -55,7 +55,7 @@ fun ListScreen(
     state: TasksState,
     onAddTaskClick: () -> Unit,
     onAction: (ListScreenAction) -> Unit,
-    onEditTaskSwipe: (String) -> Unit,
+    onEditTaskSwipe: (Long) -> Unit,
     onBackClick: () -> Unit,
     events: Flow<TagEvent> = emptyFlow(),
     modifier: Modifier = Modifier
@@ -173,7 +173,7 @@ fun ListScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
-                items(state.tasks, key = { it.title }) { item ->
+                items(state.tasks, key = { it.id }) { item ->
                     SwipeToDeleteContainer(
                         item,
                         onDelete = {
@@ -181,7 +181,7 @@ fun ListScreen(
                         },
                         onEdit = {
                             onAction(ListScreenAction.EditTask(item))
-                            onEditTaskSwipe(item.title)
+                            onEditTaskSwipe(item.id)
                         },
                         modifier = Modifier.animateItem()
                     ) {

@@ -7,6 +7,8 @@ import com.gpluslf.remindme.home.presentation.model.toCategory
 import com.gpluslf.remindme.home.presentation.model.toCategoryUi
 
 data class TodoListUi(
+    val id: Long,
+
     val title: String,
 
     val userId: Long,
@@ -27,6 +29,7 @@ data class TodoListUi(
 )
 
 fun TodoList.toTodoListUi() = TodoListUi(
+    id,
     title,
     userId,
     body,
@@ -38,6 +41,7 @@ fun TodoList.toTodoListUi() = TodoListUi(
 )
 
 fun TodoListUi.toTodoList() = TodoList(
+    id,
     title,
     userId,
     body,

@@ -12,18 +12,26 @@ import java.time.LocalDate
 
 class TaskRepository(private val taskDAOs: TaskDAOs) :
     TaskDataSource {
-    override fun getTaskByTitle(taskTitle: String, listTitle: String, userId: Long): Flow<Task?> {
-        return taskDAOs.getTaskByTitle(taskTitle, listTitle, userId).map { taskEntity ->
+    override fun getTaskById(taskId: Long): Flow<Task?> {
+        return taskDAOs.getTaskById(taskId).map { taskEntity ->
             taskEntity?.toTask(
-                taskDAOs.getAllTagsOnTask(taskTitle, listTitle, userId)
+                taskDAOs.getAllTagsOnTask(taskEntity.id, taskEntity.listId, taskEntity.userId)
             )
         }
     }
 
-    override fun getAllTasksByList(listTitle: String, userId: Long): Flow<List<Task>> {
-        return taskDAOs.getTasksByList(listTitle, userId).map { flow ->
+    override fun getTaskByTitle(taskTitle: String, listId: Long, userId: Long): Flow<Task?> {
+        return taskDAOs.getTaskByTitle(taskTitle, listId, userId).map { taskEntity ->
+            taskEntity?.toTask(
+                taskDAOs.getAllTagsOnTask(taskEntity.id, taskEntity.listId, taskEntity.userId)
+            )
+        }
+    }
+
+    override fun getAllTasksByList(listId: Long, userId: Long): Flow<List<Task>> {
+        return taskDAOs.getTasksByList(listId, userId).map { flow ->
             flow.map { taskEntity ->
-                val tags = taskDAOs.getAllTagsOnTask(taskEntity.title, listTitle, userId)
+                val tags = taskDAOs.getAllTagsOnTask(taskEntity.id, listId, userId)
                 taskEntity.toTask(
                     tags
                 )
@@ -40,7 +48,7 @@ class TaskRepository(private val taskDAOs: TaskDAOs) :
         return taskDAOs.getAllTaskByYearMonth(start.toLong(), end.toLong(), userId)
             .map { taskEntity ->
                 taskEntity.toTask(
-                    taskDAOs.getAllTagsOnTask(taskEntity.title, taskEntity.listTitle, userId)
+                    taskDAOs.getAllTagsOnTask(taskEntity.id, taskEntity.listId, userId)
                 )
             }
     }

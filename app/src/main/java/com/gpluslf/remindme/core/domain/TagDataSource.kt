@@ -7,7 +7,7 @@ interface TagDataSource {
 
     fun getTagById(tagId: Long): Flow<Tag?>
 
-    fun getAllTags(listTitle: String, userId: Long): Flow<List<Tag>>
+    fun getAllTags(listId: Long, userId: Long): Flow<List<Tag>>
 
     suspend fun upsertTag(tag: Tag)
 

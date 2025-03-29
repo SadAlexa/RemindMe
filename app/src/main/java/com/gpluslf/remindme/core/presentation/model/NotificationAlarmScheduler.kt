@@ -22,8 +22,9 @@ class NotificationAlarmScheduler(
             putExtra("senderUserId", notificationItem.senderUserId)
             putExtra("sendTime", notificationItem.sendTime.time)
             putExtra("isRead", notificationItem.isRead)
+            putExtra("taskId", notificationItem.taskId)
             putExtra("taskTitle", notificationItem.taskTitle)
-            putExtra("taskListTitle", notificationItem.taskListTitle)
+            putExtra("taskListId", notificationItem.taskListId)
             putExtra("achievementId", notificationItem.achievementId)
         }
         return PendingIntent.getBroadcast(

@@ -13,8 +13,8 @@ interface SharedUserListDAOs {
     @Query("SELECT * FROM shared_user_list WHERE user_id = :userId AND list_shared_user_id = :sharedUserId")
     fun getAllSharedLists(userId: Long, sharedUserId: Long): Flow<List<SharedUserListEntity>>
 
-    @Query("SELECT * FROM shared_user_list WHERE user_id = :userId AND list_shared_user_id = :sharedUserId AND list_title = :listTitle")
-    fun getSharedList(userId: Long, sharedUserId: Long, listTitle: String): Flow<SharedUserListEntity>
+    @Query("SELECT * FROM shared_user_list WHERE user_id = :userId AND list_shared_user_id = :sharedUserId AND list_id = :listId")
+    fun getSharedList(userId: Long, sharedUserId: Long, listId: Long): Flow<SharedUserListEntity>
 
     @Upsert
     suspend fun upsertSharedList(sharedUserList: SharedUserListEntity)

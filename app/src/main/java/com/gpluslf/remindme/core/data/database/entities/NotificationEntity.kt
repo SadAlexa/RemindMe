@@ -16,8 +16,8 @@ import androidx.room.PrimaryKey
         ),
         ForeignKey(
             entity = TaskEntity::class,
-            parentColumns = ["title", "list_title", "user_id"],
-            childColumns = ["task_title", "task_list_title", "user_id"],
+            parentColumns = ["id", "list_id", "user_id"],
+            childColumns = ["task_id", "task_list_id", "user_id"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
@@ -51,11 +51,14 @@ data class NotificationEntity(
     @ColumnInfo(name = "is_read")
     val isRead: Boolean,
 
+    @ColumnInfo(name = "task_id")
+    val taskId: Long?,
+
     @ColumnInfo(name = "task_title")
     val taskTitle: String?,
 
-    @ColumnInfo(name = "task_list_title")
-    val taskListTitle: String?,
+    @ColumnInfo(name = "task_list_id")
+    val taskListId: Long?,
 
     @ColumnInfo(name = "achievement_id")
     val achievementId: Long?

@@ -1,18 +1,21 @@
 package com.gpluslf.remindme.core.data.database.entities
 
-import androidx.room.Entity
 import androidx.room.ColumnInfo
+import androidx.room.Entity
 import androidx.room.ForeignKey
-import java.util.Date
+import androidx.room.Index
+import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "tasks",
-    primaryKeys = ["title", "list_title", "user_id"],
+    indices = [
+        Index(value = ["id", "list_id", "user_id"], unique = true)
+    ],
     foreignKeys = [
         ForeignKey(
             entity = ListEntity::class,
-            parentColumns = ["title", "user_id"],
-            childColumns = ["list_title", "user_id"],
+            parentColumns = ["id", "user_id"],
+            childColumns = ["list_id", "user_id"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
@@ -25,11 +28,14 @@ import java.util.Date
 )
 
 data class TaskEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long,
+
     @ColumnInfo(name = "title")
     val title: String,
 
-    @ColumnInfo(name = "list_title")
-    val listTitle: String,
+    @ColumnInfo(name = "list_id")
+    val listId: Long,
 
     @ColumnInfo(name = "user_id")
     val userId: Long,

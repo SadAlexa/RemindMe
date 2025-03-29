@@ -18,9 +18,11 @@ data class NotificationUi(
 
     val isRead: Boolean,
 
+    val taskId: Long?,
+
     val taskTitle: String?,
 
-    val taskListTitle: String?,
+    val taskListId: Long?,
 
     val achievementId: Long?
 )
@@ -33,8 +35,9 @@ fun Notification.toNotificationUi() = NotificationUi(
     senderUserId,
     sendTime,
     isRead,
+    taskId,
     taskTitle,
-    taskListTitle,
+    taskListId,
     achievementId
 )
 
@@ -46,7 +49,8 @@ fun NotificationUi.toNotification() = Notification(
     senderUserId,
     sendTime,
     isRead,
+    taskId,
     taskTitle,
-    taskListTitle,
+    taskListId,
     achievementId
 )

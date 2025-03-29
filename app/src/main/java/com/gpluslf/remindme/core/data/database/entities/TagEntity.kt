@@ -10,8 +10,8 @@ import androidx.room.PrimaryKey
     foreignKeys = [
         ForeignKey(
             entity = ListEntity::class,
-            parentColumns = ["user_id", "title"],
-            childColumns = ["user_id", "list_title"],
+            parentColumns = ["user_id", "id"],
+            childColumns = ["user_id", "list_id"],
             onDelete = ForeignKey.CASCADE
         )
     ]
@@ -23,8 +23,8 @@ data class TagEntity(
     @ColumnInfo(name = "title")
     val title: String,
 
-    @ColumnInfo(name = "list_title")
-    val listTitle: String,
+    @ColumnInfo(name = "list_id")
+    val listId: Long,
 
     @ColumnInfo(name = "user_id")
     val userId: Long

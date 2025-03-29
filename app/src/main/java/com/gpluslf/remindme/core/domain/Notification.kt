@@ -18,9 +18,11 @@ data class Notification(
 
     val isRead: Boolean = false,
 
+    val taskId: Long? = null,
+
     val taskTitle: String? = null,
 
-    val taskListTitle: String? = null,
+    val taskListId: Long? = null,
 
     val achievementId: Long? = null
 )

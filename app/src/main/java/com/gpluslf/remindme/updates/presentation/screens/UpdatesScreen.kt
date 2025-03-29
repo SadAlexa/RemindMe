@@ -41,7 +41,7 @@ import java.util.Date
 fun UpdatesScreen(
     state: NotificationsState,
     onNotificationAction: (NotificationAction) -> Unit,
-    onTaskNotificationClick: (String) -> Unit,
+    onTaskNotificationClick: (Long) -> Unit,
     onAchievementNotificationClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -83,8 +83,8 @@ fun UpdatesScreen(
                                 .clip(RoundedCornerShape(20.dp))
                                 .clickable {
                                     onNotificationAction(NotificationAction.Click(item))
-                                    if (item.taskListTitle != null) {
-                                        onTaskNotificationClick(item.taskListTitle)
+                                    if (item.taskListId != null) {
+                                        onTaskNotificationClick(item.taskListId)
                                     } else {
                                         onAchievementNotificationClick()
                                     }

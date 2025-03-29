@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.map
 
 class TagRepository(private val tagDAOs: TagDAOs) : TagDataSource {
 
-    override fun getAllTags(listTitle: String, userId: Long) =
-        tagDAOs.getAllTags(listTitle, userId).map { flow -> flow.map { it.toTag() } }
+    override fun getAllTags(listId: Long, userId: Long) =
+        tagDAOs.getAllTags(listId, userId).map { flow -> flow.map { it.toTag() } }
 
     override fun getTagById(tagId: Long) = tagDAOs.getTagById(tagId).map { it?.toTag() }
 

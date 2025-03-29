@@ -7,5 +7,5 @@ data class SharedUserList(
 
     val listsSharedUserId: Long,
 
-    val listTitle: String
+    val listId: Long
 )

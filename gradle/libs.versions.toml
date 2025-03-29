@@ -1,6 +1,6 @@
 [versions]
 accompanistPermissions = "0.33.1-alpha"
-agp = "8.7.3"
+agp = "8.9.1"
 coilCompose = "2.3.0"
 compose = "2.6.1"
 datastorePreferences = "1.1.1"

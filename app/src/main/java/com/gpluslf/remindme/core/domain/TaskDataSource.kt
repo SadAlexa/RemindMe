@@ -5,10 +5,11 @@ import java.time.LocalDate
 
 
 interface TaskDataSource {
+    fun getTaskById(taskId: Long): Flow<Task?>
 
-    fun getTaskByTitle(taskTitle: String, listTitle: String, userId: Long): Flow<Task?>
+    fun getTaskByTitle(taskTitle: String, listId: Long, userId: Long): Flow<Task?>
 
-    fun getAllTasksByList(listTitle: String, userId: Long): Flow<List<Task>>
+    fun getAllTasksByList(listId: Long, userId: Long): Flow<List<Task>>
 
     suspend fun getAllTaskByYearMonth(
         start: LocalDate,

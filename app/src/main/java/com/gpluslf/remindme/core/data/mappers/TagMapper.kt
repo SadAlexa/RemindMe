@@ -7,24 +7,24 @@ import com.gpluslf.remindme.core.domain.Tag
 fun TagEntity.toTag() = Tag(
     id,
     title,
-    listTitle,
+    listId,
     userId
 )
 
 fun Tag.toTagEntity() = TagEntity(
     id,
     title,
-    listTitle,
+    listId,
     userId
 )
 
 fun Tag.toTagsOnTaskEntity(
-    taskTitle: String,
-    listTitle: String,
+    taskId: Long,
+    listId: Long,
     userId: Long
 ) = TagsOnTaskEntity(
-    tagId = id,
-    taskTitle = taskTitle,
+    taskId = taskId,
+    taskListId = listId,
     taskUserId = userId,
-    taskListTitle = listTitle
+    tagId = id,
 )

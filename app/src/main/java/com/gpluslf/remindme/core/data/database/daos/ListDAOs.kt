@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ListDAOs {
 
+    @Query("SELECT * FROM lists WHERE id = :listId")
+    fun getListById(listId: Long): Flow<ListEntity?>
+
     @Query("SELECT * FROM lists WHERE title = :listTitle AND user_id = :userId")
     fun getListByTitle(listTitle: String, userId: Long): Flow<ListEntity?>
 

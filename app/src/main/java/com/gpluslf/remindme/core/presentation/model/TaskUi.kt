@@ -6,8 +6,9 @@ import com.gpluslf.remindme.core.domain.Task
 import java.util.Date
 
 data class TaskUi(
+    val id: Long,
     val title: String,
-    val listTitle: String,
+    val listId: Long,
     val userId: Long,
     val body: String?,
     val endTime: Date?,
@@ -20,8 +21,9 @@ data class TaskUi(
 )
 
 fun Task.toTaskUi() = TaskUi(
+    id,
     title,
-    listTitle,
+    listId,
     userId,
     body,
     endTime,
@@ -37,8 +39,9 @@ fun Task.toTaskUi() = TaskUi(
 )
 
 fun TaskUi.toTask() = Task(
+    id,
     title,
-    listTitle,
+    listId,
     userId,
     body,
     endTime,

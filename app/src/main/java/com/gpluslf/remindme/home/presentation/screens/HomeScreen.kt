@@ -52,8 +52,8 @@ fun HomeScreen(
     state: ListsState,
     onHomeScreenAction: (HomeScreenAction) -> Unit,
     onAddListClick: () -> Unit,
-    onEditListSwipe: (String) -> Unit,
-    onCustomListItemClick: (String) -> Unit,
+    onEditListSwipe: (Long) -> Unit,
+    onCustomListItemClick: (Long, String) -> Unit,
     events: Flow<CategoryEvent> = emptyFlow(),
     modifier: Modifier = Modifier
 ) {
@@ -170,14 +170,14 @@ fun HomeScreen(
                         },
                         onEdit = {
                             onHomeScreenAction(HomeScreenAction.EditList(it))
-                            onEditListSwipe(item.title)
+                            onEditListSwipe(item.id)
                         },
                         modifier = Modifier.animateItem()
                     ) {
                         CustomListItem(
                             item,
                             onClick = {
-                                onCustomListItemClick(item.title)
+                                onCustomListItemClick(item.id, item.title)
                             }
                         )
                     }
@@ -204,7 +204,7 @@ private fun HomeScreenPreviewLight() {
                 {},
                 {},
                 {},
-                {},
+                {} as (Long, String) -> Unit,
                 modifier = Modifier
                     .padding(padding)
                     .fillMaxSize(),
@@ -228,7 +228,7 @@ private fun HomeScreenPreviewDark() {
                 {},
                 {},
                 {},
-                {},
+                {} as (Long, String) -> Unit,
                 modifier = Modifier
                     .padding(padding)
                     .fillMaxSize()

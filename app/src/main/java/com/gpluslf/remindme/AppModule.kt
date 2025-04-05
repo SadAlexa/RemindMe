@@ -3,6 +3,7 @@ package com.gpluslf.remindme
 import androidx.room.Room
 import com.gpluslf.remindme.calendar.presentation.CalendarViewModel
 import com.gpluslf.remindme.core.data.database.RemindMeDatabase
+import com.gpluslf.remindme.core.data.networking.HttpClientFactory
 import com.gpluslf.remindme.core.data.repository.CategoryRepository
 import com.gpluslf.remindme.core.data.repository.DataStoreRepository
 import com.gpluslf.remindme.core.data.repository.ListRepository
@@ -47,6 +48,7 @@ val appModule = module {
             .createFromAsset("database/remindme-database.db")
             .build()
     }
+    single { HttpClientFactory.create(CIO.create()) }
     single<AlarmScheduler> { NotificationAlarmScheduler(get()) }
     single { LocationService(get()) }
     single { get<RemindMeDatabase>().categoryDao() }

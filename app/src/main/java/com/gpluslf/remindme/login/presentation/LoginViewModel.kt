@@ -47,10 +47,6 @@ class LoginViewModel(
                 _signUpState.update { state -> state.copy(confirmPassword = action.value) }
             }
 
-            is SignUpAction.UpdateName -> {
-                _signUpState.update { state -> state.copy(name = action.value) }
-            }
-
             is SignUpAction.UpdateEmail -> {
                 _signUpState.update { state -> state.copy(email = action.value) }
             }
@@ -74,7 +70,6 @@ class LoginViewModel(
                 User(
                     id = 0,
                     username = signUpState.value.username,
-                    name = signUpState.value.name,
                     email = signUpState.value.email,
                     password = signUpState.value.password,
                     salt = "",

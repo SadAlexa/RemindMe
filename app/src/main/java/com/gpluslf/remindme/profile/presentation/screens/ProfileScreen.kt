@@ -122,6 +122,28 @@ fun ProfileScreen(
                 }
                 TextButton(
                     onClick = {
+                        onProfileAction(ProfileAction.SyncData)
+                    },
+                ) {
+                    Text(
+                        "Sync Data",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+                TextButton(
+                    onClick = {
+                        onProfileAction(ProfileAction.LocalBackupData)
+                    },
+                ) {
+                    Text(
+                        "Local Backup",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+                TextButton(
+                    onClick = {
                         onProfileAction(ProfileAction.LogOut)
                     },
                 ) {
@@ -202,12 +224,8 @@ fun ProfileScreen(
                 }
             }
             Text(
-                text = userState.user?.name ?: "",
-                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-            )
-            Text(
                 text = userState.user?.username ?: "",
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.SemiBold),
                 color = MaterialTheme.colorScheme.primary
             )
             Spacer(
@@ -263,7 +281,6 @@ private fun ProfileScreenPreviewLight() {
                 userState = UserState(
                     User(
                         id = 1,
-                        name = "name",
                         username = "username",
                         image = null,
                         password = "password",
@@ -315,7 +332,6 @@ private fun ProfileScreenPreviewDark() {
                 userState = UserState(
                     User(
                         id = 1,
-                        name = "name",
                         username = "username",
                         image = null,
                         password = "password",

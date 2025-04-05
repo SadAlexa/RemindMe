@@ -73,6 +73,9 @@ class UserViewModel(
                 }
                 updateImage()
             }
+
+            is ProfileAction.LocalBackupData -> TODO()
+            is ProfileAction.SyncData -> TODO()
         }
     }
 }

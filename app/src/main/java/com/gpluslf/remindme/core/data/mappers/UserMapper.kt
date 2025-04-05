@@ -7,7 +7,6 @@ import com.gpluslf.remindme.core.domain.User
 fun UserEntity.toUser() = User(
     id,
     username,
-    name,
     email,
     password,
     salt,
@@ -17,7 +16,6 @@ fun UserEntity.toUser() = User(
 fun User.toLoggedUserEntity() = UserEntity(
     id,
     username,
-    name,
     email,
     password,
     salt,

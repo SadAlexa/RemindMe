@@ -72,14 +72,6 @@ fun SignUpScreen(
             verticalArrangement = Arrangement.spacedBy(25.dp),
         ) {
             CustomOutlinedTextField(
-                stringResource(R.string.name),
-                state.name,
-                onValueChange = {
-                    onSignUpAction(SignUpAction.UpdateName(it))
-                },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-            )
-            CustomOutlinedTextField(
                 stringResource(R.string.username),
                 state.username,
                 onValueChange = {

@@ -8,8 +8,6 @@ data class UserUi(
 
     val username: String,
 
-    val name: String? = null,
-
     val email: String,
 
     val password: String,
@@ -22,7 +20,6 @@ data class UserUi(
 fun User.toUserUi() = UserUi(
     id,
     username,
-    name,
     email,
     password,
     salt,
@@ -32,7 +29,6 @@ fun User.toUserUi() = UserUi(
 fun UserUi.toUser() = User(
     id,
     username,
-    name,
     email,
     password,
     salt,

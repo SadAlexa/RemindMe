@@ -4,6 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.gpluslf.remindme.core.data.database.DefaultUUID.Companion.DEFAULT_UUID
+import java.util.UUID
 
 @Entity(
     tableName = "categories",
@@ -17,8 +19,8 @@ import androidx.room.PrimaryKey
     ]
 )
 data class CategoryEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    @PrimaryKey()
+    val id: UUID = DEFAULT_UUID,
 
     @ColumnInfo(name = "title")
     val title: String,

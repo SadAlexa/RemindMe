@@ -40,28 +40,49 @@ interface SyncDAOs {
     @Upsert
     suspend fun upsertNotifications(notifications: List<NotificationEntity>)
 
+    @Query("SELECT * FROM users WHERE id = :userId")
+    suspend fun getUser(userId: Long): UserEntity
+
     @Query("SELECT * FROM categories WHERE user_id = :userId")
     suspend fun getAllCategories(userId: Long): List<CategoryEntity>
+
+    @Query("SELECT * FROM lists WHERE user_id = :userId")
+    suspend fun getAllLists(userId: Long): List<ListEntity>
+
+    @Query("SELECT * FROM tasks WHERE user_id = :userId")
+    suspend fun getAllTasks(userId: Long): List<TaskEntity>
+
+    @Query("SELECT * FROM tags WHERE user_id = :userId")
+    suspend fun getAllTags(userId: Long): List<TagEntity>
+
+    @Query("SELECT * FROM user_achievements WHERE user_id = :userId")
+    suspend fun getAllUserAchievements(userId: Long): List<UserAchievementEntity>
+
+    @Query("SELECT * FROM tasks_tags WHERE task_user_id = :userId")
+    suspend fun getAllTagsOnTask(userId: Long): List<TagsOnTaskEntity>
+
+    @Query("SELECT * FROM notifications WHERE user_id = :userId")
+    suspend fun getAllNotifications(userId: Long): List<NotificationEntity>
 
     @Transaction
     suspend fun sync(
         user: UserEntity,
         categories: List<CategoryEntity>,
-//        lists: List<ListEntity>,
-//        tags: List<TagEntity>,
-//        tasks: List<TaskEntity>,
-//        tagsOnTask: List<TagsOnTaskEntity>,
-//        userAchievements: List<UserAchievementEntity>,
-//        notifications: List<NotificationEntity>
+        lists: List<ListEntity>,
+        tags: List<TagEntity>,
+        tasks: List<TaskEntity>,
+        tagsOnTask: List<TagsOnTaskEntity>,
+        userAchievements: List<UserAchievementEntity>,
+        notifications: List<NotificationEntity>
     ) {
         upsertUser(user)
         upsertCategories(categories)
-//        upsertLists(lists)
-//        upsertTags(tags)
-//        upsertTasks(tasks)
-//        upsertTagsOnTask(tagsOnTask)
-//        upsertUserAchievements(userAchievements)
-//        upsertNotifications(notifications)
+        upsertLists(lists)
+        upsertTags(tags)
+        upsertTasks(tasks)
+        upsertTagsOnTask(tagsOnTask)
+        upsertUserAchievements(userAchievements)
+        upsertNotifications(notifications)
     }
 
 

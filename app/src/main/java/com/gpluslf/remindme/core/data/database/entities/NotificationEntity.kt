@@ -30,8 +30,8 @@ import androidx.room.PrimaryKey
 )
 data class NotificationEntity(
 
-    @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    @PrimaryKey
+    val id: String,
 
     @ColumnInfo(name = "title")
     val title: String,
@@ -52,13 +52,13 @@ data class NotificationEntity(
     val isRead: Boolean,
 
     @ColumnInfo(name = "task_id")
-    val taskId: Long?,
+    val taskId: String?,
 
     @ColumnInfo(name = "task_title")
     val taskTitle: String?,
 
     @ColumnInfo(name = "task_list_id")
-    val taskListId: Long?,
+    val taskListId: String?,
 
     @ColumnInfo(name = "achievement_id")
     val achievementId: Long?

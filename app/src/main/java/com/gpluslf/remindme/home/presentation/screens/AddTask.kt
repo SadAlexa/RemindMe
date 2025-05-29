@@ -144,7 +144,8 @@ fun AddTaskScreen(
                             }
                         },
                         actions = {
-                            IconButton(onClick = onBack,
+                            IconButton(
+                                onClick = onBack,
                                 content = {
                                     Icon(
                                         Icons.Outlined.Close, contentDescription = "Close",
@@ -201,7 +202,8 @@ fun AddTaskScreen(
                                         )
                                     }
                                 )
-                                Text("${state.endTime?.let { time.format(it) }}",
+                                Text(
+                                    "${state.endTime?.let { time.format(it) }}",
                                     style = MaterialTheme.typography.bodyLarge,
                                     modifier = Modifier.clickable {
                                         onAddTaskAction(
@@ -321,7 +323,8 @@ private fun CustomSelectorItem(
     ) {
         Icon(leadingIcon, null)
         content()
-        IconButton(onClick = onClick,
+        IconButton(
+            onClick = onClick,
             content = {
                 Icon(
                     Icons.Outlined.Close, contentDescription = "Close",
@@ -449,14 +452,14 @@ private fun AddTaskScreenPreviewDark() {
 }
 
 internal val sampleCreateTaskState = CreateTaskState(
-    id = 8,
+    id = "8",
     body = "body",
     endTime = Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000),
     tags = listOf(
         TagUi(
-            id = 1,
+            id = "1",
             title = "title",
-            listId = 2,
+            listId = "2",
             userId = 1
         )
     ),

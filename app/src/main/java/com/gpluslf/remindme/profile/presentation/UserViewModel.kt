@@ -1,15 +1,20 @@
 package com.gpluslf.remindme.profile.presentation
 
 import android.net.Uri
+import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gpluslf.remindme.core.data.crypt.EncryptedUser
 import com.gpluslf.remindme.core.domain.LoggedUserDataSource
+import com.gpluslf.remindme.core.domain.SyncProvider
 import com.gpluslf.remindme.core.domain.UserDataSource
 import com.gpluslf.remindme.profile.presentation.model.ProfileAction
 import com.gpluslf.remindme.profile.presentation.model.UserUi
 import com.gpluslf.remindme.profile.presentation.model.toUserUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -25,7 +30,9 @@ data class UserState(
 class UserViewModel(
     private val userId: Long,
     private val userRepository: UserDataSource,
-    private val loggedUserRepository: LoggedUserDataSource
+    private val loggedUserRepository: LoggedUserDataSource,
+    private val syncProvider: SyncProvider,
+    private val encryptedDataStore: DataStore<EncryptedUser>
 ) : ViewModel() {
     private val _state = MutableStateFlow(UserState())
     val state = _state.onStart {
@@ -74,8 +81,26 @@ class UserViewModel(
                 updateImage()
             }
 
-            is ProfileAction.LocalBackupData -> TODO()
-            is ProfileAction.SyncData -> TODO()
+            is ProfileAction.LocalBackupData -> TODO() // ahahahah
+            is ProfileAction.SyncData -> {
+                encryptedDataStore.data.onEach { values ->
+                    println(values)
+                    syncProvider.uploadData(
+                        values.email,
+                        values.password,
+                        userId,
+                        {},
+                        {},
+                        {},
+                        {},
+                        {},
+                        {},
+                        {},
+                        {},
+                        {},
+                    )
+                }.launchIn(viewModelScope)
+            }
         }
     }
 }

@@ -3,12 +3,13 @@ package com.gpluslf.remindme.core.data.mappers
 import android.net.Uri
 import com.gpluslf.remindme.core.data.database.entities.TagEntity
 import com.gpluslf.remindme.core.data.database.entities.TaskEntity
+import com.gpluslf.remindme.core.data.dto.TaskDTO
 import com.gpluslf.remindme.core.domain.Task
 
 fun TaskEntity.toTask(tags: List<TagEntity>) = Task(
-    id,
+    id.toString(),
     title,
-    listId,
+    listId.toString(),
     userId,
     body,
     endTime?.toDate(),
@@ -22,9 +23,9 @@ fun TaskEntity.toTask(tags: List<TagEntity>) = Task(
 )
 
 fun Task.toTaskEntity() = TaskEntity(
-    id,
+    id.toUUID(),
     title,
-    listId,
+    listId.toUUID(),
     userId,
     body,
     endTime?.toLong(),
@@ -34,4 +35,34 @@ fun Task.toTaskEntity() = TaskEntity(
     isDone,
     latitude,
     longitude
+)
+
+fun TaskDTO.toTaskEntity() = TaskEntity(
+    id.toUUID(),
+    title,
+    listId.toUUID(),
+    userId,
+    body,
+    endTime?.toLong(),
+    frequency?.toLong(),
+    alert?.toLong(),
+    image?.toString(),
+    isDone,
+    latitude,
+    longitude
+)
+
+fun TaskEntity.toTaskDTO() = TaskDTO(
+    id.toString(),
+    title,
+    listId.toString(),
+    userId,
+    body,
+    image,
+    endTime,
+    frequency,
+    alert,
+    isDone,
+    latitude,
+    longitude,
 )

@@ -41,7 +41,7 @@ import java.util.Date
 fun UpdatesScreen(
     state: NotificationsState,
     onNotificationAction: (NotificationAction) -> Unit,
-    onTaskNotificationClick: (Long) -> Unit,
+    onTaskNotificationClick: (String) -> Unit,
     onAchievementNotificationClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -136,7 +136,7 @@ private fun UpdatesScreenPreviewLight() {
                 state = NotificationsState(
                     notifications = (0..10).map {
                         sampleNotifications.toNotificationUi()
-                            .copy(id = it.toLong(), title = "Notification $it")
+                            .copy(id = it.toString(), title = "Notification $it")
                     }
                 ),
                 {},
@@ -151,7 +151,7 @@ private fun UpdatesScreenPreviewLight() {
 }
 
 internal val sampleNotifications = Notification(
-    id = 0,
+    id = "",
     title = "title",
     body = "body",
     userId = 1,
@@ -171,7 +171,7 @@ private fun UpdatesScreenPreviewDark() {
                 state = NotificationsState(
                     notifications = (0..10).map {
                         sampleNotifications.toNotificationUi()
-                            .copy(id = it.toLong(), title = "Notification $it")
+                            .copy(id = it.toString(), title = "Notification $it")
                     }
                 ),
                 {},

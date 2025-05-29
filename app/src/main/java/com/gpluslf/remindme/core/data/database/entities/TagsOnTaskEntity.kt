@@ -3,6 +3,8 @@ package com.gpluslf.remindme.core.data.database.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import com.gpluslf.remindme.core.data.database.DefaultUUID.Companion.DEFAULT_UUID
+import java.util.UUID
 
 @Entity(
     tableName = "tasks_tags",
@@ -24,14 +26,14 @@ import androidx.room.ForeignKey
 )
 data class TagsOnTaskEntity(
     @ColumnInfo(name = "task_id")
-    val taskId: Long,
+    val taskId: UUID = DEFAULT_UUID,
 
     @ColumnInfo(name = "task_list_id")
-    val taskListId: Long,
+    val taskListId: UUID = DEFAULT_UUID,
 
     @ColumnInfo(name = "task_user_id")
     val taskUserId: Long,
 
     @ColumnInfo(name = "tag_id")
-    val tagId: Long,
+    val tagId: UUID = DEFAULT_UUID,
 )

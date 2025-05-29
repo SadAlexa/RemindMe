@@ -7,7 +7,7 @@ import com.gpluslf.remindme.home.presentation.model.toCategory
 import com.gpluslf.remindme.home.presentation.model.toCategoryUi
 
 data class TodoListUi(
-    val id: Long,
+    val id: String,
 
     val title: String,
 
@@ -20,8 +20,6 @@ data class TodoListUi(
     val isShared: Boolean = false,
 
     val sharedUserId: Long? = null,
-
-    val isFavorite: Boolean = false,
 
     val category: CategoryUi? = null,
 
@@ -36,7 +34,6 @@ fun TodoList.toTodoListUi() = TodoListUi(
     image,
     isShared,
     sharedUserId,
-    isFavorite,
     category?.toCategoryUi(),
 )
 
@@ -48,7 +45,6 @@ fun TodoListUi.toTodoList() = TodoList(
     image,
     isShared,
     sharedUserId,
-    isFavorite,
     category?.toCategory(),
 )
 

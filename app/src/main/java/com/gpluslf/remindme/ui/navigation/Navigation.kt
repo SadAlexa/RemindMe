@@ -75,13 +75,13 @@ sealed interface RemindMeRoute {
     data object SignUp : RemindMeRoute
 
     @Serializable
-    data class TodoList(val listId: Long, val listTitle: String? = null) : RemindMeRoute
+    data class TodoList(val listId: String, val listTitle: String? = null) : RemindMeRoute
 
     @Serializable
-    data class AddList(val listId: Long? = null) : RemindMeRoute
+    data class AddList(val listId: String? = null) : RemindMeRoute
 
     @Serializable
-    data class AddTask(val listId: Long, val taskId: Long? = null) : RemindMeRoute
+    data class AddTask(val listId: String, val taskId: String? = null) : RemindMeRoute
 
     @Serializable
     data object Calendar : RemindMeRoute
@@ -150,7 +150,7 @@ fun RemindMeNavGraph(
                                 "$currentUserId/${achievement.achievementId}/${achievement.achievementTitle}".hashCode()
                                     .toLong()
                             val notificationItem = Notification(
-                                id = scheduleId,
+                                id = scheduleId.toString(),
                                 sendTime = Date(),
                                 userId = user,
                                 body = "You have unlocked the ${achievement.achievementTitle}",

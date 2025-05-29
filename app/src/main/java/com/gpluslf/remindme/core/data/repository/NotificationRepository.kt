@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 class NotificationRepository(private val notificationDAOs: NotificationDAOs) :
     NotificationDataSource {
 
-    override fun getNotificationById(notificationId: Long) =
+    override fun getNotificationById(notificationId: String) =
         notificationDAOs.getNotificationById(notificationId).toNotification()
 
     override fun getAllNotifications(userId: Long) = notificationDAOs.getAllNotifications(userId)

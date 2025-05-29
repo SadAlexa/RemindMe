@@ -4,7 +4,7 @@ import com.gpluslf.remindme.core.domain.Category
 
 
 data class CategoryUi(
-    val id: Long,
+    val id: String,
     val title: String,
     val userId: Long,
 )

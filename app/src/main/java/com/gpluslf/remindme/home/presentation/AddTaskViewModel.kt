@@ -25,8 +25,8 @@ import java.util.Date
 
 class AddTaskViewModel(
     private val userId: Long,
-    private val listId: Long,
-    private val taskId: Long? = null,
+    private val listId: String,
+    private val taskId: String? = null,
     private val taskRepository: TaskDataSource,
     private val tagsRepository: TagDataSource,
     private val alarmScheduler: AlarmScheduler
@@ -105,7 +105,7 @@ class AddTaskViewModel(
                 .toLong() + currentState.endTime.time
 
             val notificationItem = Notification(
-                id = scheduleId,
+                id = scheduleId.toString(),
                 sendTime = currentState.endTime,
                 taskListId = listId,
                 userId = userId,

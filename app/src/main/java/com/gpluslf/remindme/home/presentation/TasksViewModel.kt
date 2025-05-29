@@ -36,7 +36,7 @@ data class TasksState(
 
 class TasksViewModel(
     private val userId: Long,
-    private val listId: Long,
+    private val listId: String,
     private val taskRepository: TaskDataSource,
     private val tagRepository: TagDataSource
 ) : ViewModel() {
@@ -123,7 +123,7 @@ class TasksViewModel(
                 viewModelScope.launch {
                     tagRepository.upsertTag(
                         Tag(
-                            id = state.value.selectedEditTag?.id ?: 0,
+                            id = state.value.selectedEditTag?.id ?: "",
                             title = state.value.tagTitle,
                             listId = listId,
                             userId

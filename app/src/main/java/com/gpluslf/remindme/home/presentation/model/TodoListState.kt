@@ -5,7 +5,7 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class TodoListState(
-    val id: Long = 0L,
+    val id: String = "",
 
     val title: String = "",
 

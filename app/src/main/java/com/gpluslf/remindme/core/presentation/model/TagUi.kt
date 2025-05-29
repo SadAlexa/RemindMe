@@ -3,9 +3,9 @@ package com.gpluslf.remindme.core.presentation.model
 import com.gpluslf.remindme.core.domain.Tag
 
 data class TagUi(
-    val id: Long,
+    val id: String,
     val title: String,
-    val listId: Long,
+    val listId: String,
     val userId: Long,
 )
 

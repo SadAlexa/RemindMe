@@ -64,7 +64,7 @@ import java.util.Locale
 fun CalendarScreen(
     taskState: CalendarTaskState,
     onAction: (CalendarAction) -> Unit,
-    navigateToList: (Long) -> Unit,
+    navigateToList: (String) -> Unit,
     checkDay: (LocalDate) -> Boolean,
     modifier: Modifier = Modifier
 ) {

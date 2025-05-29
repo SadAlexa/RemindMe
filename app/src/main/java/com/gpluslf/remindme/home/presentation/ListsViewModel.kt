@@ -88,7 +88,7 @@ class ListsViewModel(
                 viewModelScope.launch {
                     categoryRepository.upsertCategory(
                         Category(
-                            id = state.value.selectedEditCategory?.id ?: 0,
+                            id = state.value.selectedEditCategory?.id ?: "",
                             title = state.value.categoryTitle,
                             userId
                         )

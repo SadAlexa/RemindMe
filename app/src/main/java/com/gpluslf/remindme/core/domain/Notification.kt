@@ -4,7 +4,7 @@ import java.util.Date
 
 data class Notification(
 
-    val id: Long,
+    val id: String,
 
     val title: String,
 
@@ -18,11 +18,11 @@ data class Notification(
 
     val isRead: Boolean = false,
 
-    val taskId: Long? = null,
+    val taskId: String? = null,
 
     val taskTitle: String? = null,
 
-    val taskListId: Long? = null,
+    val taskListId: String? = null,
 
     val achievementId: Long? = null
 )

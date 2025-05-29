@@ -8,7 +8,7 @@ interface UserDataSource {
 
     fun getUserById(userId: Long): Flow<User>
 
-    suspend fun logInUser(email: String, password: String): User?
+    suspend fun logInUser(): User?
 
     suspend fun createAccount(user: User)
 

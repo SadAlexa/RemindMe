@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
 
 class AddListViewModel(
     private val userId: Long,
-    private val listId: Long? = null,
+    private val listId: String? = null,
     private val todoListDataSource: ListDataSource,
     private val categoryDataSource: CategoryDataSource
 ) : ViewModel() {
@@ -48,7 +48,6 @@ class AddListViewModel(
                                         image = list.image,
                                         selectedCategory = list.category?.toCategoryUi(),
                                         isShared = list.isShared,
-                                        isFavorite = list.isFavorite,
                                         sharedUserId = list.sharedUserId
                                     )
                                 }
@@ -76,7 +75,6 @@ class AddListViewModel(
                     image = state.value.image,
                     category = state.value.selectedCategory?.toCategory(),
                     isShared = state.value.isShared,
-                    isFavorite = state.value.isFavorite,
                     sharedUserId = state.value.sharedUserId
                 )
             )

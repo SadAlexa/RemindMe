@@ -2,10 +2,10 @@ package com.gpluslf.remindme.core.presentation.model
 
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import androidx.core.app.TaskStackBuilder
 import com.gpluslf.remindme.MainActivity
 import com.gpluslf.remindme.core.data.mappers.toDate
 import com.gpluslf.remindme.core.domain.Notification
@@ -23,19 +23,19 @@ class AlarmReceiver : BroadcastReceiver() {
         }.k
         val notificationDataSource = koin.get<NotificationDataSource>()
         val achievementId = intent.getLongExtra("achievementId", 0)
-        val listId = intent.getLongExtra("taskListId", 0)
-        val taskId = intent.getLongExtra("taskId", 0)
+        val listId = intent.getStringExtra("taskListId")
+        val taskId = intent.getStringExtra("taskId")
         val notification = Notification(
-            intent.getLongExtra("id", 0),
+            intent.getStringExtra("id") ?: "id default",
             intent.getStringExtra("title") ?: "title default",
             intent.getStringExtra("body") ?: "body default",
             intent.getLongExtra("userId", 0),
             null,
             intent.getLongExtra("sendTime", 0).toDate(),
             intent.getBooleanExtra("isRead", false),
-            if (taskId != 0L) taskId else null,
+            taskId,
             intent.getStringExtra("taskTitle"),
-            if (listId != 0L) listId else null,
+            listId,
             if (achievementId != 0L) achievementId else null
         )
 

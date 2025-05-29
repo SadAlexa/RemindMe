@@ -4,6 +4,7 @@ import com.gpluslf.remindme.core.data.database.daos.TaskDAOs
 import com.gpluslf.remindme.core.data.mappers.toLong
 import com.gpluslf.remindme.core.data.mappers.toTask
 import com.gpluslf.remindme.core.data.mappers.toTaskEntity
+import com.gpluslf.remindme.core.data.mappers.toUUID
 import com.gpluslf.remindme.core.domain.Task
 import com.gpluslf.remindme.core.domain.TaskDataSource
 import kotlinx.coroutines.flow.Flow
@@ -12,26 +13,26 @@ import java.time.LocalDate
 
 class TaskRepository(private val taskDAOs: TaskDAOs) :
     TaskDataSource {
-    override fun getTaskById(taskId: Long): Flow<Task?> {
-        return taskDAOs.getTaskById(taskId).map { taskEntity ->
+    override fun getTaskById(taskId: String): Flow<Task?> {
+        return taskDAOs.getTaskById(taskId.toUUID()).map { taskEntity ->
             taskEntity?.toTask(
                 taskDAOs.getAllTagsOnTask(taskEntity.id, taskEntity.listId, taskEntity.userId)
             )
         }
     }
 
-    override fun getTaskByTitle(taskTitle: String, listId: Long, userId: Long): Flow<Task?> {
-        return taskDAOs.getTaskByTitle(taskTitle, listId, userId).map { taskEntity ->
+    override fun getTaskByTitle(taskTitle: String, listId: String, userId: Long): Flow<Task?> {
+        return taskDAOs.getTaskByTitle(taskTitle, listId.toUUID(), userId).map { taskEntity ->
             taskEntity?.toTask(
                 taskDAOs.getAllTagsOnTask(taskEntity.id, taskEntity.listId, taskEntity.userId)
             )
         }
     }
 
-    override fun getAllTasksByList(listId: Long, userId: Long): Flow<List<Task>> {
-        return taskDAOs.getTasksByList(listId, userId).map { flow ->
+    override fun getAllTasksByList(listId: String, userId: Long): Flow<List<Task>> {
+        return taskDAOs.getTasksByList(listId.toUUID(), userId).map { flow ->
             flow.map { taskEntity ->
-                val tags = taskDAOs.getAllTagsOnTask(taskEntity.id, listId, userId)
+                val tags = taskDAOs.getAllTagsOnTask(taskEntity.id, listId.toUUID(), userId)
                 taskEntity.toTask(
                     tags
                 )

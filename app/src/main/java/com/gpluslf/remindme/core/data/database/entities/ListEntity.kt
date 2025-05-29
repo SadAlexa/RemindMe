@@ -5,6 +5,8 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.gpluslf.remindme.core.data.database.DefaultUUID.Companion.DEFAULT_UUID
+import java.util.UUID
 
 @Entity(
     indices = [
@@ -33,8 +35,8 @@ import androidx.room.PrimaryKey
     ]
 )
 data class ListEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    @PrimaryKey()
+    val id: UUID = DEFAULT_UUID,
 
     @ColumnInfo(name = "title")
     val title: String,
@@ -54,9 +56,6 @@ data class ListEntity(
     @ColumnInfo(name = "shared_user_id")
     val sharedUserId: Long? = null,
 
-    @ColumnInfo(name = "is_favorite")
-    val isFavorite: Boolean = false,
-
     @ColumnInfo(name = "category_id")
-    val categoryId: Long? = null
+    val categoryId: String? = null
 )

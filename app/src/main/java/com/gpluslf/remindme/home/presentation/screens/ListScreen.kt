@@ -55,7 +55,7 @@ fun ListScreen(
     state: TasksState,
     onAddTaskClick: () -> Unit,
     onAction: (ListScreenAction) -> Unit,
-    onEditTaskSwipe: (Long) -> Unit,
+    onEditTaskSwipe: (String) -> Unit,
     onBackClick: () -> Unit,
     events: Flow<TagEvent> = emptyFlow(),
     modifier: Modifier = Modifier

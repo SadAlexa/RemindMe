@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 
 class ListRepository(private val listDAOs: ListDAOs, private val categoryDAOs: CategoryDAOs) :
     ListDataSource {
-    override fun getListById(listId: Long): Flow<TodoList?> {
+    override fun getListById(listId: String): Flow<TodoList?> {
         return listDAOs.getListById(listId)
             .map { it?.toTodoList(getCategoryById(it.categoryId)) }
     }
@@ -23,7 +23,7 @@ class ListRepository(private val listDAOs: ListDAOs, private val categoryDAOs: C
         }
     }
 
-    private fun getCategoryById(categoryId: Long?): CategoryEntity? {
+    private fun getCategoryById(categoryId: String?): CategoryEntity? {
         return if (categoryId != null) categoryDAOs.getCategoryById(categoryId) else null
     }
 

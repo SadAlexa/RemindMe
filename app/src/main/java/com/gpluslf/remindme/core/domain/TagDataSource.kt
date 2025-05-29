@@ -5,9 +5,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface TagDataSource {
 
-    fun getTagById(tagId: Long): Flow<Tag?>
+    fun getTagById(tagId: String): Flow<Tag?>
 
-    fun getAllTags(listId: Long, userId: Long): Flow<List<Tag>>
+    fun getAllTags(listId: String, userId: Long): Flow<List<Tag>>
 
     suspend fun upsertTag(tag: Tag)
 

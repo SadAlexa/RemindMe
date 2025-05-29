@@ -3,7 +3,7 @@ package com.gpluslf.remindme.core.domain
 import kotlinx.coroutines.flow.Flow
 
 interface ListDataSource {
-    fun getListById(listId: Long): Flow<TodoList?>
+    fun getListById(listId: String): Flow<TodoList?>
 
     fun getAllLists(userId: Long): Flow<List<TodoList>>
 

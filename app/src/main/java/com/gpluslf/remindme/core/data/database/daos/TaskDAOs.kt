@@ -10,19 +10,21 @@ import com.gpluslf.remindme.core.data.database.entities.TagsOnTaskEntity
 import com.gpluslf.remindme.core.data.database.entities.TaskEntity
 import com.gpluslf.remindme.core.data.mappers.toTagsOnTaskEntity
 import com.gpluslf.remindme.core.data.mappers.toTaskEntity
+import com.gpluslf.remindme.core.data.mappers.toUUID
 import com.gpluslf.remindme.core.domain.Task
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 @Dao
 interface TaskDAOs {
     @Query("SELECT * FROM tasks WHERE id = :taskId ")
-    fun getTaskById(taskId: Long): Flow<TaskEntity?>
+    fun getTaskById(taskId: UUID): Flow<TaskEntity?>
 
     @Query("SELECT * FROM tasks WHERE title = :taskTitle AND list_id = :listId AND user_id = :userId")
-    fun getTaskByTitle(taskTitle: String, listId: Long, userId: Long): Flow<TaskEntity?>
+    fun getTaskByTitle(taskTitle: String, listId: UUID, userId: Long): Flow<TaskEntity?>
 
     @Query("SELECT * FROM tasks WHERE list_id = :listId AND user_id = :userId")
-    fun getTasksByList(listId: Long, userId: Long): Flow<List<TaskEntity>>
+    fun getTasksByList(listId: UUID, userId: Long): Flow<List<TaskEntity>>
 
     @Query("SELECT * FROM tasks WHERE end_time >= :start AND end_time <= :end AND user_id = :userId")
     suspend fun getAllTaskByYearMonth(
@@ -32,7 +34,7 @@ interface TaskDAOs {
     ): List<TaskEntity>
 
     @Upsert
-    suspend fun upsertTask(task: TaskEntity)
+    suspend fun upsertTask(task: TaskEntity): Long
 
     @Delete
     suspend fun deleteTask(task: TaskEntity)
@@ -40,8 +42,8 @@ interface TaskDAOs {
 
     @Query("SELECT tags.* FROM tags LEFT JOIN tasks_tags ON tags.id = tasks_tags.tag_id WHERE tasks_tags.task_id = :taskId AND tasks_tags.task_list_id = :listId AND tasks_tags.task_user_id = :userId")
     suspend fun getAllTagsOnTask(
-        taskId: Long,
-        listId: Long,
+        taskId: UUID,
+        listId: UUID,
         userId: Long
     ): List<TagEntity>
 
@@ -49,16 +51,18 @@ interface TaskDAOs {
     suspend fun upsertTagOnTask(tagsOnTask: List<TagsOnTaskEntity>)
 
     @Query("DELETE FROM tasks_tags WHERE task_id = :taskId AND task_user_id = :userId")
-    suspend fun deleteTagOnTask(userId: Long, taskId: Long)
+    suspend fun deleteTagOnTask(userId: Long, taskId: UUID)
 
     @Transaction
     suspend fun updateTask(task: Task) {
+
         val taskEntity = task.toTaskEntity()
-        deleteTagOnTask(task.userId, task.id)
+            .copy(id = if (task.id.isEmpty()) UUID.randomUUID() else task.id.toUUID())
+        deleteTagOnTask(taskEntity.userId, taskEntity.id)
         upsertTask(taskEntity)
         upsertTagOnTask(task.tags.map {
             it.toTagsOnTaskEntity(
-                task.id,
+                taskEntity.id.toString(),
                 task.listId,
                 task.userId
             )

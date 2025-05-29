@@ -22,10 +22,10 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "API_HOST", "\"localhost\"")
+            buildConfigField("String", "API_HOST", "\"192.168.1.91\"")
         }
         release {
-            buildConfigField("String", "API_HOST", "\"localhost\"")
+            buildConfigField("String", "API_HOST", "\"192.168.1.91\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -85,4 +85,7 @@ dependencies {
     implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.auth)
+    implementation(libs.androidx.datastore)
+    implementation(libs.gson)
+    implementation(libs.androidx.security.crypto)
 }

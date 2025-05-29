@@ -3,6 +3,8 @@ package com.gpluslf.remindme.core.data.database.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import com.gpluslf.remindme.core.data.database.DefaultUUID.Companion.DEFAULT_UUID
+import java.util.UUID
 
 @Entity(
     tableName = "shared_user_list",
@@ -37,5 +39,5 @@ data class SharedUserListEntity(
     val listsSharedUserId: Long,
 
     @ColumnInfo(name = "list_id")
-    val listId: Long
+    val listId: UUID = DEFAULT_UUID
 )

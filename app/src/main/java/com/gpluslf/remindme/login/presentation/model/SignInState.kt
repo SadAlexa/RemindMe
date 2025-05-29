@@ -7,5 +7,7 @@ data class SignInState(
     val email: String = "",
     val password: String = "",
     val loginError: Boolean = false,
-    val isLoggedIn: Boolean = false
+    val isLoggedIn: Boolean = false,
+    val loadingLabel: String = "",
+    val isLoading: Boolean = false
 )

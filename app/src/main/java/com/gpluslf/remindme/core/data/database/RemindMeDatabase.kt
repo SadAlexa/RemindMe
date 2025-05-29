@@ -2,12 +2,14 @@ package com.gpluslf.remindme.core.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.gpluslf.remindme.core.data.database.daos.AchievementDAOs
 import com.gpluslf.remindme.core.data.database.daos.CategoryDAOs
 import com.gpluslf.remindme.core.data.database.daos.ListDAOs
 import com.gpluslf.remindme.core.data.database.daos.LoggedUserDAOs
 import com.gpluslf.remindme.core.data.database.daos.NotificationDAOs
 import com.gpluslf.remindme.core.data.database.daos.SharedUserListDAOs
+import com.gpluslf.remindme.core.data.database.daos.SyncDAOs
 import com.gpluslf.remindme.core.data.database.daos.TagDAOs
 import com.gpluslf.remindme.core.data.database.daos.TaskDAOs
 import com.gpluslf.remindme.core.data.database.daos.UserDAOs
@@ -43,6 +45,7 @@ import com.gpluslf.remindme.core.data.database.views.UserAchievementView
     ],
     version = 1
 )
+@TypeConverters(Converters::class)
 abstract class RemindMeDatabase : RoomDatabase() {
     abstract fun userDao(): UserDAOs
     abstract fun listDao(): ListDAOs
@@ -53,4 +56,5 @@ abstract class RemindMeDatabase : RoomDatabase() {
     abstract fun achievementDao(): AchievementDAOs
     abstract fun sharedUserListDao(): SharedUserListDAOs
     abstract fun loggedUserDao(): LoggedUserDAOs
+    abstract fun syncDao(): SyncDAOs
 }

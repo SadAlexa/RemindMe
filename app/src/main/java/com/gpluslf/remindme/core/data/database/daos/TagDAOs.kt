@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TagDAOs {
 
-    @Query("SELECT * FROM tags WHERE id = :categoryId")
-    fun getTagById(categoryId: Long): Flow<TagEntity?>
+    @Query("SELECT * FROM tags WHERE id = :tagId")
+    fun getTagById(tagId: String): Flow<TagEntity?>
 
     @Query("SELECT * FROM tags WHERE list_id = :listId AND user_id = :userId")
-    fun getAllTags(listId: Long, userId: Long): Flow<List<TagEntity>>
+    fun getAllTags(listId: String, userId: Long): Flow<List<TagEntity>>
 
     @Upsert
     suspend fun upsertTag(tag: TagEntity)

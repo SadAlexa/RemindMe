@@ -1,14 +1,11 @@
 package com.gpluslf.remindme.core.data.dto
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class TagDTO(
-    val id: Long,
+    val id: String,
     val title: String,
-    @SerialName("list_id")
-    val listId: Long,
-    @SerialName("user_id")
+    val listId: String,
     val userId: Long,
 )

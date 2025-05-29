@@ -1,8 +1,11 @@
 package com.gpluslf.remindme.login.presentation
 
+import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gpluslf.remindme.core.data.crypt.EncryptedUser
 import com.gpluslf.remindme.core.domain.LoggedUserDataSource
+import com.gpluslf.remindme.core.domain.SyncProvider
 import com.gpluslf.remindme.core.domain.User
 import com.gpluslf.remindme.core.domain.UserDataSource
 import com.gpluslf.remindme.login.presentation.model.LoginAction
@@ -22,7 +25,9 @@ import kotlinx.coroutines.withContext
 
 class LoginViewModel(
     private val userRepository: UserDataSource,
-    private val loggedUserRepository: LoggedUserDataSource
+    private val loggedUserRepository: LoggedUserDataSource,
+    private val syncProvider: SyncProvider,
+    private val encryptedDataStore: DataStore<EncryptedUser>
 ) : ViewModel() {
     private val _signUpState = MutableStateFlow(SignUpState())
     val signUpState = _signUpState.asStateFlow()
@@ -80,15 +85,54 @@ class LoginViewModel(
         }
     }
 
+    private fun updateText(text: String) {
+        _signInState.update {
+            it.copy(loadingLabel = text)
+        }
+    }
+
+    fun onError() {
+        viewModelScope.launch {
+            _events.send(LoginEvent.LoginFailed)
+        }
+    }
+
     fun onLoginAction(action: LoginAction) {
         when (action) {
             LoginAction.SignIn -> {
+
                 viewModelScope.launch {
-                    withContext(Dispatchers.IO) {
-                        val user = userRepository.logInUser(
-                            signInState.value.email,
-                            signInState.value.password
+                    encryptedDataStore.updateData {
+                        it.copy(
+                            email = signInState.value.email,
+                            password = signInState.value.password
                         )
+                    }
+                    _signInState.update {
+                        it.copy(
+                            isLoading = true,
+                        )
+                    }
+                    syncProvider.downloadData(
+                        signInState.value.email,
+                        signInState.value.password,
+                        { updateText("Downloading User...") },
+                        { updateText("Downloading Categories...") },
+                        { updateText("Downloading Lists...") },
+                        { updateText("Downloading Tags...") },
+                        { updateText("Downloading Tasks...") },
+                        { updateText("Downloading Achievements...") },
+                        { updateText("Downloading Notifications...") },
+                        { onError() },
+                        {},
+                    )
+                    _signInState.update {
+                        it.copy(
+                            isLoading = false,
+                        )
+                    }
+                    withContext(Dispatchers.IO) {
+                        val user = userRepository.logInUser()
                         if (user != null) {
                             loggedUserRepository.upsertLoggedUser(user.id)
                         } else {

@@ -4,6 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.gpluslf.remindme.core.data.database.DefaultUUID.Companion.DEFAULT_UUID
+import java.util.UUID
 
 @Entity(
     tableName = "tags",
@@ -17,14 +19,14 @@ import androidx.room.PrimaryKey
     ]
 )
 data class TagEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    @PrimaryKey()
+    val id: UUID = DEFAULT_UUID,
 
     @ColumnInfo(name = "title")
     val title: String,
 
     @ColumnInfo(name = "list_id")
-    val listId: Long,
+    val listId: UUID = DEFAULT_UUID,
 
     @ColumnInfo(name = "user_id")
     val userId: Long

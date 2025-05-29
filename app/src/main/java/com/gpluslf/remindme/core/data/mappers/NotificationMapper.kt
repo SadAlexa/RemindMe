@@ -1,6 +1,7 @@
 package com.gpluslf.remindme.core.data.mappers
 
 import com.gpluslf.remindme.core.data.database.entities.NotificationEntity
+import com.gpluslf.remindme.core.data.dto.NotificationDTO
 import com.gpluslf.remindme.core.domain.Notification
 
 fun NotificationEntity.toNotification() = Notification(
@@ -18,6 +19,34 @@ fun NotificationEntity.toNotification() = Notification(
 )
 
 fun Notification.toNotificationEntity() = NotificationEntity(
+    id,
+    title,
+    body,
+    userId,
+    senderUserId,
+    sendTime.toLong(),
+    isRead,
+    taskId,
+    taskTitle,
+    taskListId,
+    achievementId
+)
+
+fun NotificationDTO.toNotificationEntity() = NotificationEntity(
+    id,
+    title,
+    body,
+    userId,
+    senderUserId,
+    sendTime.toLong(),
+    isRead,
+    taskId,
+    taskTitle,
+    taskListId,
+    achievementId
+)
+
+fun NotificationEntity.toNotificationDTO() = NotificationDTO(
     id,
     title,
     body,

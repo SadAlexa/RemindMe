@@ -6,7 +6,7 @@ import com.gpluslf.remindme.core.domain.SharedUserList
 data class SharedUserListUi(
     val usersId: Long,
     val listsSharedUserId: Long,
-    val listId: Long
+    val listId: String
 )
 
 fun SharedUserList.toSharedUserListUi() = SharedUserListUi(

@@ -16,6 +16,8 @@ interface SyncProvider {
     )
 
     suspend fun uploadData(
+        email: String,
+        password: String,
         userId: Long,
         uploadUserCallback: () -> Unit,
         uploadCategoryCallback: () -> Unit,

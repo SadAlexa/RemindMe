@@ -38,6 +38,8 @@ fun SignInScreen(
     onSignInAction: (SignInAction) -> Unit = {},
     onLoginAction: (LoginAction) -> Unit = {},
 ) {
+
+
     Column(
         modifier.padding(horizontal = 50.dp, vertical = 70.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -51,36 +53,41 @@ fun SignInScreen(
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground)
         )
 
-        Text(
-            stringResource(R.string.sign_in),
-            fontSize = 60.sp,
-            fontWeight = FontWeight.Black
-        )
-        CustomOutlinedTextField(
-            stringResource(R.string.email),
-            state.email,
-            onValueChange = {
-                onSignInAction(SignInAction.UpdateEmail(it))
-            },
-            isError = state.loginError
-        )
-        CustomOutlinedTextField(
-            stringResource(R.string.password),
-            state.password,
-            onValueChange = {
-                onSignInAction(SignInAction.UpdatePassword(it))
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password
-            ),
-            isPassword = true,
-            isError = state.loginError
-        )
-        CustomButton(
-            stringResource(R.string.sign_in)
-        ) {
-            onLoginAction(LoginAction.SignIn)
+        if (state.isLoading) {
+            Text(state.loadingLabel)
+        } else {
+            Text(
+                stringResource(R.string.sign_in),
+                fontSize = 60.sp,
+                fontWeight = FontWeight.Black
+            )
+            CustomOutlinedTextField(
+                stringResource(R.string.email),
+                state.email,
+                onValueChange = {
+                    onSignInAction(SignInAction.UpdateEmail(it))
+                },
+                isError = state.loginError
+            )
+            CustomOutlinedTextField(
+                stringResource(R.string.password),
+                state.password,
+                onValueChange = {
+                    onSignInAction(SignInAction.UpdatePassword(it))
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password
+                ),
+                isPassword = true,
+                isError = state.loginError
+            )
+            CustomButton(
+                stringResource(R.string.sign_in)
+            ) {
+                onLoginAction(LoginAction.SignIn)
+            }
         }
+
     }
 }
 

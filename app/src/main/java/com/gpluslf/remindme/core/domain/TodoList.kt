@@ -3,8 +3,8 @@ package com.gpluslf.remindme.core.domain
 import android.net.Uri
 
 data class TodoList(
-    val id: Long,
-    
+    val id: String,
+
     val title: String,
 
     val userId: Long,
@@ -16,8 +16,6 @@ data class TodoList(
     val isShared: Boolean = false,
 
     val sharedUserId: Long? = null,
-
-    val isFavorite: Boolean = false,
 
     val category: Category? = null
 )

@@ -206,7 +206,7 @@ internal val sampleTodoListState = TodoListState(
     title = "Sample List",
     categories = (1..10).map {
         Category(
-            id = it.toLong(),
+            id = it.toString(),
             title = "title $it",
             userId = 1
         ).toCategoryUi()

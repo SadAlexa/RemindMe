@@ -1,8 +1,8 @@
 package com.gpluslf.remindme.core.domain
 
 data class Tag(
-    val id: Long,
+    val id: String,
     val title: String,
-    val listId: Long,
+    val listId: String,
     val userId: Long
 )

@@ -1,9 +1,16 @@
 package com.gpluslf.remindme
 
+import android.content.Context
+import androidx.datastore.core.DataStore
 import androidx.room.Room
 import com.gpluslf.remindme.calendar.presentation.CalendarViewModel
+import com.gpluslf.remindme.core.data.crypt.EncryptedUser
+import com.gpluslf.remindme.core.data.crypt.protoDataStore
 import com.gpluslf.remindme.core.data.database.RemindMeDatabase
+import com.gpluslf.remindme.core.data.database.daos.SyncDAOs
 import com.gpluslf.remindme.core.data.networking.HttpClientFactory
+import com.gpluslf.remindme.core.data.networking.RemoteApiService
+import com.gpluslf.remindme.core.data.networking.RemoteSyncProvider
 import com.gpluslf.remindme.core.data.repository.CategoryRepository
 import com.gpluslf.remindme.core.data.repository.DataStoreRepository
 import com.gpluslf.remindme.core.data.repository.ListRepository
@@ -14,11 +21,13 @@ import com.gpluslf.remindme.core.data.repository.TaskRepository
 import com.gpluslf.remindme.core.data.repository.UserAchievementRepository
 import com.gpluslf.remindme.core.data.repository.UserRepository
 import com.gpluslf.remindme.core.domain.AlarmScheduler
+import com.gpluslf.remindme.core.domain.ApiService
 import com.gpluslf.remindme.core.domain.CategoryDataSource
 import com.gpluslf.remindme.core.domain.DataStoreSource
 import com.gpluslf.remindme.core.domain.ListDataSource
 import com.gpluslf.remindme.core.domain.LoggedUserDataSource
 import com.gpluslf.remindme.core.domain.NotificationDataSource
+import com.gpluslf.remindme.core.domain.SyncProvider
 import com.gpluslf.remindme.core.domain.TagDataSource
 import com.gpluslf.remindme.core.domain.TaskDataSource
 import com.gpluslf.remindme.core.domain.UserAchievementDataSource
@@ -34,6 +43,7 @@ import com.gpluslf.remindme.profile.presentation.SettingsViewModel
 import com.gpluslf.remindme.profile.presentation.UserAchievementViewModel
 import com.gpluslf.remindme.profile.presentation.UserViewModel
 import com.gpluslf.remindme.updates.presentation.NotificationsViewModel
+import io.ktor.client.engine.cio.CIO
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -60,18 +70,22 @@ val appModule = module {
     single<NotificationDataSource> { NotificationRepository(get<RemindMeDatabase>().notificationDao()) }
     single<UserAchievementDataSource> { UserAchievementRepository(get<RemindMeDatabase>().achievementDao()) }
     single<LoggedUserDataSource> { LoggedUserRepository(get<RemindMeDatabase>().loggedUserDao()) }
+    single<SyncDAOs> { get<RemindMeDatabase>().syncDao() }
     single<DataStoreSource> { DataStoreRepository(get()) }
+    single<ApiService> { RemoteApiService(get()) }
+    single<SyncProvider> { RemoteSyncProvider(get(), get()) }
+    single<DataStore<EncryptedUser>> { get<Context>().protoDataStore }
 
-    viewModel<LoginViewModel> { LoginViewModel(get(), get()) }
+    viewModel<LoginViewModel> { LoginViewModel(get(), get(), get(), get()) }
     viewModel<UserAchievementViewModel> { (userId: Long) ->
         UserAchievementViewModel(
             userId,
             get()
         )
     }
-    viewModel<UserViewModel> { (userId: Long) -> UserViewModel(userId, get(), get()) }
+    viewModel<UserViewModel> { (userId: Long) -> UserViewModel(userId, get(), get(), get(), get()) }
     viewModel<ListsViewModel> { (userId: Long) -> ListsViewModel(userId, get(), get()) }
-    viewModel<AddListViewModel> { (userId: Long, listId: Long?) ->
+    viewModel<AddListViewModel> { (userId: Long, listId: String?) ->
         AddListViewModel(
             userId,
             listId,
@@ -79,7 +93,7 @@ val appModule = module {
             get()
         )
     }
-    viewModel<TasksViewModel> { (userId: Long, listId: Long) ->
+    viewModel<TasksViewModel> { (userId: Long, listId: String) ->
         TasksViewModel(
             userId,
             listId,
@@ -87,7 +101,7 @@ val appModule = module {
             get()
         )
     }
-    viewModel<AddTaskViewModel> { (userId: Long, listId: Long, taskId: Long?) ->
+    viewModel<AddTaskViewModel> { (userId: Long, listId: String, taskId: String?) ->
         AddTaskViewModel(
             userId,
             listId,

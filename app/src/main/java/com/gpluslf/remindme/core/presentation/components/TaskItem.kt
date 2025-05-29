@@ -191,9 +191,9 @@ private fun CalendarItemPreview() {
 }
 
 internal val sampleTask = Task(
-    id = 1,
+    id = "1",
     title = "Title",
-    listId = 1,
+    listId = "1",
     userId = 1,
     image = Uri.parse("https://cdn-icons-png.flaticon.com/512/149/149071.png"),
     endTime = Date.from(Date().toInstant()),
@@ -202,15 +202,15 @@ internal val sampleTask = Task(
     latitude = 14721986725629376.0,
     tags = listOf(
         Tag(
-            id = 1,
+            id = "1",
             title = "Tag",
-            listId = 1,
+            listId = "1",
             userId = 1
         ),
         Tag(
-            id = 2,
+            id = "2",
             title = "Tag2",
-            listId = 1,
+            listId = "1",
             userId = 1
         )
     )

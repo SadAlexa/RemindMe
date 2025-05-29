@@ -20,8 +20,8 @@ interface UserDAOs {
     @Query("SELECT * FROM users")
     fun getAllUsers(): Flow<List<UserEntity>>
 
-    @Query("SELECT * FROM users WHERE email = :email AND password = :password LIMIT 1")
-    suspend fun logInUser(email: String, password: String): UserEntity?
+    @Query("SELECT * FROM users LIMIT 1")
+    suspend fun logInUser(): UserEntity?
 
     @Upsert
     suspend fun upsertUser(user: UserEntity): Long

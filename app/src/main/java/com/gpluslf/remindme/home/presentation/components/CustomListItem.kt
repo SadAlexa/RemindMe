@@ -93,12 +93,12 @@ private fun CustomListItemPreview() {
 }
 
 internal val sampleTodoList = TodoList(
-    id = 1,
+    id = "",
     "title",
     1,
     body = "body",
     category = Category(
-        id = 1,
+        id = "1",
         title = "title",
         userId = 1
     ),

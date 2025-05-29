@@ -4,7 +4,7 @@ import com.gpluslf.remindme.core.domain.Notification
 import java.util.Date
 
 data class NotificationUi(
-    val id: Long,
+    val id: String,
 
     val title: String,
 
@@ -18,11 +18,11 @@ data class NotificationUi(
 
     val isRead: Boolean,
 
-    val taskId: Long?,
+    val taskId: String?,
 
     val taskTitle: String?,
 
-    val taskListId: Long?,
+    val taskListId: String?,
 
     val achievementId: Long?
 )

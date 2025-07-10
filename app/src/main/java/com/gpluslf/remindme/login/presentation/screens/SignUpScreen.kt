@@ -97,7 +97,8 @@ fun SignUpScreen(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Next
                 ),
-                isPassword = true
+                isPassword = true,
+                isError = state.password != state.confirmPassword
             )
             CustomOutlinedTextField(
                 stringResource(R.string.confirmPassword),
@@ -109,10 +110,12 @@ fun SignUpScreen(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
-                isPassword = true
+                isPassword = true,
+                isError = state.password != state.confirmPassword
             )
             CustomButton(
-                stringResource(R.string.sign_up)
+                stringResource(R.string.sign_up),
+                enabled = state.password == state.confirmPassword && state.password.isNotBlank() && state.email.isNotBlank() && state.username.isNotBlank()
             ) {
                 onLoginAction(LoginAction.SignUp)
             }

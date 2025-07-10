@@ -133,17 +133,6 @@ fun ProfileScreen(
                 }
                 TextButton(
                     onClick = {
-                        onProfileAction(ProfileAction.LocalBackupData)
-                    },
-                ) {
-                    Text(
-                        "Local Backup",
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-                TextButton(
-                    onClick = {
                         onProfileAction(ProfileAction.LogOut)
                     },
                 ) {

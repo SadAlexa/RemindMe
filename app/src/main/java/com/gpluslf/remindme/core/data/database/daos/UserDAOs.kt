@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 interface UserDAOs {
 
     @Query("SELECT * FROM users WHERE id = :userId")
-    fun getUserById(userId: Long): Flow<UserEntity>
+    fun getUserById(userId: Long): Flow<UserEntity?>
 
     @Query("SELECT * FROM users")
     fun getAllUsers(): Flow<List<UserEntity>>

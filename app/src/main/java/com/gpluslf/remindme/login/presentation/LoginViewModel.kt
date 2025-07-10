@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.gpluslf.remindme.core.data.crypt.EncryptedUser
 import com.gpluslf.remindme.core.domain.LoggedUserDataSource
 import com.gpluslf.remindme.core.domain.SyncProvider
-import com.gpluslf.remindme.core.domain.User
 import com.gpluslf.remindme.core.domain.UserDataSource
 import com.gpluslf.remindme.login.presentation.model.LoginAction
 import com.gpluslf.remindme.login.presentation.model.LoginEvent
@@ -16,6 +15,7 @@ import com.gpluslf.remindme.login.presentation.model.SignUpAction
 import com.gpluslf.remindme.login.presentation.model.SignUpState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -71,15 +71,21 @@ class LoginViewModel(
 
     private fun createUser() {
         viewModelScope.launch {
-            userRepository.createAccount(
-                User(
-                    id = 0,
-                    username = signUpState.value.username,
-                    email = signUpState.value.email,
-                    password = signUpState.value.password,
-                    salt = "",
-                    image = null
-                )
+            syncProvider.downloadData(
+                signUpState.value.email,
+                signUpState.value.password,
+                signUpState.value.username,
+                {
+                    updateText("Syncing data...")
+                    viewModelScope.launch {
+                        delay(
+                            1000
+                        )
+                    }
+                },
+                {
+                    onError()
+                }
             )
             _events.send(LoginEvent.SignUpSuccess)
         }
@@ -100,7 +106,6 @@ class LoginViewModel(
     fun onLoginAction(action: LoginAction) {
         when (action) {
             LoginAction.SignIn -> {
-
                 viewModelScope.launch {
                     encryptedDataStore.updateData {
                         it.copy(
@@ -116,15 +121,18 @@ class LoginViewModel(
                     syncProvider.downloadData(
                         signInState.value.email,
                         signInState.value.password,
-                        { updateText("Downloading User...") },
-                        { updateText("Downloading Categories...") },
-                        { updateText("Downloading Lists...") },
-                        { updateText("Downloading Tags...") },
-                        { updateText("Downloading Tasks...") },
-                        { updateText("Downloading Achievements...") },
-                        { updateText("Downloading Notifications...") },
-                        { onError() },
-                        {},
+                        null,
+                        {
+                            updateText("Downloading data...")
+                            viewModelScope.launch {
+                                delay(
+                                    1000
+                                )
+                            }
+                        },
+                        {
+                            onError()
+                        }
                     )
                     _signInState.update {
                         it.copy(

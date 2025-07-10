@@ -8,7 +8,7 @@ data class SyncDTO(
     val lists: List<TodoListDTO>,
     val tags: List<TagDTO>,
     val tasks: List<TaskDTO>,
-    val tagsOnTasks: List<TagsOnTaskDTO>,
+    val tagsOnTask: List<TagsOnTaskDTO>,
     val userAchievements: List<UserAchievementDTO>,
     val notifications: List<NotificationDTO>,
 )

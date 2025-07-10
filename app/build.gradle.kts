@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +7,8 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
 }
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
     namespace = "com.gpluslf.remindme"
@@ -22,10 +26,10 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "API_HOST", "\"192.168.1.91\"")
+            buildConfigField("String", "API_HOST", "\"${properties.getProperty("API_HOST")}\"")
         }
         release {
-            buildConfigField("String", "API_HOST", "\"192.168.1.91\"")
+            buildConfigField("String", "API_HOST", "\"${properties.getProperty("API_HOST")}\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

@@ -69,7 +69,12 @@ val appModule = module {
     single<TagDataSource> { TagRepository(get<RemindMeDatabase>().tagDao()) }
     single<NotificationDataSource> { NotificationRepository(get<RemindMeDatabase>().notificationDao()) }
     single<UserAchievementDataSource> { UserAchievementRepository(get<RemindMeDatabase>().achievementDao()) }
-    single<LoggedUserDataSource> { LoggedUserRepository(get<RemindMeDatabase>().loggedUserDao()) }
+    single<LoggedUserDataSource> {
+        LoggedUserRepository(
+            get<RemindMeDatabase>().loggedUserDao(),
+            get<RemindMeDatabase>().syncDao()
+        )
+    }
     single<SyncDAOs> { get<RemindMeDatabase>().syncDao() }
     single<DataStoreSource> { DataStoreRepository(get()) }
     single<ApiService> { RemoteApiService(get()) }

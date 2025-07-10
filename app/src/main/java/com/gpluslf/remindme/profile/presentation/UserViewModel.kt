@@ -47,7 +47,7 @@ class UserViewModel(
         viewModelScope.launch {
             userRepository.getUserById(userId).collect {
                 _state.update { state ->
-                    state.copy(user = it.toUserUi())
+                    state.copy(user = it?.toUserUi())
                 }
             }
         }
@@ -66,7 +66,7 @@ class UserViewModel(
         when (action) {
             is ProfileAction.LogOut -> {
                 viewModelScope.launch {
-                    loggedUserRepository.deleteLoggedUser()
+                    loggedUserRepository.deleteLoggedUser(userId)
                 }
             }
 
@@ -89,13 +89,6 @@ class UserViewModel(
                         values.email,
                         values.password,
                         userId,
-                        {},
-                        {},
-                        {},
-                        {},
-                        {},
-                        {},
-                        {},
                         {},
                         {},
                     )

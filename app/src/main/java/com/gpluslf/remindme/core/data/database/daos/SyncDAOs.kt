@@ -64,6 +64,30 @@ interface SyncDAOs {
     @Query("SELECT * FROM notifications WHERE user_id = :userId")
     suspend fun getAllNotifications(userId: Long): List<NotificationEntity>
 
+    @Query("DELETE FROM users WHERE id = :userId")
+    suspend fun deleteUser(userId: Long)
+
+    @Query("DELETE FROM categories WHERE user_id = :userId")
+    suspend fun deleteCategories(userId: Long)
+
+    @Query("DELETE FROM lists WHERE user_id = :userId")
+    suspend fun deleteLists(userId: Long)
+
+    @Query("DELETE FROM tasks WHERE user_id = :userId")
+    suspend fun deleteTasks(userId: Long)
+
+    @Query("DELETE FROM tags WHERE user_id = :userId")
+    suspend fun deleteTags(userId: Long)
+
+    @Query("DELETE FROM user_achievements WHERE user_id = :userId")
+    suspend fun deleteUserAchievements(userId: Long)
+
+    @Query("DELETE FROM tasks_tags WHERE task_user_id = :userId")
+    suspend fun deleteTagsOnTask(userId: Long)
+
+    @Query("DELETE FROM notifications WHERE user_id = :userId")
+    suspend fun deleteNotifications(userId: Long)
+
     @Transaction
     suspend fun sync(
         user: UserEntity,
@@ -85,5 +109,15 @@ interface SyncDAOs {
         upsertNotifications(notifications)
     }
 
-
+    @Transaction
+    suspend fun deleteSync(userId: Long) {
+        deleteNotifications(userId)
+        deleteUserAchievements(userId)
+        deleteTagsOnTask(userId)
+        deleteTasks(userId)
+        deleteTags(userId)
+        deleteLists(userId)
+        deleteCategories(userId)
+        deleteUser(userId)
+    }
 }

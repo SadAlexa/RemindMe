@@ -399,13 +399,13 @@ fun RemindMeNavGraph(
                     userState = userState,
                     settingState = settingsState,
                     onProfileAction = { action ->
-                        userViewModel.onProfileAction(action)
-                        if (action == ProfileAction.LogOut) {
+                        if (action is ProfileAction.LogOut) {
                             navController.popBackStack(
                                 route = RemindMeRoute.AUTH,
                                 inclusive = false
                             )
                         }
+                        userViewModel.onProfileAction(action)
                     },
                     onSettingAction = settingsViewModel::onAction,
                     userAchievementState = achievementState,

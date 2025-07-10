@@ -6,8 +6,8 @@ interface LoggedUserDataSource {
 
     fun getLoggedUserById(): Flow<Long?>
 
-    suspend fun upsertLoggedUser(id: Long)
+    suspend fun upsertLoggedUser(userId: Long)
 
-    suspend fun deleteLoggedUser()
+    suspend fun deleteLoggedUser(userId: Long)
 
 }

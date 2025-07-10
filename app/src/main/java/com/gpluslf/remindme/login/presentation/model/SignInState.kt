@@ -9,5 +9,6 @@ data class SignInState(
     val loginError: Boolean = false,
     val isLoggedIn: Boolean = false,
     val loadingLabel: String = "",
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val progress: Float = 0f,
 )

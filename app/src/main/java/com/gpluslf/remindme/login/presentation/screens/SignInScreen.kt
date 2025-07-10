@@ -5,9 +5,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,12 +41,12 @@ fun SignInScreen(
     onSignInAction: (SignInAction) -> Unit = {},
     onLoginAction: (LoginAction) -> Unit = {},
 ) {
-
-
     Column(
-        modifier.padding(horizontal = 50.dp, vertical = 70.dp),
+        modifier
+            .padding(horizontal = 50.dp, vertical = 70.dp)
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(30.dp),
+        verticalArrangement = if (state.isLoading) Arrangement.Center else Arrangement.spacedBy(30.dp),
     ) {
         Image(
             painterResource(R.drawable.remindmeicon),
@@ -52,9 +55,16 @@ fun SignInScreen(
             modifier = Modifier.size(120.dp),
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground)
         )
-
         if (state.isLoading) {
-            Text(state.loadingLabel)
+            Text(
+                state.loadingLabel,
+                fontWeight = FontWeight.Black,
+                textAlign = TextAlign.Center
+            )
+            LinearProgressIndicator(
+                progress = { state.progress },
+                modifier = Modifier.fillMaxWidth(),
+            )
         } else {
             Text(
                 stringResource(R.string.sign_in),

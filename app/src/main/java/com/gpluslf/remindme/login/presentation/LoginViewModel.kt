@@ -75,14 +75,7 @@ class LoginViewModel(
                 signUpState.value.email,
                 signUpState.value.password,
                 signUpState.value.username,
-                {
-                    updateText("Syncing data...")
-                    viewModelScope.launch {
-                        delay(
-                            1000
-                        )
-                    }
-                },
+                {},
                 {
                     onError()
                 }
@@ -103,6 +96,12 @@ class LoginViewModel(
         }
     }
 
+    private fun updateProgress(progress: Float) {
+        _signInState.update {
+            it.copy(progress = progress)
+        }
+    }
+
     fun onLoginAction(action: LoginAction) {
         when (action) {
             LoginAction.SignIn -> {
@@ -116,6 +115,7 @@ class LoginViewModel(
                     _signInState.update {
                         it.copy(
                             isLoading = true,
+                            progress = 0f
                         )
                     }
                     syncProvider.downloadData(
@@ -124,22 +124,22 @@ class LoginViewModel(
                         null,
                         {
                             updateText("Downloading data...")
-                            viewModelScope.launch {
-                                delay(
-                                    1000
-                                )
-                            }
                         },
                         {
                             onError()
                         }
                     )
-                    _signInState.update {
-                        it.copy(
-                            isLoading = false,
-                        )
-                    }
+
                     withContext(Dispatchers.IO) {
+                        for (i in 1..10) {
+                            updateProgress(i.toFloat() / 10)
+                            delay(10)
+                        }
+                        _signInState.update {
+                            it.copy(
+                                isLoading = false,
+                            )
+                        }
                         val user = userRepository.logInUser()
                         if (user != null) {
                             loggedUserRepository.upsertLoggedUser(user.id)

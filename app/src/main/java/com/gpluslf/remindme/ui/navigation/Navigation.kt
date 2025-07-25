@@ -440,6 +440,7 @@ fun RemindMeNavGraph(
                     },
                     onSettingAction = settingsViewModel::onAction,
                     userAchievementState = achievementState,
+                    events = userViewModel.events
                 )
             }
             composable<RemindMeRoute.Updates> {

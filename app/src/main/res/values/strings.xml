@@ -25,4 +25,6 @@
     <string name="category_created">Category created successfully</string>
     <string name="tag_created">Tag created successfully</string>
     <string name="server_url">Server URL</string>
+    <string name="sync_success">Sync Success</string>
+    <string name="sync_failed">Sync Failed</string>
 </resources>

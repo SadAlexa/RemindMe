@@ -1,12 +1,15 @@
 package com.gpluslf.remindme.profile.presentation.screens
 
 import android.content.res.Configuration
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,6 +36,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,10 +64,14 @@ import com.gpluslf.remindme.profile.presentation.components.CustomSegmentedButto
 import com.gpluslf.remindme.profile.presentation.model.ProfileAction
 import com.gpluslf.remindme.profile.presentation.model.SettingsAction
 import com.gpluslf.remindme.profile.presentation.model.SettingsState
+import com.gpluslf.remindme.profile.presentation.model.SyncEvent
 import com.gpluslf.remindme.profile.presentation.model.toThemeUi
 import com.gpluslf.remindme.profile.presentation.model.toUserAchievementUi
 import com.gpluslf.remindme.profile.presentation.model.toUserUi
 import com.gpluslf.remindme.ui.theme.RemindMeTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.emptyFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,8 +81,32 @@ fun ProfileScreen(
     userAchievementState: UserAchievementState,
     onProfileAction: (ProfileAction) -> Unit,
     onSettingAction: (SettingsAction) -> Unit,
+    events: Flow<SyncEvent>,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        events.collectLatest { event ->
+            when (event) {
+                SyncEvent.SyncSuccess -> {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.sync_success),
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+
+                SyncEvent.SyncFailed -> {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.sync_failed),
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+            }
+        }
+    }
+
     var isDialogOpen by remember { mutableStateOf(false) }
 
     if (isDialogOpen) {
@@ -122,16 +154,27 @@ fun ProfileScreen(
                     }
                 }
                 if (userState.user?.id != GUEST_USER_ID) {
-                    TextButton(
-                        onClick = {
-                            onProfileAction(ProfileAction.SyncData)
-                        },
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(
-                            "Sync Data",
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                        TextButton(
+                            onClick = {
+                                onProfileAction(ProfileAction.SyncData)
+                            },
+                        ) {
+                            Text(
+                                "Sync Data",
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                        AnimatedVisibility(
+                            visible = userState.syncing
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
                 }
                 TextButton(
@@ -289,6 +332,7 @@ private fun ProfileScreenPreviewLight() {
                 ),
                 {},
                 {},
+                emptyFlow(),
                 modifier = Modifier
                     .padding(padding)
                     .fillMaxSize()
@@ -340,6 +384,7 @@ private fun ProfileScreenPreviewDark() {
                 ),
                 {},
                 {},
+                emptyFlow(),
                 modifier = Modifier
                     .padding(padding)
                     .fillMaxSize()

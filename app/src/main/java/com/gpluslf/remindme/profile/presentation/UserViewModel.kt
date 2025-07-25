@@ -9,13 +9,16 @@ import com.gpluslf.remindme.core.domain.LoggedUserDataSource
 import com.gpluslf.remindme.core.domain.SyncProvider
 import com.gpluslf.remindme.core.domain.UserDataSource
 import com.gpluslf.remindme.profile.presentation.model.ProfileAction
+import com.gpluslf.remindme.profile.presentation.model.SyncEvent
 import com.gpluslf.remindme.profile.presentation.model.UserUi
 import com.gpluslf.remindme.profile.presentation.model.toUserUi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -25,6 +28,7 @@ data class UserState(
     val isImagePickerVisible: Boolean = false,
     val image: Uri? = null,
     val username: String = "",
+    val syncing: Boolean = false
 )
 
 class UserViewModel(
@@ -42,6 +46,9 @@ class UserViewModel(
         started = SharingStarted.WhileSubscribed(),
         initialValue = UserState()
     )
+
+    private val _events = Channel<SyncEvent>()
+    val events = _events.receiveAsFlow()
 
     private fun loadData() {
         viewModelScope.launch {
@@ -83,14 +90,26 @@ class UserViewModel(
 
             is ProfileAction.SyncData -> {
                 encryptedDataStore.data.onEach { values ->
-                    println(values)
+                    _state.update { state ->
+                        state.copy(syncing = true)
+                    }
                     syncProvider.uploadData(
                         values.email,
                         values.password,
                         userId,
-                        {},
-                        {},
+                        {
+
+                        },
+                        {
+                            viewModelScope.launch {
+                                _events.send(SyncEvent.SyncFailed)
+                            }
+                        },
                     )
+                    _state.update { state ->
+                        state.copy(syncing = false)
+                    }
+                    _events.send(SyncEvent.SyncSuccess)
                 }.launchIn(viewModelScope)
             }
         }

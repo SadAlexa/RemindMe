@@ -2,6 +2,7 @@ package com.gpluslf.remindme.core.data.networking
 
 import com.gpluslf.remindme.core.data.database.daos.SyncDAOs
 import com.gpluslf.remindme.core.data.dto.SyncDTO
+import com.gpluslf.remindme.core.data.dto.ValidateServerDTO
 import com.gpluslf.remindme.core.data.mappers.toCategoryDTO
 import com.gpluslf.remindme.core.data.mappers.toCategoryEntity
 import com.gpluslf.remindme.core.data.mappers.toListEntity
@@ -19,6 +20,8 @@ import com.gpluslf.remindme.core.data.mappers.toUserAchievementEntity
 import com.gpluslf.remindme.core.data.mappers.toUserEntity
 import com.gpluslf.remindme.core.domain.ApiService
 import com.gpluslf.remindme.core.domain.SyncProvider
+import com.gpluslf.remindme.core.domain.networkutils.NetworkError
+import com.gpluslf.remindme.core.domain.networkutils.Result
 import com.gpluslf.remindme.core.domain.networkutils.onError
 import com.gpluslf.remindme.core.domain.networkutils.onSuccess
 
@@ -98,5 +101,9 @@ class RemoteSyncProvider(
                 )
             )
         }
+    }
+
+    override suspend fun validateServer(url: String): Result<ValidateServerDTO, NetworkError> {
+        return apiService.validateServer(url)
     }
 }

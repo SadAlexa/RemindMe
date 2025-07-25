@@ -1,5 +1,6 @@
 package com.gpluslf.remindme.core.data.repository
 
+import com.gpluslf.remindme.core.GUEST_USER_ID
 import com.gpluslf.remindme.core.data.database.daos.LoggedUserDAOs
 import com.gpluslf.remindme.core.data.database.daos.SyncDAOs
 import com.gpluslf.remindme.core.data.mappers.toLoggedUserEntity
@@ -23,6 +24,8 @@ class LoggedUserRepository(
 
     override suspend fun deleteLoggedUser(userId: Long) {
         loggedUserDAOs.deleteLoggedUser()
-        syncDAOs.deleteSync(userId = userId)
+        if (userId != GUEST_USER_ID) {
+            syncDAOs.deleteSync(userId = userId)
+        }
     }
 }

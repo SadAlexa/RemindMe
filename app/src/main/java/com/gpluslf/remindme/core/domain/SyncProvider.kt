@@ -1,5 +1,9 @@
 package com.gpluslf.remindme.core.domain
 
+import com.gpluslf.remindme.core.data.dto.ValidateServerDTO
+import com.gpluslf.remindme.core.domain.networkutils.NetworkError
+import com.gpluslf.remindme.core.domain.networkutils.Result
+
 interface SyncProvider {
     suspend fun downloadData(
         email: String,
@@ -16,4 +20,6 @@ interface SyncProvider {
         uploadingCallback: () -> Unit,
         errorCallback: () -> Unit
     )
+
+    suspend fun validateServer(url: String): Result<ValidateServerDTO, NetworkError>
 }

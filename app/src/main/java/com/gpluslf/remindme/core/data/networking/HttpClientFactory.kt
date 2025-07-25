@@ -1,6 +1,5 @@
 package com.gpluslf.remindme.core.data.networking
 
-import com.gpluslf.remindme.BuildConfig
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
@@ -40,13 +39,12 @@ object HttpClientFactory {
                 )
             }
             defaultRequest {
+                url {
+                    // protocol = URLProtocol.HTTPS
+                }
                 contentType(
                     ContentType.Application.Json
                 )
-                url {
-                    host = BuildConfig.API_HOST
-                    port = 3000
-                }
             }
         }
     }

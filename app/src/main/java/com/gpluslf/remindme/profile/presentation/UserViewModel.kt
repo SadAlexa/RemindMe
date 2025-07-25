@@ -81,7 +81,6 @@ class UserViewModel(
                 updateImage()
             }
 
-            is ProfileAction.LocalBackupData -> TODO() // ahahahah
             is ProfileAction.SyncData -> {
                 encryptedDataStore.data.onEach { values ->
                     println(values)

@@ -4,21 +4,29 @@ import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gpluslf.remindme.core.data.crypt.EncryptedUser
+import com.gpluslf.remindme.core.domain.DataStoreSource
 import com.gpluslf.remindme.core.domain.LoggedUserDataSource
 import com.gpluslf.remindme.core.domain.SyncProvider
 import com.gpluslf.remindme.core.domain.UserDataSource
+import com.gpluslf.remindme.core.domain.networkutils.onError
+import com.gpluslf.remindme.core.domain.networkutils.onSuccess
 import com.gpluslf.remindme.login.presentation.model.LoginAction
 import com.gpluslf.remindme.login.presentation.model.LoginEvent
 import com.gpluslf.remindme.login.presentation.model.SignInAction
 import com.gpluslf.remindme.login.presentation.model.SignInState
 import com.gpluslf.remindme.login.presentation.model.SignUpAction
 import com.gpluslf.remindme.login.presentation.model.SignUpState
+import com.gpluslf.remindme.login.presentation.model.WelcomeAction
+import com.gpluslf.remindme.login.presentation.model.WelcomeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,13 +35,34 @@ class LoginViewModel(
     private val userRepository: UserDataSource,
     private val loggedUserRepository: LoggedUserDataSource,
     private val syncProvider: SyncProvider,
-    private val encryptedDataStore: DataStore<EncryptedUser>
+    private val encryptedDataStore: DataStore<EncryptedUser>,
+    private val repository: DataStoreSource
 ) : ViewModel() {
     private val _signUpState = MutableStateFlow(SignUpState())
     val signUpState = _signUpState.asStateFlow()
 
     private val _signInState = MutableStateFlow(SignInState())
     val signInState = _signInState.asStateFlow()
+
+    private val _welcomeState = MutableStateFlow(WelcomeState())
+    val welcomeState = _welcomeState.onStart {
+        viewModelScope.launch {
+            repository.getString("endpoint").collect { endpoint ->
+                if (endpoint != null) {
+                    _welcomeState.update { state ->
+                        state.copy(
+                            serverUrl = endpoint,
+                            isServerUrlValid = true
+                        )
+                    }
+                }
+            }
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = WelcomeState()
+    )
 
     private val _events = Channel<LoginEvent>()
     val events = _events.receiveAsFlow()
@@ -66,6 +95,34 @@ class LoginViewModel(
 
             is SignInAction.UpdatePassword ->
                 _signInState.update { state -> state.copy(password = action.value) }
+        }
+    }
+
+
+    fun onWelcomeAction(action: WelcomeAction) {
+        when (action) {
+            is WelcomeAction.EditServerUrl -> {
+                _welcomeState.update { state -> state.copy(serverUrl = action.url) }
+            }
+
+            WelcomeAction.ValidateServerUrl -> {
+                val serverUrl = _welcomeState.value.serverUrl.trim().trimEnd('/')
+                _welcomeState.update {
+                    it.copy(loading = true, isError = false)
+                }
+                viewModelScope.launch {
+                    syncProvider.validateServer(serverUrl).onSuccess {
+                        _welcomeState.update {
+                            it.copy(isServerUrlValid = true, loading = false, isError = false)
+                        }
+                        repository.putString("endpoint", serverUrl)
+                    }.onError {
+                        _welcomeState.update {
+                            it.copy(isServerUrlValid = false, loading = false, isError = true)
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -131,6 +188,7 @@ class LoginViewModel(
                     )
 
                     withContext(Dispatchers.IO) {
+
                         for (i in 1..10) {
                             updateProgress(i.toFloat() / 10)
                             delay(10)
@@ -140,7 +198,7 @@ class LoginViewModel(
                                 isLoading = false,
                             )
                         }
-                        val user = userRepository.logInUser()
+                        val user = userRepository.logInUser(signInState.value.email)
                         if (user != null) {
                             loggedUserRepository.upsertLoggedUser(user.id)
                         } else {
@@ -149,8 +207,11 @@ class LoginViewModel(
                         _signInState.update { state ->
                             state.copy(
                                 loginError = user == null,
-                                isLoggedIn = user != null
                             )
+                        }
+
+                        if (user != null) {
+                            _events.send(LoginEvent.LoginSuccess)
                         }
                     }
                 }

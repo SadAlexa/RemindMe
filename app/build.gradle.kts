@@ -25,11 +25,7 @@ android {
     }
 
     buildTypes {
-        debug {
-            buildConfigField("String", "API_HOST", "\"${properties.getProperty("API_HOST")}\"")
-        }
         release {
-            buildConfigField("String", "API_HOST", "\"${properties.getProperty("API_HOST")}\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

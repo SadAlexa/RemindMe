@@ -77,11 +77,11 @@ val appModule = module {
     }
     single<SyncDAOs> { get<RemindMeDatabase>().syncDao() }
     single<DataStoreSource> { DataStoreRepository(get()) }
-    single<ApiService> { RemoteApiService(get()) }
+    single<ApiService> { RemoteApiService(get(), get()) }
     single<SyncProvider> { RemoteSyncProvider(get(), get()) }
     single<DataStore<EncryptedUser>> { get<Context>().protoDataStore }
 
-    viewModel<LoginViewModel> { LoginViewModel(get(), get(), get(), get()) }
+    viewModel<LoginViewModel> { LoginViewModel(get(), get(), get(), get(), get()) }
     viewModel<UserAchievementViewModel> { (userId: Long) ->
         UserAchievementViewModel(
             userId,

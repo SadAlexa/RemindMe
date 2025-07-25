@@ -1,11 +1,14 @@
 package com.gpluslf.remindme.ui.navigation
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.PersonOutline
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -13,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -26,6 +30,7 @@ import androidx.navigation.toRoute
 import com.gpluslf.remindme.R
 import com.gpluslf.remindme.calendar.presentation.CalendarViewModel
 import com.gpluslf.remindme.calendar.presentation.screens.CalendarScreen
+import com.gpluslf.remindme.core.GUEST_USER_ID
 import com.gpluslf.remindme.core.domain.AlarmScheduler
 import com.gpluslf.remindme.core.domain.LoggedUserDataSource
 import com.gpluslf.remindme.core.domain.Notification
@@ -101,6 +106,12 @@ sealed interface RemindMeRoute {
     @Serializable
     data object APP : RemindMeRoute
 
+    @Serializable
+    data object LOADING : RemindMeRoute
+
+    @Serializable
+    data object GOTO : RemindMeRoute
+
 }
 
 enum class Screens(
@@ -136,6 +147,11 @@ fun RemindMeNavGraph(
         coroutineScope.launch {
             loggedUserRepository.getLoggedUserById().collect { id ->
                 currentUserId = id
+                if (currentUserId == null) {
+                    navController.navigate(RemindMeRoute.AUTH)
+                } else {
+                    navController.navigate(RemindMeRoute.APP)
+                }
             }
         }
     }
@@ -207,49 +223,62 @@ fun RemindMeNavGraph(
                         Toast.LENGTH_SHORT,
                     ).show()
                 }
+
+                LoginEvent.LoginSuccess -> {
+                    navController.popBackStack(
+                        route = RemindMeRoute.AUTH,
+                        inclusive = false
+                    )
+                    navController.navigate(RemindMeRoute.APP)
+                }
             }
         }
     }
 
     NavHost(
         navController = navController,
-        startDestination = if (currentUserId != null) RemindMeRoute.APP else RemindMeRoute.AUTH,
+        startDestination = RemindMeRoute.LOADING,
         modifier = modifier
     ) {
+        navigation<RemindMeRoute.LOADING>(startDestination = RemindMeRoute.GOTO) {
+            composable<RemindMeRoute.GOTO> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
+        }
 
         navigation<RemindMeRoute.AUTH>(
             startDestination = RemindMeRoute.Welcome
         ) {
             composable<RemindMeRoute.Welcome> {
+
+                val state by loginViewModel.welcomeState.collectAsStateWithLifecycle()
+
                 WelcomeScreen(
+                    state = state,
                     onLoginAction = { action ->
                         when (action) {
                             LoginAction.SignIn -> navController.navigate(RemindMeRoute.SignIn)
                             LoginAction.SignUp -> navController.navigate(RemindMeRoute.SignUp)
                             LoginAction.Guest -> {
                                 coroutineScope.launch {
-                                    loggedUserRepository.upsertLoggedUser(1)
+                                    loggedUserRepository.upsertLoggedUser(GUEST_USER_ID)
                                 }
                                 navController.popBackStack()
                                 navController.navigate(RemindMeRoute.APP)
                             }
                         }
                     },
+                    onWelcomeAction = loginViewModel::onWelcomeAction,
                 )
             }
 
             composable<RemindMeRoute.SignIn> {
                 val state by loginViewModel.signInState.collectAsStateWithLifecycle()
 
-                LaunchedEffect(state.isLoggedIn) {
-                    if (state.isLoggedIn) {
-                        navController.popBackStack(
-                            route = RemindMeRoute.AUTH,
-                            inclusive = false
-                        )
-                        navController.navigate(RemindMeRoute.APP)
-                    }
-                }
                 SignInScreen(
                     state = state,
                     onSignInAction = loginViewModel::onSignInAction,
@@ -289,25 +318,26 @@ fun RemindMeNavGraph(
                         flag = true
                     }
                 }
-
-                val viewModel = koinViewModel<ListsViewModel>(
-                    parameters = { parametersOf(currentUserId) }
-                )
-                val state by viewModel.state.collectAsStateWithLifecycle()
-                HomeScreen(
-                    state = state,
-                    onHomeScreenAction = viewModel::onHomeScreenAction,
-                    onAddListClick = {
-                        navController.navigate(RemindMeRoute.AddList())
-                    },
-                    onEditListSwipe = { id ->
-                        navController.navigate(RemindMeRoute.AddList(id))
-                    },
-                    onCustomListItemClick = { id, title ->
-                        navController.navigate(RemindMeRoute.TodoList(id, title))
-                    },
-                    events = viewModel.events
-                )
+                if (currentUserId != null) {
+                    val viewModel = koinViewModel<ListsViewModel>(
+                        parameters = { parametersOf(currentUserId) }
+                    )
+                    val state by viewModel.state.collectAsStateWithLifecycle()
+                    HomeScreen(
+                        state = state,
+                        onHomeScreenAction = viewModel::onHomeScreenAction,
+                        onAddListClick = {
+                            navController.navigate(RemindMeRoute.AddList())
+                        },
+                        onEditListSwipe = { id ->
+                            navController.navigate(RemindMeRoute.AddList(id))
+                        },
+                        onCustomListItemClick = { id, title ->
+                            navController.navigate(RemindMeRoute.TodoList(id, title))
+                        },
+                        events = viewModel.events
+                    )
+                }
             }
             composable<RemindMeRoute.TodoList> {
                 val listId = it.toRoute<RemindMeRoute.TodoList>().listId
@@ -401,7 +431,8 @@ fun RemindMeNavGraph(
                     onProfileAction = { action ->
                         if (action is ProfileAction.LogOut) {
                             navController.popBackStack(
-                                route = RemindMeRoute.AUTH,
+                                route = RemindMeRoute.LOADING,
+                                saveState = false,
                                 inclusive = false
                             )
                         }

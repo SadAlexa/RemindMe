@@ -17,8 +17,8 @@ class UserRepository(private val userDAOs: UserDAOs) : UserDataSource {
     override fun getUserById(userId: Long): Flow<User?> =
         userDAOs.getUserById(userId).map { it?.toUser() }
 
-    override suspend fun logInUser(): User? {
-        return userDAOs.logInUser()?.toUser()
+    override suspend fun logInUser(email: String): User? {
+        return userDAOs.logInUser(email)?.toUser()
     }
 
     override suspend fun createAccount(user: User) =

@@ -29,7 +29,7 @@ class NotificationAlarmScheduler(
         }
         return PendingIntent.getBroadcast(
             context,
-            notificationItem.id.toInt(),
+            notificationItem.id.hashCode(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

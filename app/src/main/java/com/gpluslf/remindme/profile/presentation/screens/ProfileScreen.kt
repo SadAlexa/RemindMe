@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.gpluslf.remindme.R
+import com.gpluslf.remindme.core.GUEST_USER_ID
 import com.gpluslf.remindme.core.domain.User
 import com.gpluslf.remindme.core.domain.UserAchievement
 import com.gpluslf.remindme.core.presentation.components.ImageDialog
@@ -120,16 +121,18 @@ fun ProfileScreen(
                         onSettingAction(SettingsAction.ChangeTheme(it))
                     }
                 }
-                TextButton(
-                    onClick = {
-                        onProfileAction(ProfileAction.SyncData)
-                    },
-                ) {
-                    Text(
-                        "Sync Data",
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                if (userState.user?.id != GUEST_USER_ID) {
+                    TextButton(
+                        onClick = {
+                            onProfileAction(ProfileAction.SyncData)
+                        },
+                    ) {
+                        Text(
+                            "Sync Data",
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
                 }
                 TextButton(
                     onClick = {

@@ -48,6 +48,8 @@ tasks and reminders efficiently.
 ## Usage
 
 - Launch the application.
+- If you want to synchronize your data with the server, enter your server link in the field and
+  then "Sign Up". If you don't want to, you can click the “Sign in as a guest” button.
 - Create a new list by clicking on the "Add List" button.
 - If you want to divide your lists into categories, create them by clicking the “Add Category”
   button and then select one in the list creation.

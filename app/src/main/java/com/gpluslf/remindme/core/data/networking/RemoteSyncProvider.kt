@@ -41,7 +41,6 @@ class RemoteSyncProvider(
             email,
             password
         )).onError { errorCallback() }.onSuccess { jwt ->
-            println(jwt.accessToken)
             apiService.getUser(jwt.accessToken).onError {
                 errorCallback()
             }.onSuccess { user ->
@@ -84,7 +83,6 @@ class RemoteSyncProvider(
 
         apiService.login(email, password).onError {
             errorCallback()
-            println("Login error")
         }.onSuccess { token ->
             val jwt = token.accessToken
             uploadingCallback()

@@ -10,4 +10,6 @@ data class SignInState(
     val loadingLabel: String = "",
     val isLoading: Boolean = false,
     val progress: Float = 0f,
-)
+    val emailError: Boolean = false,
+
+    )

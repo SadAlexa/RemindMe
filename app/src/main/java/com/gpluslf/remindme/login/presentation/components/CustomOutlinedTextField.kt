@@ -18,6 +18,7 @@ fun CustomOutlinedTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     isPassword: Boolean = false,
     isError: Boolean = false,
+    supportingText: @Composable () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
@@ -41,6 +42,7 @@ fun CustomOutlinedTextField(
         isError = isError,
         singleLine = true,
         keyboardOptions = keyboardOptions,
+        supportingText = supportingText,
         visualTransformation = if (isPassword) {
             PasswordVisualTransformation()
         } else {

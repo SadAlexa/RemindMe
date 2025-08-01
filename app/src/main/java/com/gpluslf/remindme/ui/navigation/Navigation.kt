@@ -1,5 +1,6 @@
 package com.gpluslf.remindme.ui.navigation
 
+import android.app.Activity
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,7 +53,6 @@ import com.gpluslf.remindme.login.presentation.screens.WelcomeScreen
 import com.gpluslf.remindme.profile.presentation.SettingsViewModel
 import com.gpluslf.remindme.profile.presentation.UserAchievementViewModel
 import com.gpluslf.remindme.profile.presentation.UserViewModel
-import com.gpluslf.remindme.profile.presentation.model.ProfileAction
 import com.gpluslf.remindme.profile.presentation.screens.ProfileScreen
 import com.gpluslf.remindme.updates.presentation.NotificationsState
 import com.gpluslf.remindme.updates.presentation.NotificationsViewModel
@@ -142,15 +142,23 @@ fun RemindMeNavGraph(
     val loggedUserRepository = getKoin().get<LoggedUserDataSource>()
     val achievementRepository = getKoin().get<UserAchievementDataSource>()
     val alarmScheduler = getKoin().get<AlarmScheduler>()
+    val localcontext = LocalContext.current as Activity
+
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             loggedUserRepository.getLoggedUserById().collect { id ->
                 currentUserId = id
                 if (currentUserId == null) {
-                    navController.navigate(RemindMeRoute.AUTH)
+                    navController.navigate(RemindMeRoute.AUTH) {
+                        popUpTo(0)
+                    }
                 } else {
-                    navController.navigate(RemindMeRoute.APP)
+                    navController.navigate(RemindMeRoute.APP) {
+                        popUpTo(RemindMeRoute.LOADING) {
+                            inclusive = true
+                        }
+                    }
                 }
             }
         }
@@ -428,16 +436,7 @@ fun RemindMeNavGraph(
                 ProfileScreen(
                     userState = userState,
                     settingState = settingsState,
-                    onProfileAction = { action ->
-                        if (action is ProfileAction.LogOut) {
-                            navController.popBackStack(
-                                route = RemindMeRoute.LOADING,
-                                saveState = false,
-                                inclusive = false
-                            )
-                        }
-                        userViewModel.onProfileAction(action)
-                    },
+                    onProfileAction = userViewModel::onProfileAction,
                     onSettingAction = settingsViewModel::onAction,
                     userAchievementState = achievementState,
                     events = userViewModel.events

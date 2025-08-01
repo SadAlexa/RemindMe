@@ -85,7 +85,13 @@ fun SignUpScreen(
                 onValueChange = {
                     onSignUpAction(SignUpAction.UpdateEmail(it))
                 },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                isError = state.emailError,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                supportingText = {
+                    if (state.emailError) {
+                        Text(stringResource(R.string.email_error))
+                    }
+                }
             )
             CustomOutlinedTextField(
                 stringResource(R.string.password),

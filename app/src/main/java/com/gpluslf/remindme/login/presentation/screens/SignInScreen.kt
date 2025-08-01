@@ -21,6 +21,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -77,7 +78,13 @@ fun SignInScreen(
                 onValueChange = {
                     onSignInAction(SignInAction.UpdateEmail(it))
                 },
-                isError = state.loginError
+                isError = state.emailError || state.loginError,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                supportingText = {
+                    if (state.emailError) {
+                        Text(stringResource(R.string.email_error))
+                    }
+                }
             )
             CustomOutlinedTextField(
                 stringResource(R.string.password),

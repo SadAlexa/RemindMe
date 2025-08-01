@@ -64,8 +64,17 @@ class LoginViewModel(
         initialValue = WelcomeState()
     )
 
+
     private val _events = Channel<LoginEvent>()
     val events = _events.receiveAsFlow()
+
+    private fun emailError(email: String): Boolean {
+        return if (email.isNotEmpty()) {
+            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        } else {
+            false
+        }
+    }
 
     fun onSignUpAction(action: SignUpAction) {
         when (action) {
@@ -82,7 +91,12 @@ class LoginViewModel(
             }
 
             is SignUpAction.UpdateEmail -> {
-                _signUpState.update { state -> state.copy(email = action.value) }
+                _signUpState.update { state ->
+                    state.copy(
+                        email = action.value,
+                        emailError = emailError(action.value)
+                    )
+                }
             }
         }
     }
@@ -90,7 +104,12 @@ class LoginViewModel(
     fun onSignInAction(action: SignInAction) {
         when (action) {
             is SignInAction.UpdateEmail -> {
-                _signInState.update { state -> state.copy(email = action.value) }
+                _signInState.update { state ->
+                    state.copy(
+                        email = action.value,
+                        emailError = emailError(action.value)
+                    )
+                }
             }
 
             is SignInAction.UpdatePassword ->
